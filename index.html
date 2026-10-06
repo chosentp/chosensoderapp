@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chosen 👑 SoderApp v1.8.0 Satelital Pro</title>
+    <title>Chosen 👑 SoderApp v1.8.1 Satelital Pro</title>
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Leaflet CSS para Mapas -->
@@ -24,7 +24,7 @@
         <div class="bg-blue-600 p-4 rounded-full mb-4 text-3xl shadow-lg">👑</div>
         <h1 class="text-3xl font-extrabold text-blue-400 mb-2">Chosen SoderApp</h1>
         <p class="text-sm text-gray-300 mb-2">Sistema de Control Total Satelital & Gestión de Soda y Agua</p>
-        <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold mb-6">Versión 1.8.0 Pro</span>
+        <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold mb-6">Versión 1.8.1 Pro</span>
         <button onclick="cerrarSplash()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg transition transform active:scale-95">
             🚀 INGRESAR AL SISTEMA
         </button>
@@ -35,7 +35,7 @@
         <div>
             <h1 class="text-lg sm:text-xl font-bold flex items-center gap-2">
                 <span>Chosen 👑 SoderApp</span> 
-                <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full font-bold">v1.8.0 Pro</span>
+                <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full font-bold">v1.8.1 Pro</span>
             </h1>
             <p class="text-xs text-blue-200" id="current-zone-label">📍 San Juan | Media Agua & Zonas</p>
         </div>
@@ -268,7 +268,7 @@
 
         </div>
 
-        <!-- TAB 2: CLIENTES (Padrón & Alta) -->
+        <!-- TAB 2: CLIENTES (Padrón & Alta Completa / Posibles Clientes) -->
         <div id="tab-clientes" class="tab-content space-y-4">
             
             <!-- Estadísticas Clientes -->
@@ -286,7 +286,7 @@
                     <strong class="text-base text-blue-600" id="met-semana">0</strong>
                 </div>
                 <div class="bg-white p-3 rounded-xl border shadow-sm">
-                    <span class="text-gray-500 block">Total Padrón</span>
+                    <span class="text-gray-500 block">Total Padrón (1000+)</span>
                     <strong class="text-base text-purple-600" id="met-mes">0</strong>
                 </div>
             </div>
@@ -294,25 +294,25 @@
             <!-- Botones Toggle -->
             <div class="flex gap-2">
                 <button onclick="toggleSeccionCliente('form')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs shadow flex items-center gap-1">
-                    <i class="fas fa-user-plus"></i> Agregar / Editar Cliente
+                    <i class="fas fa-user-plus"></i> Agregar / Editar Cliente (o Posible)
                 </button>
                 <button onclick="toggleSeccionCliente('padron')" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg text-xs shadow flex items-center gap-1">
                     <i class="fas fa-list-alt"></i> Padrón General
                 </button>
             </div>
 
-            <!-- Formulario Alta / Edición -->
+            <!-- Formulario Alta / Edición (Soporta Clientes Fijos, Nuevos y Posibles Clientes con GPS y Fachada) -->
             <div id="sec-form-cliente" class="bg-white p-4 rounded-xl shadow-md border-2 border-blue-500">
-                <h3 class="text-sm font-bold text-blue-900 mb-3" id="titulo-form-cliente">➕ Alta / Edición de Cliente</h3>
+                <h3 class="text-sm font-bold text-blue-900 mb-3" id="titulo-form-cliente">➕ Alta / Edición de Cliente / Posible Cliente</h3>
                 <input type="hidden" id="edit-cliente-id" value="">
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     <div>
-                        <label class="block font-bold text-gray-700 mb-1">Nombre y Apellido:</label>
-                        <input type="text" id="alta-nombre" placeholder="Ej. Pedro Gómez" class="w-full p-2 border rounded-lg">
+                        <label class="block font-bold text-gray-700 mb-1">Nombre y Apellido / Negocio:</label>
+                        <input type="text" id="alta-nombre" placeholder="Ej. Pedro Gómez o Kiosco El Sol" class="w-full p-2 border rounded-lg">
                     </div>
                     <div>
-                        <label class="block font-bold text-gray-700 mb-1">Dirección:</label>
+                        <label class="block font-bold text-gray-700 mb-1">Dirección / Referencia:</label>
                         <input type="text" id="alta-dir" placeholder="Ej. Calle Barboza s/n" class="w-full p-2 border rounded-lg">
                     </div>
                     <div>
@@ -324,12 +324,12 @@
                         <select id="alta-tipo" class="w-full p-2 border rounded-lg bg-white">
                             <option value="Cliente Fijo">Cliente Fijo</option>
                             <option value="Cliente Nuevo">Cliente Nuevo</option>
-                            <option value="Posible Cliente">Posible Cliente</option>
+                            <option value="Posible Cliente">Posible Cliente (Prospecto)</option>
                             <option value="De Paso">De Paso</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block font-bold text-gray-700 mb-1">Día de Reparto:</label>
+                        <label class="block font-bold text-gray-700 mb-1">Día de Reparto Asignado:</label>
                         <select id="alta-dia" class="w-full p-2 border rounded-lg bg-white">
                             <option value="Lunes">Lunes</option>
                             <option value="Martes">Martes</option>
@@ -358,7 +358,7 @@
                     </div>
                     <div class="sm:col-span-2">
                         <label class="block font-bold text-gray-700 mb-1">Notas Tácticas:</label>
-                        <input type="text" id="alta-notas" placeholder="Ej. Puerta reja azul..." class="w-full p-2 border rounded-lg">
+                        <input type="text" id="alta-notas" placeholder="Ej. Puerta reja azul, pasar el domingo..." class="w-full p-2 border rounded-lg">
                     </div>
                     <div>
                         <label class="block font-bold text-gray-700 mb-1">Foto de Fachada (Cámara o Archivo):</label>
@@ -366,7 +366,7 @@
                         <img id="alta-foto-preview" class="preview-img hidden mt-2" alt="Vista previa fachada">
                     </div>
                     <div class="flex flex-col justify-end">
-                        <button onclick="capturarGpsClienteEnVivo()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-3 rounded-lg text-xs shadow mb-1">
+                        <button type="button" onclick="capturarGpsClienteEnVivo()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-3 rounded-lg text-xs shadow mb-1">
                             📍 Capturar GPS Puerta en Vivo
                         </button>
                         <small id="gps-status-txt" class="text-gray-500 font-semibold">GPS: No capturado</small>
@@ -374,16 +374,16 @@
                 </div>
 
                 <div class="mt-4 space-y-2">
-                    <button onclick="guardarRegistroCliente()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs sm:text-sm shadow">
+                    <button type="button" onclick="guardarRegistroCliente()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs sm:text-sm shadow">
                         💾 Guardar / Actualizar Cliente
                     </button>
-                    <button id="btn-cancelar-edit" onclick="limpiarFormCliente()" class="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg text-xs hidden">
+                    <button type="button" id="btn-cancelar-edit" onclick="limpiarFormCliente()" class="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg text-xs hidden">
                         Cancelar Edición
                     </button>
                 </div>
             </div>
 
-            <!-- Listado Padrón con Buscador -->
+            <!-- Listado Padrón con Buscador (Optimizado para 1000+ clientes) -->
             <div id="sec-padron-cliente" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
                     <h3 class="text-sm font-bold text-gray-800"><i class="fas fa-users text-blue-600"></i> Padrón General de Clientes</h3>
@@ -392,41 +392,6 @@
                 <div id="lista-padron-clientes" class="space-y-2 max-h-96 overflow-y-auto pr-1"></div>
             </div>
 
-        </div>
-
-        <!-- TAB 2.5: POSIBLES CLIENTES -->
-        <div id="tab-posibles" class="tab-content space-y-4">
-            <div class="bg-white p-4 rounded-xl shadow-md border-2 border-blue-400">
-                <h3 class="text-sm font-bold text-blue-900 mb-3"><i class="fas fa-user-plus text-blue-600"></i> Captura Rápida de Posibles Clientes</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    <div>
-                        <label class="block font-bold text-gray-700 mb-1">Nombre / Negocio:</label>
-                        <input type="text" id="pos-nombre" placeholder="Ej. Kiosco El Sol" class="w-full p-2 border rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-gray-700 mb-1">Dirección / Referencia:</label>
-                        <input type="text" id="pos-dir" placeholder="Ej. Esquina diagonal" class="w-full p-2 border rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-gray-700 mb-1">Teléfono:</label>
-                        <input type="text" id="pos-tel" placeholder="264..." class="w-full p-2 border rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-gray-700 mb-1">Día Asignado:</label>
-                        <select id="pos-dia" class="w-full p-2 border rounded-lg bg-white">
-                            <option value="Lunes">Lunes</option>
-                            <option value="Martes">Martes</option>
-                            <option value="Miércoles">Miércoles</option>
-                            <option value="Jueves">Jueves</option>
-                            <option value="Viernes">Viernes</option>
-                            <option value="Sábado">Sábado</option>
-                        </select>
-                    </div>
-                </div>
-                <button onclick="guardarPosibleClienteRapido()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs shadow">
-                    Guardar Posible Cliente (Marcador Azul)
-                </button>
-            </div>
         </div>
 
         <!-- TAB 3: STOCK GALPÓN, CAMIÓN & ENVASES -->
@@ -457,7 +422,7 @@
                 </div>
             </div>
 
-            <!-- CONTROL STOCK GALPÓN / FÁBRICA (Con Dispensers Mesa y F/C) -->
+            <!-- CONTROL STOCK GALPÓN / FÁBRICA -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
                 <h3 class="text-sm font-bold text-gray-800 border-b pb-2 mb-3 flex items-center gap-2">
                     <i class="fas fa-warehouse text-blue-600"></i> Control de Stock Galpón / Fábrica
@@ -734,16 +699,13 @@
 
     </main>
 
-    <!-- Barra de Navegación Inferior -->
+    <!-- Barra de Navegación Inferior (Sin la pestaña Posibles separada) -->
     <nav class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 shadow-lg flex justify-around p-2 z-40 text-xs">
         <button onclick="switchTab('recorrido')" class="nav-btn flex flex-col items-center text-blue-700 font-bold" id="nav-recorrido">
             <i class="fas fa-route text-lg"></i><span>Ruta</span>
         </button>
         <button onclick="switchTab('clientes')" class="nav-btn flex flex-col items-center text-gray-500 font-semibold" id="nav-clientes">
             <i class="fas fa-users text-lg"></i><span>Clientes</span>
-        </button>
-        <button onclick="switchTab('posibles')" class="nav-btn flex flex-col items-center text-gray-500 font-semibold" id="nav-posibles">
-            <i class="fas fa-user-plus text-lg"></i><span>Posibles</span>
         </button>
         <button onclick="switchTab('stock')" class="nav-btn flex flex-col items-center text-gray-500 font-semibold" id="nav-stock">
             <i class="fas fa-warehouse text-lg"></i><span>Stock</span>
@@ -833,10 +795,10 @@
             }).addTo(mapLeaflet);
         }
 
-        function guardarStorage() { localStorage.setItem('chosen_soderapp_v180_data', JSON.stringify(appState)); }
+        function guardarStorage() { localStorage.setItem('chosen_soderapp_v181_data', JSON.stringify(appState)); }
 
         function cargarStorage() {
-            const data = localStorage.getItem('chosen_soderapp_v180_data');
+            const data = localStorage.getItem('chosen_soderapp_v181_data');
             if (data) { try { appState = JSON.parse(data); } catch(e) {} }
         }
 
@@ -1228,7 +1190,6 @@
             cli.vacios.b12 = Math.max(0, cli.vacios.b12 + (c12 - dev12));
             cli.vacios.soda = Math.max(0, cli.vacios.soda + (cSoda - devSoda));
 
-            // Descuento automático de stock en camión en vivo
             appState.camionEnVivo.llenos.b20 = Math.max(0, appState.camionEnVivo.llenos.b20 - c20);
             appState.camionEnVivo.llenos.b12 = Math.max(0, appState.camionEnVivo.llenos.b12 - c12);
             appState.camionEnVivo.llenos.soda = Math.max(0, appState.camionEnVivo.llenos.soda - cSoda);
@@ -1288,17 +1249,26 @@
         }
 
         function guardarRegistroCliente() {
-            const nombre = document.getElementById('alta-nombre').value.trim();
-            const dir = document.getElementById('alta-dir').value.trim();
-            if (!nombre || !dir) { mostrarModal('Atención', 'Completá al menos Nombre y Dirección.'); return; }
+            const nombreInput = document.getElementById('alta-nombre');
+            const dirInput = document.getElementById('alta-dir');
+            
+            const nombre = nombreInput ? nombreInput.value.trim() : '';
+            const dir = dirInput ? dirInput.value.trim() : '';
+
+            if (!nombre || !dir) { 
+                mostrarModal('Atención', 'Completá al menos Nombre y Dirección.'); 
+                return; 
+            }
 
             const editId = document.getElementById('edit-cliente-id').value;
+            const clienteTipo = document.getElementById('alta-tipo').value;
+            
             const nuevoCli = {
                 id: editId ? parseInt(editId) : Date.now(),
                 nombre,
                 direccion: dir,
                 tel: document.getElementById('alta-tel').value,
-                tipo: document.getElementById('alta-tipo').value,
+                tipo: clienteTipo,
                 dia: document.getElementById('alta-dia').value,
                 zona: document.getElementById('alta-zona').value,
                 notas: document.getElementById('alta-notas').value,
@@ -1326,7 +1296,8 @@
             renderClientesRuta();
             renderPadronClientes();
             renderMetricasClientes();
-            mostrarModal('Guardado', 'Cliente guardado correctamente.');
+            mostrarModal('Guardado Exitoso', clienteTipo === 'Posible Cliente' ? 'Posible cliente guardado con marcador azul en ruta.' : 'Cliente guardado correctamente.');
+            toggleSeccionCliente('padron');
         }
 
         function limpiarFormCliente() {
@@ -1341,49 +1312,18 @@
             appState.tempFotoData = ''; appState.tempGpsData = null;
         }
 
-        function guardarPosibleClienteRapido() {
-            const nombre = document.getElementById('pos-nombre').value.trim();
-            const dir = document.getElementById('pos-dir').value.trim();
-            if (!nombre || !dir) { mostrarModal('Atención', 'Completá nombre y dirección.'); return; }
-
-            appState.clientes.push({
-                id: Date.now(),
-                nombre,
-                direccion: dir,
-                tel: document.getElementById('pos-tel').value,
-                tipo: 'Posible Cliente',
-                dia: document.getElementById('pos-dia').value,
-                zona: 'Villa Media Agua',
-                notas: 'Prospecto nuevo',
-                estado: 'Pendiente',
-                activo: true,
-                gps: { lat: -31.982 + (Math.random()*0.02 - 0.01), lng: -68.433 + (Math.random()*0.02 - 0.01) },
-                vacios: { b20: 0, b12: 0, soda: 0 },
-                deuda: 0, totalHistorico: 0
-            });
-
-            guardarStorage();
-            document.getElementById('pos-nombre').value = '';
-            document.getElementById('pos-dir').value = '';
-            document.getElementById('pos-tel').value = '';
-            renderClientesRuta();
-            renderPadronClientes();
-            mostrarModal('Registrado', 'Posible cliente guardado con marcador azul en la ruta.');
-            switchTab('recorrido');
-        }
-
         function renderPadronClientes() {
             const query = document.getElementById('buscador-clientes').value.toLowerCase();
             const cont = document.getElementById('lista-padron-clientes');
             cont.innerHTML = '';
-            const filtrados = appState.clientes.filter(c => c.nombre.toLowerCase().includes(query) || c.direccion.toLowerCase().includes(query));
+            const filtrados = appState.clientes.filter(c => c.nombre.toLowerCase().includes(query) || c.direccion.toLowerCase().includes(query) || (c.tel && c.tel.includes(query)));
 
             filtrados.forEach(c => {
                 cont.innerHTML += `
                     <div class="bg-gray-50 border p-2.5 rounded-lg flex justify-between items-center text-xs">
                         <div>
-                            <strong>${c.nombre}</strong> (${c.tipo})<br>
-                            <span class="text-gray-600">${c.direccion} - Días: ${c.dia}</span>
+                            <strong>${c.nombre}</strong> <span class="text-blue-600">(${c.tipo})</span><br>
+                            <span class="text-gray-600">${c.direccion} - Día: ${c.dia}</span>
                         </div>
                         <div class="flex gap-1">
                             <button onclick="editarCliente(${c.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold">Editar</button>
@@ -1395,7 +1335,7 @@
 
         function editarCliente(id) {
             const cli = appState.clientes.find(c => c.id === id); if (!cli) return;
-            switchTab('clientes');
+            toggleSeccionCliente('form');
             document.getElementById('edit-cliente-id').value = cli.id;
             document.getElementById('alta-nombre').value = cli.nombre;
             document.getElementById('alta-dir').value = cli.direccion;
@@ -1404,9 +1344,16 @@
             document.getElementById('alta-dia').value = cli.dia || 'Lunes';
             document.getElementById('alta-zona').value = cli.zona || 'Villa Media Agua';
             document.getElementById('alta-notas').value = cli.notas || '';
+            appState.tempFotoData = cli.foto || '';
+            appState.tempGpsData = cli.gps || null;
             if (cli.foto) {
                 const prev = document.getElementById('alta-foto-preview');
                 prev.src = cli.foto; prev.classList.remove('hidden');
+            } else {
+                document.getElementById('alta-foto-preview').classList.add('hidden');
+            }
+            if (cli.gps && cli.gps.lat) {
+                document.getElementById('gps-status-txt').innerText = `GPS: (${cli.gps.lat.toFixed(4)}, ${cli.gps.lng.toFixed(4)})`;
             }
         }
 
@@ -1440,7 +1387,6 @@
         }
 
         function actualizarFinanzasUI() {
-            // Desglose Diario
             const tb = document.getElementById('tb-desglose-ventas'); tb.innerHTML = '';
             const items = [
                 { nombre: 'Bidón 20L', cant: appState.ventasDelDia.b20, precio: appState.precios.b20, com: appState.comisiones.b20 },
@@ -1449,17 +1395,13 @@
                 { nombre: 'Dispenser Mesa', cant: appState.ventasDelDia.mesa, precio: appState.precios.mesa, com: appState.comisiones.mesa }
             ];
 
-            let totalVendidoHoy = 0;
             let comisionTotalHoy = 0;
-
             items.forEach(it => {
                 const sub = it.cant * it.precio;
-                totalVendidoHoy += sub;
                 comisionTotalHoy += (it.cant * it.com);
                 tb.innerHTML += `<tr class="border-b"><td class="p-2">${it.nombre}</td><td class="p-2">${it.cant}</td><td class="p-2">$${it.precio}</td><td class="p-2 font-bold">$${sub}</td></tr>`;
             });
 
-            // Desglose Semanal
             const tbSem = document.getElementById('tb-desglose-semana'); tbSem.innerHTML = '';
             const itemsSem = [
                 { nombre: 'Bidón 20L', cant: appState.ventasSemana.b20, precio: appState.precios.b20 },
@@ -1487,17 +1429,6 @@
             const totalRecaudadoTotal = appState.finanzas.efectivo + appState.finanzas.transferencia;
             const totalRendir = Math.max(0, totalRecaudadoTotal - totalGastos - comisionTotalHoy);
             document.getElementById('fin-rendir-dueno').innerText = '$' + totalRendir;
-        }
-
-        function registrarGasto() {
-            const concepto = document.getElementById('gasto-concepto').value.trim();
-            const monto = parseInt(document.getElementById('gasto-monto').value) || 0;
-            if (!concepto || monto <= 0) { mostrarModal('Atención', 'Ingresá un concepto y monto válido.'); return; }
-
-            appState.finanzas.gastos.push({ id: Date.now(), concepto, monto });
-            document.getElementById('gasto-concepto').value = '';
-            document.getElementById('gasto-monto').value = '';
-            guardarStorage(); actualizarFinanzasUI();
         }
 
         function registrarGasto() {
@@ -1561,6 +1492,7 @@
             document.getElementById('app-modal').classList.remove('hidden');
         }
         function cerrarModal() { document.getElementById('app-modal').classList.add('hidden'); }
+        
         function toggleSeccionCliente(tipo) {
             if(tipo === 'form') {
                 document.getElementById('sec-form-cliente').classList.remove('hidden');
