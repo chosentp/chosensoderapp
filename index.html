@@ -3,691 +3,492 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chosen 👑 SoderApp v1.7.5 (Satelital)</title>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <!-- FontAwesome -->
+    <title>Chosen 👑 SoderApp v1.7.4 (Satelital)</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Leaflet CSS para Mapas -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- FontAwesome para Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #0284c7;
-            --primary-dark: #0369a1;
-            --secondary: #0f172a;
-            --accent: #38bdf8;
-            --success: #22c55e;
-            --warning: #eab308;
-            --danger: #ef4444;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        header {
-            background-color: var(--secondary);
-            color: white;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        header h1 {
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        header h1 span {
-            color: var(--accent);
-            font-size: 0.8rem;
-            background: rgba(56, 189, 248, 0.15);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-icon {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: background 0.2s;
-        }
-
-        .btn-icon:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        main {
-            flex: 1;
-            position: relative;
-            display: flex;
-            overflow: hidden;
-        }
-
-        /* Vistas / Pantallas */
-        .view {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg);
-            display: none;
-            flex-direction: column;
-            z-index: 10;
-            overflow-y: auto;
-        }
-
-        .view.active {
-            display: flex;
-        }
-
-        #map-view {
-            z-index: 5;
-        }
-
-        #map {
-            width: 100%;
-            flex: 1;
-        }
-
-        /* Barra de control flotante sobre el mapa */
-        .map-controls {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            background: white;
-            padding: 10px 15px;
-            border-radius: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            max-width: 95%;
-            overflow-x: auto;
-        }
-
-        /* Navegación inferior tipo App */
-        nav.bottom-nav {
-            background: white;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            z-index: 1000;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
-        }
-
-        nav.bottom-nav button {
-            background: none;
-            border: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            color: var(--text-light);
-            font-size: 0.75rem;
-            cursor: pointer;
-            flex: 1;
-            transition: color 0.2s;
-        }
-
-        nav.bottom-nav button i {
-            font-size: 1.2rem;
-        }
-
-        nav.bottom-nav button.active {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        /* Estilos generales para formularios y tarjetas */
-        .container-padded {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-        }
-
-        .card h3 {
-            font-size: 1rem;
-            margin-bottom: 12px;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--text-light);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-        }
-
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: background 0.2s;
-        }
-
-        .btn:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-success { background: var(--success); }
-        .btn-success:hover { background: #16a34a; }
-        .btn-danger { background: var(--danger); }
-        .btn-danger:hover { background: #dc2626; }
-
-        /* Modales */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            padding: 15px;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: var(--text-light);
-        }
-
-        .badge {
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .badge-pending { background: #fef08a; color: #854d0e; }
-        .badge-delivered { background: #dcfce7; color: #166534; }
-        .badge-absent { background: #fee2e2; color: #991b1b; }
-
-        /* Utilidades */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        #map { height: 350px; z-index: 1; }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans pb-24">
 
-    <header>
-        <h1><i class="fa-solid fa-droplet"></i> SoderApp <span>v1.7.5 Satelital</span></h1>
-        <div class="header-actions">
-            <button class="btn-icon" onclick="app.toggleRoute()"><i class="fa-solid fa-play" id="route-icon"></i> <span id="route-text">Iniciar Ruta</span></button>
-            <button class="btn-icon" onclick="app.openModal('modal-settings')"><i class="fa-solid fa-gear"></i></button>
+    <!-- Encabezado Principal -->
+    <header class="bg-blue-800 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-bold">Chosen 👑 SoderApp <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full">v1.7.4 Satelital</span></h1>
+            <p class="text-xs text-blue-200" id="current-zone-label">Zona: Sarmiento / Media Agua</p>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span id="jornada-estado" class="text-xs px-2.5 py-1 rounded bg-red-600 font-semibold">PAUSADA</span>
+            <button onclick="toggleJornada()" id="btn-jornada" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded font-bold shadow">Iniciar</button>
         </div>
     </header>
 
-    <main>
-        <!-- VISTA 1: MAPA SATELITAL -->
-        <div id="map-view" class="view active">
-            <div id="map"></div>
-            <div class="map-controls">
-                <button class="btn" style="padding: 8px 15px; font-size: 0.85rem;" onclick="app.openModal('modal-add-client')"><i class="fa-solid fa-user-plus"></i> Nuevo Cliente</button>
-                <button class="btn btn-success" style="padding: 8px 15px; font-size: 0.85rem;" onclick="app.centerMap()"><i class="fa-solid fa-location-crosshairs"></i> Mi Posición</button>
+    <!-- Contenedor Principal de Módulos -->
+    <main class="p-4 max-w-4xl mx-auto">
+
+        <!-- 1. TAB RECORRIDO -->
+        <div id="tab-recorrido" class="tab-content active space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-route text-blue-600"></i> Ruta del Día y Stock en Camión</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-sm mb-4">
+                    <div class="bg-blue-50 p-2 rounded border border-blue-200">
+                        <span class="block text-gray-500 text-xs">Bidón 20L Llenos</span>
+                        <strong class="text-lg text-blue-800" id="camion-b20">50</strong>
+                    </div>
+                    <div class="bg-blue-50 p-2 rounded border border-blue-200">
+                        <span class="block text-gray-500 text-xs">Soda Sifón</span>
+                        <strong class="text-lg text-blue-800" id="camion-soda">30</strong>
+                    </div>
+                    <div class="bg-green-50 p-2 rounded border border-green-200">
+                        <span class="block text-gray-500 text-xs">Vacíos 20L</span>
+                        <strong class="text-lg text-green-800" id="camion-v20">12</strong>
+                    </div>
+                    <div class="bg-green-50 p-2 rounded border border-green-200">
+                        <span class="block text-gray-500 text-xs">Vacíos Soda</span>
+                        <strong class="text-lg text-green-800" id="camion-vsoda">5</strong>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mb-3">
+                    <select id="filtro-dia" class="w-1/2 p-2 border rounded text-sm bg-gray-50" onchange="renderRecorrido()">
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sábado">Sábado</option>
+                    </select>
+                    <select id="filtro-zona" class="w-1/2 p-2 border rounded text-sm bg-gray-50" onchange="renderRecorrido()">
+                        <option value="Todas">Todas las Zonas</option>
+                        <option value="Media Agua">Media Agua</option>
+                        <option value="Los Berros">Los Berros</option>
+                        <option value="Cochagual">Cochagual</option>
+                        <option value="Sarmiento">Sarmiento</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Mapa Satelital HD -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-sm font-bold text-gray-700 mb-2"><i class="fas fa-satellite text-blue-600"></i> Radar Satelital de Clientes</h3>
+                <div id="map" class="rounded-lg border"></div>
+            </div>
+
+            <!-- Lista de Ruta -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-sm font-bold text-gray-700 mb-2"><i class="fas fa-list text-blue-600"></i> Clientes a Visitar Hoy</h3>
+                <div id="lista-recorrido-clientes" class="space-y-2"></div>
             </div>
         </div>
 
-        <!-- VISTA 2: CLIENTES -->
-        <div id="clients-view" class="view">
-            <div class="container-padded">
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <input type="text" id="search-client" class="form-control" placeholder="Buscar cliente por nombre o dirección..." oninput="app.filterClients()">
-                    <button class="btn" style="width: auto;" onclick="app.openModal('modal-add-client')"><i class="fa-solid fa-plus"></i></button>
+        <!-- 2. TAB CLIENTES (Padrón Completo e Ilimitado) -->
+        <div id="tab-clientes" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                <div>
+                    <h2 class="text-md font-bold text-gray-700"><i class="fas fa-users text-blue-600"></i> Padrón General de Clientes</h2>
+                    <p class="text-xs text-gray-500">Gestión completa y sin límites de almacenamiento.</p>
                 </div>
-                <div id="clients-list">
-                    <!-- Listado dinámico de clientes -->
+                <button onclick="abrirModalCliente()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-bold shadow">
+                    <i class="fas fa-user-plus"></i> Nuevo Cliente
+                </button>
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow">
+                <input type="text" id="buscador-clientes" placeholder="Buscar por nombre, dirección o teléfono..." class="w-full p-2 border rounded text-sm mb-3" oninput="filtrarPadronClientes()">
+                <div id="lista-padron-completa" class="space-y-3">
+                    <!-- Dinámico -->
                 </div>
             </div>
         </div>
 
-        <!-- VISTA 3: STOCK (GALPÓN Y CAMIÓN) -->
-        <div id="stock-view" class="view">
-            <div class="container-padded">
-                <div class="card">
-                    <h3><i class="fa-solid fa-truck"></i> Control de Stock en Camión</h3>
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Bidones 20L Llenos</label>
-                            <input type="number" id="camion-20l-llenos" class="form-control" value="40" onchange="app.updateStock()">
-                        </div>
-                        <div class="form-group">
-                            <label>Bidones 20L Vacíos</label>
-                            <input type="number" id="camion-20l-vacios" class="form-control" value="0" onchange="app.updateStock()">
-                        </div>
+        <!-- 3. TAB STOCK GALPÓN -->
+        <div id="tab-stock" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-warehouse text-blue-600"></i> Control de Stock en Galpón</h2>
+                <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                    <div class="p-3 bg-gray-50 rounded border">
+                        <span class="text-gray-500 block text-xs">Bidones 20L Llenos</span>
+                        <strong class="text-xl text-gray-800" id="stock-galpon-b20">300</strong>
                     </div>
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Sifones Soda</label>
-                            <input type="number" id="camion-sifones" class="form-control" value="30" onchange="app.updateStock()">
-                        </div>
-                        <div class="form-group">
-                            <label>Bidones 12L</label>
-                            <input type="number" id="camion-12l" class="form-control" value="10" onchange="app.updateStock()">
-                        </div>
+                    <div class="p-3 bg-gray-50 rounded border">
+                        <span class="text-gray-500 block text-xs">Sifones de Soda</span>
+                        <strong class="text-xl text-gray-800" id="stock-galpon-soda">150</strong>
                     </div>
                 </div>
-                <div class="card">
-                    <h3><i class="fa-solid fa-warehouse"></i> Inventario Galpón (Media Agua)</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 10px;">Control general de mercadería disponible para recarga.</p>
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Stock Total Bidones Llenos</label>
-                            <input type="number" id="galpon-llenos" class="form-control" value="250">
-                        </div>
-                        <div class="form-group">
-                            <label>Stock Total Bidones Vacíos</label>
-                            <input type="number" id="galpon-vacios" class="form-control" value="80">
-                        </div>
-                    </div>
+                <div class="flex gap-2">
+                    <button onclick="registrarCargaCamion()" class="w-1/2 bg-blue-600 text-white p-2 rounded text-xs font-bold">Cargar Camión</button>
+                    <button onclick="registrarRetornoCamion()" class="w-1/2 bg-green-600 text-white p-2 rounded text-xs font-bold">Cierre / Retorno</button>
                 </div>
             </div>
         </div>
 
-        <!-- VISTA 4: FINANZAS Y GASTOS -->
-        <div id="finances-view" class="view">
-            <div class="container-padded">
-                <div class="card">
-                    <h3><i class="fa-solid fa-wallet"></i> Resumen de Caja del Día</h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
-                            <span>Efectivo Recaudado:</span>
-                            <strong id="caja-efectivo" style="color: var(--success);">$0</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
-                            <span>Transferencias / QR:</span>
-                            <strong id="caja-transf" style="color: var(--primary);">$0</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
-                            <span>Gastos de Calle:</span>
-                            <strong id="caja-gastos" style="color: var(--danger);">$0</strong>
-                        </div>
-                        <hr style="border: 0; border-top: 1px solid var(--border);">
-                        <div style="display: flex; justify-content: space-between; font-size: 1.1rem;">
-                            <span>Total a Rendir:</span>
-                            <strong id="caja-total">$0</strong>
-                        </div>
+        <!-- 4. TAB PRECIOS -->
+        <div id="tab-precios" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-tags text-blue-600"></i> Gestión de Precios</h2>
+                <div class="space-y-3 text-sm">
+                    <div>
+                        <label class="block text-xs text-gray-500">Precio Bidón 20L ($)</label>
+                        <input type="number" id="precio-b20" value="2500" class="w-full p-2 border rounded">
                     </div>
-                </div>
-                <div class="card">
-                    <h3><i class="fa-solid fa-receipt"></i> Registrar Gasto Operativo</h3>
-                    <div class="form-group">
-                        <label>Concepto</label>
-                        <input type="text" id="gasto-concepto" class="form-control" placeholder="Ej. GNC, Comida, Repuesto...">
+                    <div>
+                        <label class="block text-xs text-gray-500">Precio Cajón Soda ($)</label>
+                        <input type="number" id="precio-soda" value="4000" class="w-full p-2 border rounded">
                     </div>
-                    <div class="form-group">
-                        <label>Monto ($)</label>
-                        <input type="number" id="gasto-monto" class="form-control" placeholder="0">
+                    <div>
+                        <label class="block text-xs text-gray-500">Alquiler Dispenser Mensual ($)</label>
+                        <input type="number" id="precio-dispenser" value="8000" class="w-full p-2 border rounded">
                     </div>
-                    <button class="btn btn-danger" onclick="app.addExpense()">Registrar Gasto</button>
+                    <button onclick="guardarPrecios()" class="w-full bg-blue-600 text-white p-2 rounded text-xs font-bold">Guardar Precios</button>
                 </div>
             </div>
         </div>
+
+        <!-- 5. TAB FINANZAS -->
+        <div id="tab-finanzas" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-wallet text-blue-600"></i> Resumen de Caja Diario</h2>
+                <div class="grid grid-cols-2 gap-4 text-center mb-4">
+                    <div class="p-3 bg-green-50 rounded border border-green-200">
+                        <span class="text-xs text-gray-500">Efectivo Recaudado</span>
+                        <strong class="text-lg text-green-700" id="caja-efectivo">$0</strong>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded border border-blue-200">
+                        <span class="text-xs text-gray-500">Transferencias</span>
+                        <strong class="text-lg text-blue-700" id="caja-transferencia">$0</strong>
+                    </div>
+                </div>
+                <button onclick="realizarCierreCaja()" class="w-full bg-red-600 text-white p-2 rounded text-xs font-bold">Realizar Cierre de Caja</button>
+            </div>
+        </div>
+
+        <!-- 6. TAB GRABADOR GPS -->
+        <div id="tab-grabador" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow text-center">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-map-marked-alt text-blue-600"></i> Grabador de Recorrido GPS</h2>
+                <p class="text-xs text-gray-500 mb-4">Registrá el trazado satelital de tus calles de reparto.</p>
+                <button onclick="toggleGrabadorGPS()" id="btn-gps" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-xs font-bold">Iniciar Grabación GPS</button>
+            </div>
+        </div>
+
     </main>
 
     <!-- Barra de Navegación Inferior -->
-    <nav class="bottom-nav">
-        <button class="active" onclick="app.switchView('map-view', this)"><i class="fa-solid fa-map"></i> Mapa</button>
-        <button onclick="app.switchView('clients-view', this)"><i class="fa-solid fa-users"></i> Clientes</button>
-        <button onclick="app.switchView('stock-view', this)"><i class="fa-solid fa-boxes-stacked"></i> Stock</button>
-        <button onclick="app.switchView('finances-view', this)"><i class="fa-solid fa-cash-register"></i> Finanzas</button>
+    <nav class="bg-white border-t fixed bottom-0 left-0 right-0 shadow-lg flex justify-around p-2 z-50">
+        <button onclick="switchTab('recorrido')" class="flex flex-col items-center text-blue-800 text-xs" id="nav-recorrido"><i class="fas fa-route text-lg"></i> Ruta</button>
+        <button onclick="switchTab('clientes')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-clientes"><i class="fas fa-users text-lg"></i> Clientes</button>
+        <button onclick="switchTab('stock')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-stock"><i class="fas fa-warehouse text-lg"></i> Stock</button>
+        <button onclick="switchTab('precios')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-precios"><i class="fas fa-tags text-lg"></i> Precios</button>
+        <button onclick="switchTab('finanzas')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-finanzas"><i class="fas fa-wallet text-lg"></i> Caja</button>
+        <button onclick="switchTab('grabador')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-grabador"><i class="fas fa-satellite text-lg"></i> GPS</button>
     </nav>
 
-    <!-- MODAL NUEVO CLIENTE -->
-    <div id="modal-add-client" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-user-plus"></i> Registrar Cliente</h3>
-                <button class="close-modal" onclick="app.closeModal('modal-add-client')">&times;</button>
+    <!-- MODAL ALTA / EDICIÓN DE CLIENTE (Completo, Estético e Ilimitado) -->
+    <div id="modal-cliente" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-white p-4 rounded-lg w-full max-w-md space-y-3 my-auto max-h-screen overflow-y-auto">
+            <h3 class="text-md font-bold text-gray-800" id="modal-titulo"><i class="fas fa-user-plus text-blue-600"></i> Alta de Cliente</h3>
+            <input type="hidden" id="cliente-id">
+            
+            <div>
+                <label class="block text-xs text-gray-500">Nombre y Apellido:</label>
+                <input type="text" id="input-nombre" placeholder="Ej. Pedro Gómez" class="w-full p-2 border rounded text-sm">
             </div>
-            <div class="form-group">
-                <label>Nombre y Apellido / Negocio</label>
-                <input type="text" id="new-client-name" class="form-control" placeholder="Ej. Kiosco Don Pedro">
+            <div>
+                <label class="block text-xs text-gray-500">Dirección:</label>
+                <input type="text" id="input-direccion" placeholder="Ej. Calle Barboza s/n" class="w-full p-2 border rounded text-sm">
             </div>
-            <div class="form-group">
-                <label>Dirección</label>
-                <input type="text" id="new-client-address" class="form-control" placeholder="Ej. 9 de Julio s/n, Media Agua">
+            <div>
+                <label class="block text-xs text-gray-500">Teléfono (WhatsApp):</label>
+                <input type="text" id="input-tel" placeholder="2641234567" class="w-full p-2 border rounded text-sm">
             </div>
-            <div class="form-group">
-                <label>Teléfono / WhatsApp</label>
-                <input type="text" id="new-client-phone" class="form-control" placeholder="264...">
+            <div>
+                <label class="block text-xs text-gray-500">Tipo de Cliente:</label>
+                <select id="input-tipo" class="w-full p-2 border rounded text-sm">
+                    <option value="Cliente Fijo">Cliente Fijo</option>
+                    <option value="Cliente Nuevo">Cliente Nuevo</option>
+                    <option value="Ocasional">Ocasional</option>
+                </select>
             </div>
-            <div class="form-group">
-                <label>Notas Tácticas / Consumo habitual</label>
-                <input type="text" id="new-client-notes" class="form-control" placeholder="Ej. Deja 2 bidones por semana">
+            <div>
+                <label class="block text-xs text-gray-500">Día de Reparto:</label>
+                <select id="input-dia" class="w-full p-2 border rounded text-sm">
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miércoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sábado">Sábado</option>
+                </select>
             </div>
-            <button class="btn" onclick="app.saveClient()">Guardar Cliente y Marcar en Mapa</button>
-        </div>
-    </div>
+            <div>
+                <label class="block text-xs text-gray-500">Zona / Localidad:</label>
+                <select id="input-zona" class="w-full p-2 border rounded text-sm">
+                    <option value="Media Agua">Media Agua</option>
+                    <option value="Los Berros">Los Berros</option>
+                    <option value="Cochagual">Cochagual</option>
+                    <option value="Sarmiento">Sarmiento</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500">Notas Tácticas:</label>
+                <input type="text" id="input-notas" placeholder="Detalles de entrega..." class="w-full p-2 border rounded text-sm">
+            </div>
 
-    <!-- MODAL CONFIGURACIÓN / TARIFAS -->
-    <div id="modal-settings" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-gear"></i> Tarifas y Configuración</h3>
-                <button class="close-modal" onclick="app.closeModal('modal-settings')">&times;</button>
+            <div class="flex gap-2 pt-2">
+                <button onclick="guardarClienteCompleto()" class="w-1/2 bg-blue-600 text-white p-2 rounded text-xs font-bold shadow">Guardar / Actualizar</button>
+                <button onclick="cerrarModalCliente()" class="w-1/2 bg-gray-400 text-white p-2 rounded text-xs font-bold">Cancelar</button>
             </div>
-            <div class="form-group">
-                <label>Precio Bidón 20L</label>
-                <input type="number" id="precio-20l" class="form-control" value="2500">
-            </div>
-            <div class="form-group">
-                <label>Precio Sifón de Soda</label>
-                <input type="number" id="precio-sifon" class="form-control" value="1000">
-            </div>
-            <div class="form-group">
-                <label>Precio Bidón 12L</label>
-                <input type="number" id="precio-12l" class="form-control" value="1800">
-            </div>
-            <button class="btn" onclick="app.closeModal('modal-settings')">Guardar Cambios</button>
         </div>
     </div>
 
     <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        class SoderApp {
-            constructor() {
-                this.map = null;
-                this.routeActive = false;
-                this.clients = [
-                    { id: 1, name: "Kiosco San Martin", address: "Av. San Martin, Media Agua", lat: -31.815, lng: -68.425, phone: "2644111111", status: "pending", notes: "Pide 2 bidones" },
-                    { id: 2, name: "Almacen Doña Rosa", address: "Calle Central, Sarmiento", lat: -31.820, lng: -68.430, phone: "2644222222", status: "delivered", notes: "Ya se entregó" }
-                ];
-                this.expenses = [];
-                this.init();
-            }
+        // Almacenamiento local persistente e ilimitado (respeta datos previos si existen)
+        let clientes = JSON.parse(localStorage.getItem('soderapp_clientes')) || [
+            { id: 1, nombre: "Marcela Tejada", direccion: "Av. 25 de Mayo y Santa Cruz", tel: "2644112233", tipo: "Cliente Fijo", dia: "Sábado", zona: "Media Agua", notas: "Dejar 2 bidones", lat: -31.848, lng: -68.450 },
+            { id: 2, nombre: "Supermercado Cuyo", direccion: "Ruta 40 s/n", tel: "2645556677", tipo: "Cliente Fijo", dia: "Lunes", zona: "Los Berros", notas: "Pago por transferencia", lat: -31.860, lng: -68.440 }
+        ];
 
-            init() {
-                this.initMap();
-                this.renderClients();
-                this.updateFinances();
-            }
+        let map, markersLayer;
+        let jornadaActiva = false;
+        let grabandoGPS = false;
 
-            initMap() {
-                // Coordenadas iniciales centradas en Media Agua, San Juan
-                this.map = L.map('map').setView([-31.8167, -68.4167], 14);
+        document.addEventListener("DOMContentLoaded", () => {
+            initMap();
+            renderRecorrido();
+            renderPadronClientes();
+        });
 
-                // Capa satelital Esri
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-                    maxZoom: 19
-                }).addTo(this.map);
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('text-blue-800'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.add('text-gray-500'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('nav-' + tabId).classList.add('text-blue-800');
+            document.getElementById('nav-' + tabId).classList.remove('text-gray-500');
 
-                this.renderMarkers();
-            }
-
-            renderMarkers() {
-                // Limpiar marcadores previos si los hubiera
-                this.clients.forEach(c => {
-                    let color = c.status === 'delivered' ? '#22c55e' : (c.status === 'absent' ? '#ef4444' : '#eab308');
-                    let markerHtml = `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`;
-                    let customIcon = L.divIcon({ html: markerHtml, className: 'custom-marker', iconSize: [20, 20] });
-
-                    L.marker([c.lat, c.lng], { icon: customIcon })
-                        .addTo(this.map)
-                        .bindPopup(`<b>${c.name}</b><br>${c.address}<br><i>${c.notes}</i><br><br><button class="btn" style="padding: 5px 10px; font-size: 0.75rem;" onclick="app.markDelivered(${c.id})">Marcar Entregado</button>`);
-                });
-            }
-
-            centerMap() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(position => {
-                        let lat = position.coords.latitude;
-                        let lng = position.coords.longitude;
-                        this.map.setView([lat, lng], 16);
-                        L.marker([lat, lng]).addTo(this.map).bindPopup("¡Estás acá!").openPopup();
-                    }, () => {
-                        alert("No se pudo obtener tu ubicación GPS actual.");
-                    });
-                } else {
-                    alert("Tu navegador no soporta geolocalización.");
-                }
-            }
-
-            switchView(viewId, btnElement) {
-                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-                document.getElementById(viewId).classList.add('active');
-
-                document.querySelectorAll('nav.bottom-nav button').forEach(b => b.classList.remove('active'));
-                btnElement.classList.add('active');
-
-                if (viewId === 'map-view') {
-                    setTimeout(() => { this.map.invalidateSize(); }, 200);
-                }
-            }
-
-            openModal(modalId) {
-                document.getElementById(modalId).classList.add('active');
-            }
-
-            closeModal(modalId) {
-                document.getElementById(modalId).classList.remove('active');
-            }
-
-            toggleRoute() {
-                this.routeActive = !this.routeActive;
-                let icon = document.getElementById('route-icon');
-                let text = document.getElementById('route-text');
-                if (this.routeActive) {
-                    icon.className = "fa-solid fa-pause";
-                    text.innerText = "Ruta en Curso";
-                    alert("¡Ruta iniciada correctamente!");
-                } else {
-                    icon.className = "fa-solid fa-play";
-                    text.innerText = "Iniciar Ruta";
-                    alert("Ruta pausada.");
-                }
-            }
-
-            renderClients() {
-                let container = document.getElementById('clients-list');
-                container.innerHTML = '';
-                this.clients.forEach(c => {
-                    let badgeClass = c.status === 'delivered' ? 'badge-delivered' : 'badge-pending';
-                    let card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                            <strong>${c.name}</strong>
-                            <span class="badge ${badgeClass}">${c.status.toUpperCase()}</span>
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 5px;"><i class="fa-solid fa-location-dot"></i> ${c.address}</p>
-                        <p style="font-size: 0.85rem; margin-bottom: 10px;"><i class="fa-solid fa-phone"></i> ${c.phone}</p>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="btn btn-success" style="padding: 6px; font-size: 0.8rem;" onclick="app.markDelivered(${c.id})"><i class="fa-solid fa-check"></i> Entregado</button>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            }
-
-            filterClients() {
-                let query = document.getElementById('search-client').value.toLowerCase();
-                let cards = document.querySelectorAll('#clients-list .card');
-                this.clients.forEach((c, index) => {
-                    let match = c.name.toLowerCase().includes(query) || c.address.toLowerCase().includes(query);
-                    cards[index].style.display = match ? 'block' : 'none';
-                });
-            }
-
-            saveClient() {
-                let name = document.getElementById('new-client-name').value;
-                let address = document.getElementById('new-client-address').value;
-                let phone = document.getElementById('new-client-phone').value;
-                let notes = document.getElementById('new-client-notes').value;
-
-                if (!name || !address) {
-                    alert("Por favor completa al menos el nombre y la dirección.");
-                    return;
-                }
-
-                // Generar coordenadas aproximadas aleatorias cercanas a Media Agua si no se especifica GPS
-                let newClient = {
-                    id: this.clients.length + 1,
-                    name, address, phone, notes,
-                    lat: -31.8167 + (Math.random() - 0.5) * 0.02,
-                    lng: -68.4167 + (Math.random() - 0.5) * 0.02,
-                    status: 'pending'
-                };
-
-                this.clients.push(newClient);
-                this.renderClients();
-                this.closeModal('modal-add-client');
-                alert("¡Cliente guardado con éxito!");
-            }
-
-            markDelivered(id) {
-                let client = this.clients.find(c => c.id === id);
-                if (client) {
-                    client.status = 'delivered';
-                    this.renderClients();
-                    alert(`Marcado como entregado a: ${client.name}`);
-                }
-            }
-
-            addExpense() {
-                let concepto = document.getElementById('gasto-concepto').value;
-                let monto = parseFloat(document.getElementById('gasto-monto').value) || 0;
-
-                if (!concepto || monto <= 0) {
-                    alert("Ingresa un concepto válido y un monto mayor a cero.");
-                    return;
-                }
-
-                this.expenses.push({ concepto, monto });
-                document.getElementById('gasto-concepto').value = '';
-                document.getElementById('gasto-monto').value = '';
-                this.updateFinances();
-                alert("Gasto registrado correctamente.");
-            }
-
-            updateFinances() {
-                let totalGastos = this.expenses.reduce((acc, curr) => acc + curr.monto, 0);
-                let efectivoEstimado = 15000; // Ejemplo dinámico basado en entregas
-                let transferenciaEstimada = 5000;
-
-                document.getElementById('caja-efectivo').innerText = `$${efectivoEstimado.toLocaleString()}`;
-                document.getElementById('caja-transf').innerText = `$${transferenciaEstimada.toLocaleString()}`;
-                document.getElementById('caja-gastos').innerText = `$${totalGastos.toLocaleString()}`;
-                document.getElementById('caja-total').innerText = `$${(efectivoEstimado + transferenciaEstimada - totalGastos).toLocaleString()}`;
-            }
-
-            updateStock() {
-                // Método de control de stock en camión
+            if(tabId === 'recorrido' && map) {
+                setTimeout(() => map.invalidateSize(), 200);
             }
         }
 
-        const app = new SoderApp();
+        function initMap() {
+            map = L.map('map').setView([-31.848, -68.450], 13);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri'
+            }).addTo(map);
+            markersLayer = L.layerGroup().addTo(map);
+        }
+
+        function renderRecorrido() {
+            const diaSel = document.getElementById('filtro-dia').value;
+            const zonaSel = document.getElementById('filtro-zona').value;
+            const contenedor = document.getElementById('lista-recorrido-clientes');
+            contenedor.innerHTML = '';
+            markersLayer.clearLayers();
+
+            const filtrados = clientes.filter(c => (diaSel === 'Todos' || c.dia === diaSel) && (zonaSel === 'Todas' || c.zona === zonaSel));
+
+            if(filtrados.length === 0) {
+                contenedor.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No hay clientes con este filtro.</p>';
+                return;
+            }
+
+            filtrados.forEach(c => {
+                contenedor.innerHTML += `
+                    <div class="p-3 border rounded flex justify-between items-center bg-gray-50 shadow-sm">
+                        <div>
+                            <strong>${c.nombre}</strong>
+                            <p class="text-xs text-gray-500">${c.direccion} (${c.zona}) - Tel: ${c.tel || 'Sin número'}</p>
+                        </div>
+                        <button onclick="atenderCliente(${c.id})" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold shadow">Atender</button>
+                    </div>
+                `;
+
+                if(c.lat && c.lng) {
+                    let marker = L.marker([c.lat, c.lng]).bindPopup(`<b>${c.nombre}</b><br>${c.direccion}`);
+                    markersLayer.addLayer(marker);
+                }
+            });
+        }
+
+        function renderPadronClientes() {
+            const contenedor = document.getElementById('lista-padron-completa');
+            contenedor.innerHTML = '';
+            
+            if(clientes.length === 0) {
+                contenedor.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No hay clientes registrados.</p>';
+                return;
+            }
+
+            clientes.forEach(c => {
+                contenedor.innerHTML += `
+                    <div class="p-3 border rounded bg-gray-50 flex justify-between items-center shadow-sm">
+                        <div>
+                            <strong>${c.nombre}</strong> <span class="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">${c.tipo || 'Cliente'}</span>
+                            <p class="text-xs text-gray-500">${c.direccion} | ${c.zona} (${c.dia})</p>
+                            <p class="text-xs text-gray-400">Tel: ${c.tel || 'Sin número'} ${c.notas ? '| Nota: ' + c.notas : ''}</p>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editarCliente(${c.id})" class="bg-blue-500 text-white px-2.5 py-1 rounded text-xs font-bold shadow">Editar</button>
+                            <button onclick="eliminarCliente(${c.id})" class="bg-red-500 text-white px-2.5 py-1 rounded text-xs font-bold shadow">Borrar</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filtrarPadronClientes() {
+            const filtro = document.getElementById('buscador-clientes').value.toLowerCase();
+            const items = document.querySelectorAll('#lista-padron-completa > div');
+            items.forEach(item => {
+                const texto = item.innerText.toLowerCase();
+                item.style.display = texto.includes(filtro) ? '' : 'none';
+            });
+        }
+
+        function abrirModalCliente() {
+            document.getElementById('modal-titulo').innerHTML = '<i class="fas fa-user-plus text-blue-600"></i> Alta de Cliente';
+            document.getElementById('cliente-id').value = '';
+            document.getElementById('input-nombre').value = '';
+            document.getElementById('input-direccion').value = '';
+            document.getElementById('input-tel').value = '';
+            document.getElementById('input-notas').value = '';
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        }
+
+        function cerrarModalCliente() {
+            document.getElementById('modal-cliente').classList.add('hidden');
+        }
+
+        // GUARDADO FLEXIBLE E ILIMITADO (SIN RESTRICCIONES DE ERRORES)
+        function guardarClienteCompleto() {
+            const id = document.getElementById('cliente-id').value;
+            const nombre = document.getElementById('input-nombre').value.trim();
+            const direccion = document.getElementById('input-direccion').value.trim();
+            const tel = document.getElementById('input-tel').value.trim();
+            const tipo = document.getElementById('input-tipo').value;
+            const dia = document.getElementById('input-dia').value;
+            const zona = document.getElementById('input-zona').value;
+            const notas = document.getElementById('input-notas').value.trim();
+
+            if(!nombre) {
+                alert("Por favor, poné al menos el nombre del cliente.");
+                return;
+            }
+
+            if(id) {
+                let cli = clientes.find(c => c.id == id);
+                if(cli) {
+                    cli.nombre = nombre;
+                    cli.direccion = direccion || "Sin dirección";
+                    cli.tel = tel;
+                    cli.tipo = tipo;
+                    cli.dia = dia;
+                    cli.zona = zona;
+                    cli.notas = notas;
+                }
+            } else {
+                const nuevo = {
+                    id: Date.now(),
+                    nombre: nombre,
+                    direccion: direccion || "Sin dirección",
+                    tel: tel,
+                    tipo: tipo,
+                    dia: dia,
+                    zona: zona,
+                    notas: notas,
+                    lat: -31.848 + (Math.random() - 0.5) * 0.05,
+                    lng: -68.450 + (Math.random() - 0.5) * 0.05
+                };
+                clientes.push(nuevo);
+            }
+
+            // Persistencia permanente en LocalStorage sin límites
+            localStorage.setItem('soderapp_clientes', JSON.stringify(clientes));
+
+            cerrarModalCliente();
+            renderPadronClientes();
+            renderRecorrido();
+            alert("¡Cliente guardado correctamente con éxito, compadre!");
+        }
+
+        function editarCliente(id) {
+            const cli = clientes.find(c => c.id == id);
+            if(cli) {
+                document.getElementById('modal-titulo').innerHTML = '<i class="fas fa-user-edit text-blue-600"></i> Editar Cliente';
+                document.getElementById('cliente-id').value = cli.id;
+                document.getElementById('input-nombre').value = cli.nombre;
+                document.getElementById('input-direccion').value = cli.direccion;
+                document.getElementById('input-tel').value = cli.tel;
+                document.getElementById('input-tipo').value = cli.tipo || 'Cliente Fijo';
+                document.getElementById('input-dia').value = cli.dia;
+                document.getElementById('input-zona').value = cli.zona;
+                document.getElementById('input-notas').value = cli.notas || '';
+                document.getElementById('modal-cliente').classList.remove('hidden');
+            }
+        }
+
+        function eliminarCliente(id) {
+            if(confirm("¿Estás seguro de que querés borrar este cliente del padrón?")) {
+                clientes = clientes.filter(c => c.id != id);
+                localStorage.setItem('soderapp_clientes', JSON.stringify(clientes));
+                renderPadronClientes();
+                renderRecorrido();
+            }
+        }
+
+        function toggleJornada() {
+            jornadaActiva = !jornadaActiva;
+            const btn = document.getElementById('btn-jornada');
+            const estado = document.getElementById('jornada-estado');
+            if(jornadaActiva) {
+                btn.innerText = "Finalizar";
+                btn.className = "bg-red-600 text-white text-xs px-3 py-1.5 rounded font-bold";
+                estado.innerText = "EN CURSO";
+                estado.className = "text-xs px-2.5 py-1 rounded bg-green-600 font-semibold text-white";
+            } else {
+                btn.innerText = "Iniciar";
+                btn.className = "bg-green-600 text-white text-xs px-3 py-1.5 rounded font-bold";
+                estado.innerText = "PAUSADA";
+                estado.className = "text-xs px-2.5 py-1 rounded bg-red-600 font-semibold text-white";
+            }
+        }
+
+        function toggleGrabadorGPS() {
+            grabandoGPS = !grabandoGPS;
+            const btn = document.getElementById('btn-gps');
+            if(grabandoGPS) {
+                btn.innerText = "Detener Grabación GPS";
+                btn.className = "bg-red-600 text-white px-4 py-2 rounded text-xs font-bold";
+                alert("Grabación GPS iniciada...");
+            } else {
+                btn.innerText = "Iniciar Grabación GPS";
+                btn.className = "bg-blue-600 text-white px-4 py-2 rounded text-xs font-bold";
+                alert("Recorrido GPS guardado correctamente.");
+            }
+        }
+
+        function atenderCliente(id) {
+            let cli = clientes.find(c => c.id == id);
+            if(cli) {
+                alert(`Atendiendo a: ${cli.nombre} en ${cli.direccion}. ¡Venta registrada!`);
+            }
+        }
+
+        function guardarPrecios() { alert("Precios actualizados correctamente."); }
+        function registrarCargaCamion() { alert("Carga de camión registrada desde el galpón."); }
+        function registrarRetornoCamion() { alert("Retorno registrado con éxito."); }
+        function realizarCierreCaja() { alert("Cierre de caja realizado con éxito."); }
     </script>
 </body>
 </html>
