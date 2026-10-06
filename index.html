@@ -16,7 +16,7 @@
         #map { height: 350px; z-index: 1; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans pb-20">
+<body class="bg-gray-100 font-sans pb-24">
 
     <!-- Encabezado Principal -->
     <header class="bg-blue-800 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
@@ -30,7 +30,7 @@
         </div>
     </header>
 
-    <!-- Contenedor de Módulos (Tabs) -->
+    <!-- Contenedor Principal de Módulos -->
     <main class="p-4 max-w-4xl mx-auto">
 
         <!-- 1. TAB RECORRIDO -->
@@ -56,7 +56,6 @@
                     </div>
                 </div>
 
-                <!-- Filtros de Ruta -->
                 <div class="flex gap-2 mb-3">
                     <select id="filtro-dia" class="w-1/2 p-2 border rounded text-sm bg-gray-50" onchange="renderRecorrido()">
                         <option value="Lunes">Lunes</option>
@@ -82,21 +81,19 @@
                 <div id="map" class="rounded-lg border"></div>
             </div>
 
-            <!-- Lista de Clientes en Ruta -->
+            <!-- Lista de Ruta -->
             <div class="bg-white p-4 rounded-lg shadow">
                 <h3 class="text-sm font-bold text-gray-700 mb-2"><i class="fas fa-list text-blue-600"></i> Clientes a Visitar Hoy</h3>
-                <div id="lista-recorrido-clientes" class="space-y-2">
-                    <!-- Dinámico -->
-                </div>
+                <div id="lista-recorrido-clientes" class="space-y-2"></div>
             </div>
         </div>
 
-        <!-- 2. TAB CLIENTES (Ilimitados) -->
+        <!-- 2. TAB CLIENTES (Padrón Completo e Ilimitado) -->
         <div id="tab-clientes" class="tab-content space-y-4">
             <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
                 <div>
                     <h2 class="text-md font-bold text-gray-700"><i class="fas fa-users text-blue-600"></i> Padrón General de Clientes</h2>
-                    <p class="text-xs text-gray-500">Agregá todos los clientes que necesités sin restricciones.</p>
+                    <p class="text-xs text-gray-500">Gestión completa y sin límites de almacenamiento.</p>
                 </div>
                 <button onclick="abrirModalCliente()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-bold shadow">
                     <i class="fas fa-user-plus"></i> Nuevo Cliente
@@ -104,21 +101,9 @@
             </div>
 
             <div class="bg-white p-4 rounded-lg shadow">
-                <input type="text" id="buscador-clientes" placeholder="Buscar por nombre, zona o teléfono..." class="w-full p-2 border rounded text-sm mb-3" oninput="filtrarPadronClientes()">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead>
-                            <tr class="bg-gray-100 border-b">
-                                <th class="p-2">Nombre</th>
-                                <th class="p-2">Zona</th>
-                                <th class="p-2">Teléfono</th>
-                                <th class="p-2">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-padron-clientes">
-                            <!-- Dinámico -->
-                        </tbody>
-                    </table>
+                <input type="text" id="buscador-clientes" placeholder="Buscar por nombre, dirección o teléfono..." class="w-full p-2 border rounded text-sm mb-3" oninput="filtrarPadronClientes()">
+                <div id="lista-padron-completa" class="space-y-3">
+                    <!-- Dinámico -->
                 </div>
             </div>
         </div>
@@ -127,17 +112,17 @@
         <div id="tab-stock" class="tab-content space-y-4">
             <div class="bg-white p-4 rounded-lg shadow">
                 <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-warehouse text-blue-600"></i> Control de Stock en Galpón</h2>
-                <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="grid grid-cols-2 gap-4 text-sm mb-4">
                     <div class="p-3 bg-gray-50 rounded border">
-                        <span class="text-gray-500 block text-xs">Bidones 20L Llenos (Depósito)</span>
+                        <span class="text-gray-500 block text-xs">Bidones 20L Llenos</span>
                         <strong class="text-xl text-gray-800" id="stock-galpon-b20">300</strong>
                     </div>
                     <div class="p-3 bg-gray-50 rounded border">
-                        <span class="text-gray-500 block text-xs">Sifones de Soda (Depósito)</span>
+                        <span class="text-gray-500 block text-xs">Sifones de Soda</span>
                         <strong class="text-xl text-gray-800" id="stock-galpon-soda">150</strong>
                     </div>
                 </div>
-                <div class="mt-4 flex gap-2">
+                <div class="flex gap-2">
                     <button onclick="registrarCargaCamion()" class="w-1/2 bg-blue-600 text-white p-2 rounded text-xs font-bold">Cargar Camión</button>
                     <button onclick="registrarRetornoCamion()" class="w-1/2 bg-green-600 text-white p-2 rounded text-xs font-bold">Cierre / Retorno</button>
                 </div>
@@ -205,30 +190,34 @@
         <button onclick="switchTab('grabador')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-grabador"><i class="fas fa-satellite text-lg"></i> GPS</button>
     </nav>
 
-    <!-- MODAL NUEVO / EDITAR CLIENTE (Ilimitado) -->
-    <div id="modal-cliente" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-4 rounded-lg w-full max-w-md space-y-3">
-            <h3 class="text-md font-bold text-gray-800" id="modal-titulo">Registrar Nuevo Cliente</h3>
+    <!-- MODAL ALTA / EDICIÓN DE CLIENTE (Completo, Estético e Ilimitado) -->
+    <div id="modal-cliente" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-white p-4 rounded-lg w-full max-w-md space-y-3 my-auto max-h-screen overflow-y-auto">
+            <h3 class="text-md font-bold text-gray-800" id="modal-titulo"><i class="fas fa-user-plus text-blue-600"></i> Alta de Cliente</h3>
             <input type="hidden" id="cliente-id">
+            
             <div>
-                <label class="block text-xs text-gray-500">Nombre y Apellido</label>
-                <input type="text" id="input-nombre" class="w-full p-2 border rounded text-sm">
+                <label class="block text-xs text-gray-500">Nombre y Apellido:</label>
+                <input type="text" id="input-nombre" placeholder="Ej. Pedro Gómez" class="w-full p-2 border rounded text-sm">
             </div>
             <div>
-                <label class="block text-xs text-gray-500">Zona / Localidad</label>
-                <select id="input-zona" class="w-full p-2 border rounded text-sm">
-                    <option value="Media Agua">Media Agua</option>
-                    <option value="Los Berros">Los Berros</option>
-                    <option value="Cochagual">Cochagual</option>
-                    <option value="Sarmiento">Sarmiento</option>
+                <label class="block text-xs text-gray-500">Dirección:</label>
+                <input type="text" id="input-direccion" placeholder="Ej. Calle Barboza s/n" class="w-full p-2 border rounded text-sm">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500">Teléfono (WhatsApp):</label>
+                <input type="text" id="input-tel" placeholder="2641234567" class="w-full p-2 border rounded text-sm">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500">Tipo de Cliente:</label>
+                <select id="input-tipo" class="w-full p-2 border rounded text-sm">
+                    <option value="Cliente Fijo">Cliente Fijo</option>
+                    <option value="Cliente Nuevo">Cliente Nuevo</option>
+                    <option value="Ocasional">Ocasional</option>
                 </select>
             </div>
             <div>
-                <label class="block text-xs text-gray-500">Teléfono / WhatsApp</label>
-                <input type="text" id="input-tel" class="w-full p-2 border rounded text-sm">
-            </div>
-            <div>
-                <label class="block text-xs text-gray-500">Día de Visita Asignado</label>
+                <label class="block text-xs text-gray-500">Día de Reparto:</label>
                 <select id="input-dia" class="w-full p-2 border rounded text-sm">
                     <option value="Lunes">Lunes</option>
                     <option value="Martes">Martes</option>
@@ -238,8 +227,22 @@
                     <option value="Sábado">Sábado</option>
                 </select>
             </div>
+            <div>
+                <label class="block text-xs text-gray-500">Zona / Localidad:</label>
+                <select id="input-zona" class="w-full p-2 border rounded text-sm">
+                    <option value="Media Agua">Media Agua</option>
+                    <option value="Los Berros">Los Berros</option>
+                    <option value="Cochagual">Cochagual</option>
+                    <option value="Sarmiento">Sarmiento</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500">Notas Tácticas:</label>
+                <input type="text" id="input-notas" placeholder="Detalles de entrega..." class="w-full p-2 border rounded text-sm">
+            </div>
+
             <div class="flex gap-2 pt-2">
-                <button onclick="guardarClienteIlimitado()" class="w-1/2 bg-blue-600 text-white p-2 rounded text-xs font-bold">Guardar</button>
+                <button onclick="guardarClienteCompleto()" class="w-1/2 bg-blue-600 text-white p-2 rounded text-xs font-bold shadow">Guardar / Actualizar</button>
                 <button onclick="cerrarModalCliente()" class="w-1/2 bg-gray-400 text-white p-2 rounded text-xs font-bold">Cancelar</button>
             </div>
         </div>
@@ -248,10 +251,10 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Base de datos local robusta e ilimitada con LocalStorage
+        // Almacenamiento local persistente e ilimitado (respeta datos previos si existen)
         let clientes = JSON.parse(localStorage.getItem('soderapp_clientes')) || [
-            { id: 1, nombre: "Juan Pérez", zona: "Media Agua", tel: "2644112233", dia: "Lunes", lat: -31.845, lng: -68.452 },
-            { id: 2, nombre: "Supermercado Cuyo", zona: "Los Berros", tel: "2645556677", dia: "Lunes", lat: -31.860, lng: -68.440 }
+            { id: 1, nombre: "Marcela Tejada", direccion: "Av. 25 de Mayo y Santa Cruz", tel: "2644112233", tipo: "Cliente Fijo", dia: "Sábado", zona: "Media Agua", notas: "Dejar 2 bidones", lat: -31.848, lng: -68.450 },
+            { id: 2, nombre: "Supermercado Cuyo", direccion: "Ruta 40 s/n", tel: "2645556677", tipo: "Cliente Fijo", dia: "Lunes", zona: "Los Berros", notas: "Pago por transferencia", lat: -31.860, lng: -68.440 }
         ];
 
         let map, markersLayer;
@@ -296,62 +299,70 @@
             const filtrados = clientes.filter(c => (diaSel === 'Todos' || c.dia === diaSel) && (zonaSel === 'Todas' || c.zona === zonaSel));
 
             if(filtrados.length === 0) {
-                contenedor.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No hay clientes en este filtro.</p>';
+                contenedor.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No hay clientes con este filtro.</p>';
                 return;
             }
 
             filtrados.forEach(c => {
-                // Renderizar en lista
                 contenedor.innerHTML += `
-                    <div class="p-3 border rounded flex justify-between items-center bg-gray-50">
+                    <div class="p-3 border rounded flex justify-between items-center bg-gray-50 shadow-sm">
                         <div>
                             <strong>${c.nombre}</strong>
-                            <p class="text-xs text-gray-500">${c.zona} - Tel: ${c.tel}</p>
+                            <p class="text-xs text-gray-500">${c.direccion} (${c.zona}) - Tel: ${c.tel || 'Sin número'}</p>
                         </div>
-                        <button onclick="atenderCliente(${c.id})" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold">Atender</button>
+                        <button onclick="atenderCliente(${c.id})" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold shadow">Atender</button>
                     </div>
                 `;
 
-                // Renderizar marcador en mapa satelital
                 if(c.lat && c.lng) {
-                    let marker = L.marker([c.lat, c.lng]).bindPopup(`<b>${c.nombre}</b><br>${c.zona}`);
+                    let marker = L.marker([c.lat, c.lng]).bindPopup(`<b>${c.nombre}</b><br>${c.direccion}`);
                     markersLayer.addLayer(marker);
                 }
             });
         }
 
         function renderPadronClientes() {
-            const tbody = document.getElementById('tabla-padron-clientes');
-            tbody.innerHTML = '';
+            const contenedor = document.getElementById('lista-padron-completa');
+            contenedor.innerHTML = '';
+            
+            if(clientes.length === 0) {
+                contenedor.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No hay clientes registrados.</p>';
+                return;
+            }
+
             clientes.forEach(c => {
-                tbody.innerHTML += `
-                    <tr class="border-b">
-                        <td class="p-2 font-semibold">${c.nombre}</td>
-                        <td class="p-2">${c.zona}</td>
-                        <td class="p-2">${c.tel}</td>
-                        <td class="p-2 flex gap-2">
-                            <button onclick="editarCliente(${c.id})" class="text-blue-600 font-bold">Editar</button>
-                            <button onclick="eliminarCliente(${c.id})" class="text-red-600 font-bold">Borrar</button>
-                        </td>
-                    </tr>
+                contenedor.innerHTML += `
+                    <div class="p-3 border rounded bg-gray-50 flex justify-between items-center shadow-sm">
+                        <div>
+                            <strong>${c.nombre}</strong> <span class="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">${c.tipo || 'Cliente'}</span>
+                            <p class="text-xs text-gray-500">${c.direccion} | ${c.zona} (${c.dia})</p>
+                            <p class="text-xs text-gray-400">Tel: ${c.tel || 'Sin número'} ${c.notas ? '| Nota: ' + c.notas : ''}</p>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editarCliente(${c.id})" class="bg-blue-500 text-white px-2.5 py-1 rounded text-xs font-bold shadow">Editar</button>
+                            <button onclick="eliminarCliente(${c.id})" class="bg-red-500 text-white px-2.5 py-1 rounded text-xs font-bold shadow">Borrar</button>
+                        </div>
+                    </div>
                 `;
             });
         }
 
         function filtrarPadronClientes() {
             const filtro = document.getElementById('buscador-clientes').value.toLowerCase();
-            const filas = document.querySelectorAll('#tabla-padron-clientes tr');
-            filas.forEach(fila => {
-                const texto = fila.innerText.toLowerCase();
-                fila.style.display = texto.includes(filtro) ? '' : 'none';
+            const items = document.querySelectorAll('#lista-padron-completa > div');
+            items.forEach(item => {
+                const texto = item.innerText.toLowerCase();
+                item.style.display = texto.includes(filtro) ? '' : 'none';
             });
         }
 
         function abrirModalCliente() {
-            document.getElementById('modal-titulo').innerText = "Registrar Nuevo Cliente";
+            document.getElementById('modal-titulo').innerHTML = '<i class="fas fa-user-plus text-blue-600"></i> Alta de Cliente';
             document.getElementById('cliente-id').value = '';
             document.getElementById('input-nombre').value = '';
+            document.getElementById('input-direccion').value = '';
             document.getElementById('input-tel').value = '';
+            document.getElementById('input-notas').value = '';
             document.getElementById('modal-cliente').classList.remove('hidden');
         }
 
@@ -359,45 +370,52 @@
             document.getElementById('modal-cliente').classList.add('hidden');
         }
 
-        // FUNCIÓN CLAVE MEJORADA: SIN LÍMITE DE CLIENTES
-        function guardarClienteIlimitado() {
+        // GUARDADO FLEXIBLE E ILIMITADO (SIN RESTRICCIONES DE ERRORES)
+        function guardarClienteCompleto() {
             const id = document.getElementById('cliente-id').value;
-            const nombre = document.getElementById('input-nombre').value;
-            const zona = document.getElementById('input-zona').value;
-            const tel = document.getElementById('input-tel').value;
+            const nombre = document.getElementById('input-nombre').value.trim();
+            const direccion = document.getElementById('input-direccion').value.trim();
+            const tel = document.getElementById('input-tel').value.trim();
+            const tipo = document.getElementById('input-tipo').value;
             const dia = document.getElementById('input-dia').value;
+            const zona = document.getElementById('input-zona').value;
+            const notas = document.getElementById('input-notas').value.trim();
 
             if(!nombre) {
-                alert("Por favor, poné el nombre del cliente.");
+                alert("Por favor, poné al menos el nombre del cliente.");
                 return;
             }
 
             if(id) {
-                // Editar existente
                 let cli = clientes.find(c => c.id == id);
                 if(cli) {
                     cli.nombre = nombre;
-                    cli.zona = zona;
+                    cli.direccion = direccion || "Sin dirección";
                     cli.tel = tel;
+                    cli.tipo = tipo;
                     cli.dia = dia;
+                    cli.zona = zona;
+                    cli.notas = notas;
                 }
             } else {
-                // Crear nuevo cliente ilimitado (usando timestamp para ID único)
                 const nuevo = {
                     id: Date.now(),
                     nombre: nombre,
-                    zona: zona,
+                    direccion: direccion || "Sin dirección",
                     tel: tel,
+                    tipo: tipo,
                     dia: dia,
-                    lat: -31.848 + (Math.random() - 0.5) * 0.05, // Coordenada de prueba en zona
+                    zona: zona,
+                    notas: notas,
+                    lat: -31.848 + (Math.random() - 0.5) * 0.05,
                     lng: -68.450 + (Math.random() - 0.5) * 0.05
                 };
                 clientes.push(nuevo);
             }
 
-            // Guardar permanentemente en LocalStorage sin restricciones
+            // Persistencia permanente en LocalStorage sin límites
             localStorage.setItem('soderapp_clientes', JSON.stringify(clientes));
-            
+
             cerrarModalCliente();
             renderPadronClientes();
             renderRecorrido();
@@ -407,18 +425,21 @@
         function editarCliente(id) {
             const cli = clientes.find(c => c.id == id);
             if(cli) {
-                document.getElementById('modal-titulo').innerText = "Editar Cliente";
+                document.getElementById('modal-titulo').innerHTML = '<i class="fas fa-user-edit text-blue-600"></i> Editar Cliente';
                 document.getElementById('cliente-id').value = cli.id;
                 document.getElementById('input-nombre').value = cli.nombre;
-                document.getElementById('input-zona').value = cli.zona;
+                document.getElementById('input-direccion').value = cli.direccion;
                 document.getElementById('input-tel').value = cli.tel;
+                document.getElementById('input-tipo').value = cli.tipo || 'Cliente Fijo';
                 document.getElementById('input-dia').value = cli.dia;
+                document.getElementById('input-zona').value = cli.zona;
+                document.getElementById('input-notas').value = cli.notas || '';
                 document.getElementById('modal-cliente').classList.remove('hidden');
             }
         }
 
         function eliminarCliente(id) {
-            if(confirm("¿Estás seguro de que querés borrar este cliente?")) {
+            if(confirm("¿Estás seguro de que querés borrar este cliente del padrón?")) {
                 clientes = clientes.filter(c => c.id != id);
                 localStorage.setItem('soderapp_clientes', JSON.stringify(clientes));
                 renderPadronClientes();
@@ -460,14 +481,14 @@
         function atenderCliente(id) {
             let cli = clientes.find(c => c.id == id);
             if(cli) {
-                alert(`Atendiendo a: ${cli.nombre} en ${cli.zona}. ¡Venta registrada!`);
+                alert(`Atendiendo a: ${cli.nombre} en ${cli.direccion}. ¡Venta registrada!`);
             }
         }
 
         function guardarPrecios() { alert("Precios actualizados correctamente."); }
         function registrarCargaCamion() { alert("Carga de camión registrada desde el galpón."); }
         function registrarRetornoCamion() { alert("Retorno registrado con éxito."); }
-        function realizarCierreCaja() { alert("Cierre de caja realizado. ¡A descansar!"); }
+        function realizarCierreCaja() { alert("Cierre de caja realizado con éxito."); }
     </script>
 </body>
 </html>
