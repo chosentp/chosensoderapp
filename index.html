@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chosen 👑 SoderApp v1.8.1 Satelital Pro</title>
+    <title>Chosen 👑 SoderApp v1.8.2 Satelital Pro</title>
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Leaflet CSS para Mapas -->
@@ -24,7 +24,7 @@
         <div class="bg-blue-600 p-4 rounded-full mb-4 text-3xl shadow-lg">👑</div>
         <h1 class="text-3xl font-extrabold text-blue-400 mb-2">Chosen SoderApp</h1>
         <p class="text-sm text-gray-300 mb-2">Sistema de Control Total Satelital & Gestión de Soda y Agua</p>
-        <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold mb-6">Versión 1.8.1 Pro</span>
+        <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold mb-6">Versión 1.8.2 Pro</span>
         <button onclick="cerrarSplash()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg transition transform active:scale-95">
             🚀 INGRESAR AL SISTEMA
         </button>
@@ -35,9 +35,9 @@
         <div>
             <h1 class="text-lg sm:text-xl font-bold flex items-center gap-2">
                 <span>Chosen 👑 SoderApp</span> 
-                <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full font-bold">v1.8.1 Pro</span>
+                <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full font-bold">v1.8.2 Pro</span>
             </h1>
-            <p class="text-xs text-blue-200" id="current-zone-label">📍 San Juan | Media Agua & Zonas</p>
+            <p class="text-xs text-blue-200">📍 San Juan | Media Agua & Zonas</p>
         </div>
         <div class="flex items-center space-x-2">
             <span id="lbl-estado-ruta" class="text-xs px-2.5 py-1 rounded bg-red-600 font-bold">DETENIDO</span>
@@ -62,13 +62,13 @@
                     </h2>
                 </div>
                 <div class="grid grid-cols-3 gap-2">
-                    <button id="btn-iniciar-ruta" onclick="cambiarEstadoRuta('Activo')" class="bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm font-bold py-2 px-3 rounded-lg shadow">
+                    <button onclick="cambiarEstadoRuta('Activo')" class="bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm font-bold py-2 px-3 rounded-lg shadow">
                         🚀 Iniciar
                     </button>
-                    <button id="btn-pausar-ruta" onclick="cambiarEstadoRuta('Pausado')" class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs sm:text-sm font-bold py-2 px-3 rounded-lg shadow">
+                    <button onclick="cambiarEstadoRuta('Pausado')" class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs sm:text-sm font-bold py-2 px-3 rounded-lg shadow">
                         ⏸ Pausar
                     </button>
-                    <button id="btn-finalizar-ruta" onclick="finalizarRecorridoIrAVaciado()" class="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-bold py-2 px-3 rounded-lg shadow">
+                    <button onclick="finalizarRecorridoIrAVaciado()" class="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-bold py-2 px-3 rounded-lg shadow">
                         🏁 Finalizar
                     </button>
                 </div>
@@ -144,10 +144,10 @@
                 </div>
             </div>
 
-            <!-- Mapa Real Leaflet Satelital/Calles -->
+            <!-- Mapa Satelital Real con Nombres de Calles -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
                 <h3 class="text-sm font-bold text-gray-800 mb-2 flex items-center justify-between">
-                    <span><i class="fas fa-satellite text-blue-600"></i> Radar Satelital & Mapa de Calles Real</span>
+                    <span><i class="fas fa-satellite text-blue-600"></i> Radar Satelital & Nombres de Calles</span>
                 </h3>
                 <div class="flex flex-wrap gap-2 text-xs font-semibold mb-3 bg-gray-50 p-2 rounded-lg border">
                     <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-orange-500 inline-block"></span> Pendiente</span>
@@ -182,6 +182,7 @@
                     <div class="text-xs text-gray-700 space-y-1">
                         <p><strong>Dirección:</strong> <span id="fc-direccion"></span></p>
                         <p><strong>Notas Tácticas:</strong> <span id="fc-notas" class="text-blue-700 font-bold"></span></p>
+                        <p><strong>Vacíos Actuales del Cliente:</strong> <span id="fc-vacios-info" class="text-yellow-600 font-bold"></span></p>
                         <div class="flex items-center gap-2">
                             <span><strong>Teléfono:</strong> <span id="fc-tel"></span></span>
                             <button onclick="abrirWhatsapp()" class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded font-bold flex items-center gap-1">
@@ -278,7 +279,7 @@
                     <strong class="text-base text-green-600" id="met-activos">0</strong>
                 </div>
                 <div class="bg-white p-3 rounded-xl border shadow-sm">
-                    <span class="text-gray-500 block">Inactivos</span>
+                    <span class="text-gray-500 block">Inactivos (Bajas)</span>
                     <strong class="text-base text-red-600" id="met-inactivos">0</strong>
                 </div>
                 <div class="bg-white p-3 rounded-xl border shadow-sm">
@@ -301,7 +302,7 @@
                 </button>
             </div>
 
-            <!-- Formulario Alta / Edición (Soporta Clientes Fijos, Nuevos y Posibles Clientes con GPS y Fachada) -->
+            <!-- Formulario Alta / Edición (Con Vacíos Iniciales, Fachada y GPS) -->
             <div id="sec-form-cliente" class="bg-white p-4 rounded-xl shadow-md border-2 border-blue-500">
                 <h3 class="text-sm font-bold text-blue-900 mb-3" id="titulo-form-cliente">➕ Alta / Edición de Cliente / Posible Cliente</h3>
                 <input type="hidden" id="edit-cliente-id" value="">
@@ -360,6 +361,17 @@
                         <label class="block font-bold text-gray-700 mb-1">Notas Tácticas:</label>
                         <input type="text" id="alta-notas" placeholder="Ej. Puerta reja azul, pasar el domingo..." class="w-full p-2 border rounded-lg">
                     </div>
+                    
+                    <!-- Vacíos iniciales en poder del cliente -->
+                    <div class="sm:col-span-2 bg-yellow-50 p-2.5 rounded-lg border border-yellow-200">
+                        <label class="block font-bold text-yellow-800 mb-1">Bidones Vacíos Iniciales en Poder del Cliente:</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div><label class="block font-semibold">Vacíos 20L:</label><input type="number" id="alta-vac-20" value="0" min="0" class="w-full p-1 border rounded bg-white"></div>
+                            <div><label class="block font-semibold">Vacíos 12L:</label><input type="number" id="alta-vac-12" value="0" min="0" class="w-full p-1 border rounded bg-white"></div>
+                            <div><label class="block font-semibold">Sifones Soda:</label><input type="number" id="alta-vac-soda" value="0" min="0" class="w-full p-1 border rounded bg-white"></div>
+                        </div>
+                    </div>
+
                     <div>
                         <label class="block font-bold text-gray-700 mb-1">Foto de Fachada (Cámara o Archivo):</label>
                         <input type="file" id="alta-foto-input" accept="image/*" capture="environment" class="w-full text-xs" onchange="previewFotoCliente(event)">
@@ -383,10 +395,10 @@
                 </div>
             </div>
 
-            <!-- Listado Padrón con Buscador (Optimizado para 1000+ clientes) -->
+            <!-- Listado Padrón con Buscador y Botón Dar de Baja / Reactivar -->
             <div id="sec-padron-cliente" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
-                    <h3 class="text-sm font-bold text-gray-800"><i class="fas fa-users text-blue-600"></i> Padrón General de Clientes</h3>
+                    <h3 class="text-sm font-bold text-gray-800"><i class="fas fa-users text-blue-600"></i> Padrón General de Clientes (1000+)</h3>
                     <input type="text" id="buscador-clientes" placeholder="🔍 Buscar cliente, teléfono, zona..." class="p-2 border rounded-lg text-xs w-full sm:w-64" oninput="renderPadronClientes()">
                 </div>
                 <div id="lista-padron-clientes" class="space-y-2 max-h-96 overflow-y-auto pr-1"></div>
@@ -699,7 +711,7 @@
 
     </main>
 
-    <!-- Barra de Navegación Inferior (Sin la pestaña Posibles separada) -->
+    <!-- Barra de Navegación Inferior -->
     <nav class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 shadow-lg flex justify-around p-2 z-40 text-xs">
         <button onclick="switchTab('recorrido')" class="nav-btn flex flex-col items-center text-blue-700 font-bold" id="nav-recorrido">
             <i class="fas fa-route text-lg"></i><span>Ruta</span>
@@ -757,8 +769,8 @@
             clienteSeleccionadoId: null,
             tempFotoData: "", tempGpsData: null,
             clientes: [
-                { id: 1, nombre: "Juan Pérez", zona: "Villa Media Agua", direccion: "Calle Barboza s/n", tel: "2645123456", dia: "Lunes", tipo: "Cliente Fijo", notas: "Puerta reja verde", estado: "Pendiente", activo: true, gps: { lat: -31.9800, lng: -68.4320 }, vacios: { b20: 2, b12: 0, soda: 1, soda500: 2 }, deuda: 0, totalHistorico: 15000 },
-                { id: 2, nombre: "María Gómez", zona: "Los Berros - Parte Alta", direccion: "Ruta 40", tel: "2644987654", dia: "Lunes", tipo: "Posible Cliente", notas: "Al lado del almacén", estado: "Pendiente", activo: true, gps: { lat: -31.9500, lng: -68.4100 }, vacios: { b20: 0, b12: 0, soda: 0, soda500: 0 }, deuda: 0, totalHistorico: 0 }
+                { id: 1, nombre: "Juan Pérez", zona: "Villa Media Agua", direccion: "Calle Barboza s/n", tel: "2645123456", dia: "Lunes", tipo: "Cliente Fijo", notas: "Puerta reja verde", estado: "Pendiente", activo: true, gps: { lat: -31.9800, lng: -68.4320 }, vacios: { b20: 2, b12: 0, soda: 1 }, deuda: 0, totalHistorico: 15000 },
+                { id: 2, nombre: "María Gómez", zona: "Los Berros - Parte Alta", direccion: "Ruta 40", tel: "2644987654", dia: "Lunes", tipo: "Posible Cliente", notas: "Al lado del almacén", estado: "Pendiente", activo: true, gps: { lat: -31.9500, lng: -68.4100 }, vacios: { b20: 0, b12: 0, soda: 0 }, deuda: 0, totalHistorico: 0 }
             ],
             historialCargas: [],
             recorridosGrabados: []
@@ -789,16 +801,24 @@
 
         function initMapaLeaflet() {
             mapLeaflet = L.map('mapa-calles-real').setView([-31.982, -68.433], 13);
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            
+            // Capa Satelital con Nombres de Calles (Esri World Imagery + Reference)
+            const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 19,
-                attribution: '© Esri, OpenStreetMap'
-            }).addTo(mapLeaflet);
+                attribution: '© Esri & OpenStreetMap'
+            });
+            const labelsLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 19
+            });
+            
+            satLayer.addTo(mapLeaflet);
+            labelsLayer.addTo(mapLeaflet);
         }
 
-        function guardarStorage() { localStorage.setItem('chosen_soderapp_v181_data', JSON.stringify(appState)); }
+        function guardarStorage() { localStorage.setItem('chosen_soderapp_v182_data', JSON.stringify(appState)); }
 
         function cargarStorage() {
-            const data = localStorage.getItem('chosen_soderapp_v181_data');
+            const data = localStorage.getItem('chosen_soderapp_v182_data');
             if (data) { try { appState = JSON.parse(data); } catch(e) {} }
         }
 
@@ -1142,6 +1162,12 @@
             document.getElementById('fc-direccion').innerText = cli.direccion;
             document.getElementById('fc-notas').innerText = cli.notas || 'Sin notas';
             document.getElementById('fc-tel').innerText = cli.tel || 'S/T';
+            
+            const v20 = cli.vacios ? (cli.vacios.b20 || 0) : 0;
+            const v12 = cli.vacios ? (cli.vacios.b12 || 0) : 0;
+            const vsoda = cli.vacios ? (cli.vacios.soda || 0) : 0;
+            document.getElementById('fc-vacios-info').innerText = `20L: ${v20} | 12L: ${v12} | Sifones: ${vsoda}`;
+
             document.getElementById('vta-estado-visita').value = cli.estado || 'Pendiente';
 
             const img = document.getElementById('fc-foto');
@@ -1216,6 +1242,7 @@
             actualizarStockCamionEnVivoUI();
             renderClientesRuta();
             actualizarFinanzasUI();
+            actualizarEnvasesClientesTotalesUI();
             document.getElementById('ficha-cliente').classList.add('hidden');
             mostrarModal('Venta Exitosa', 'Se registró la entrega y se descontó del camión.');
         }
@@ -1263,6 +1290,10 @@
             const editId = document.getElementById('edit-cliente-id').value;
             const clienteTipo = document.getElementById('alta-tipo').value;
             
+            const vac20 = parseInt(document.getElementById('alta-vac-20').value) || 0;
+            const vac12 = parseInt(document.getElementById('alta-vac-12').value) || 0;
+            const vacSoda = parseInt(document.getElementById('alta-vac-soda').value) || 0;
+
             const nuevoCli = {
                 id: editId ? parseInt(editId) : Date.now(),
                 nombre,
@@ -1276,7 +1307,7 @@
                 activo: true,
                 foto: appState.tempFotoData || '',
                 gps: appState.tempGpsData || { lat: -31.980, lng: -68.433 },
-                vacios: { b20: 0, b12: 0, soda: 0 },
+                vacios: { b20: vac20, b12: vac12, soda: vacSoda },
                 deuda: 0, totalHistorico: 0
             };
 
@@ -1285,6 +1316,8 @@
                 if (idx !== -1) {
                     nuevoCli.foto = appState.tempFotoData || appState.clientes[idx].foto;
                     nuevoCli.gps = appState.tempGpsData || appState.clientes[idx].gps;
+                    nuevoCli.vacios = { b20: vac20, b12: vac12, soda: vacSoda };
+                    nuevoCli.activo = appState.clientes[idx].activo;
                     appState.clientes[idx] = nuevoCli;
                 }
             } else {
@@ -1296,7 +1329,8 @@
             renderClientesRuta();
             renderPadronClientes();
             renderMetricasClientes();
-            mostrarModal('Guardado Exitoso', clienteTipo === 'Posible Cliente' ? 'Posible cliente guardado con marcador azul en ruta.' : 'Cliente guardado correctamente.');
+            actualizarEnvasesClientesTotalesUI();
+            mostrarModal('Guardado Exitoso', 'Cliente guardado correctamente.');
             toggleSeccionCliente('padron');
         }
 
@@ -1306,6 +1340,9 @@
             document.getElementById('alta-dir').value = '';
             document.getElementById('alta-tel').value = '';
             document.getElementById('alta-notas').value = '';
+            document.getElementById('alta-vac-20').value = '0';
+            document.getElementById('alta-vac-12').value = '0';
+            document.getElementById('alta-vac-soda').value = '0';
             document.getElementById('alta-foto-input').value = '';
             document.getElementById('alta-foto-preview').classList.add('hidden');
             document.getElementById('gps-status-txt').innerText = 'GPS: No capturado';
@@ -1319,18 +1356,39 @@
             const filtrados = appState.clientes.filter(c => c.nombre.toLowerCase().includes(query) || c.direccion.toLowerCase().includes(query) || (c.tel && c.tel.includes(query)));
 
             filtrados.forEach(c => {
+                const esActivo = c.activo !== false;
+                const estadoClase = esActivo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                const estadoTexto = esActivo ? 'Activo' : 'Dado de Baja';
+                const v20 = c.vacios ? (c.vacios.b20 || 0) : 0;
+                const v12 = c.vacios ? (c.vacios.b12 || 0) : 0;
+                const vsoda = c.vacios ? (c.vacios.soda || 0) : 0;
+
                 cont.innerHTML += `
                     <div class="bg-gray-50 border p-2.5 rounded-lg flex justify-between items-center text-xs">
                         <div>
                             <strong>${c.nombre}</strong> <span class="text-blue-600">(${c.tipo})</span><br>
-                            <span class="text-gray-600">${c.direccion} - Día: ${c.dia}</span>
+                            <span class="text-gray-600">${c.direccion} - Día: ${c.dia}</span><br>
+                            <span class="text-yellow-700 font-semibold">Vacíos: 20L(${v20}) 12L(${v12}) Sif(${vsoda})</span>
+                            <span class="ml-2 px-2 py-0.5 rounded font-bold ${estadoClase}">${estadoTexto}</span>
                         </div>
                         <div class="flex gap-1">
+                            <button onclick="toggleBajaCliente(${c.id})" class="${esActivo ? 'bg-yellow-600' : 'bg-green-600'} text-white px-2 py-1 rounded font-bold">${esActivo ? 'Dar Baja' : 'Reactivar'}</button>
                             <button onclick="editarCliente(${c.id})" class="bg-blue-600 text-white px-2 py-1 rounded font-bold">Editar</button>
                             <button onclick="eliminarCliente(${c.id})" class="bg-red-600 text-white px-2 py-1 rounded font-bold">🗑</button>
                         </div>
                     </div>`;
             });
+        }
+
+        function toggleBajaCliente(id) {
+            const cli = appState.clientes.find(c => c.id === id);
+            if (cli) {
+                cli.activo = cli.activo === false ? true : false;
+                guardarStorage();
+                renderClientesRuta();
+                renderPadronClientes();
+                renderMetricasClientes();
+            }
         }
 
         function editarCliente(id) {
@@ -1344,6 +1402,11 @@
             document.getElementById('alta-dia').value = cli.dia || 'Lunes';
             document.getElementById('alta-zona').value = cli.zona || 'Villa Media Agua';
             document.getElementById('alta-notas').value = cli.notas || '';
+            
+            document.getElementById('alta-vac-20').value = cli.vacios ? (cli.vacios.b20 || 0) : 0;
+            document.getElementById('alta-vac-12').value = cli.vacios ? (cli.vacios.b12 || 0) : 0;
+            document.getElementById('alta-vac-soda').value = cli.vacios ? (cli.vacios.soda || 0) : 0;
+
             appState.tempFotoData = cli.foto || '';
             appState.tempGpsData = cli.gps || null;
             if (cli.foto) {
@@ -1359,7 +1422,7 @@
 
         function eliminarCliente(id) {
             appState.clientes = appState.clientes.filter(c => c.id !== id);
-            guardarStorage(); renderClientesRuta(); renderPadronClientes(); renderMetricasClientes();
+            guardarStorage(); renderClientesRuta(); renderPadronClientes(); renderMetricasClientes(); actualizarEnvasesClientesTotalesUI();
         }
 
         function renderMetricasClientes() {
@@ -1373,7 +1436,7 @@
         function actualizarEnvasesClientesTotalesUI() {
             let t20 = 0, t12 = 0, tsoda = 0, tsoda500 = 0;
             appState.clientes.forEach(c => {
-                if (c.vacios) {
+                if (c.vacios && c.activo !== false) {
                     t20 += c.vacios.b20 || 0;
                     t12 += c.vacios.b12 || 0;
                     tsoda += c.vacios.soda || 0;
