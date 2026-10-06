@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chosen 👑 SoderApp v1.8.2 Satelital Pro</title>
+    <title>Chosen 👑 SoderApp v1.8.3 Satelital Pro</title>
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Leaflet CSS para Mapas -->
@@ -24,7 +24,7 @@
         <div class="bg-blue-600 p-4 rounded-full mb-4 text-3xl shadow-lg">👑</div>
         <h1 class="text-3xl font-extrabold text-blue-400 mb-2">Chosen SoderApp</h1>
         <p class="text-sm text-gray-300 mb-2">Sistema de Control Total Satelital & Gestión de Soda y Agua</p>
-        <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold mb-6">Versión 1.8.2 Pro</span>
+        <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold mb-6">Versión 1.8.3 Pro</span>
         <button onclick="cerrarSplash()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg transition transform active:scale-95">
             🚀 INGRESAR AL SISTEMA
         </button>
@@ -35,7 +35,7 @@
         <div>
             <h1 class="text-lg sm:text-xl font-bold flex items-center gap-2">
                 <span>Chosen 👑 SoderApp</span> 
-                <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full font-bold">v1.8.2 Pro</span>
+                <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full font-bold">v1.8.3 Pro</span>
             </h1>
             <p class="text-xs text-blue-200">📍 San Juan | Media Agua & Zonas</p>
         </div>
@@ -216,10 +216,14 @@
                             <input type="number" id="vta-cant-12" value="0" min="0" class="w-full p-1.5 border rounded" oninput="calcularVenta()">
                         </div>
                         <div>
-                            <label class="block font-semibold">Sifones Soda:</label>
+                            <label class="block font-semibold">Sifones Soda 1L:</label>
                             <input type="number" id="vta-cant-soda" value="0" min="0" class="w-full p-1.5 border rounded" oninput="calcularVenta()">
                         </div>
                         <div>
+                            <label class="block font-semibold">Sifones Soda 500ml:</label>
+                            <input type="number" id="vta-cant-soda500" value="0" min="0" class="w-full p-1.5 border rounded" oninput="calcularVenta()">
+                        </div>
+                        <div class="col-span-2">
                             <label class="block font-semibold">Venta Dispense Mesa:</label>
                             <input type="number" id="vta-cant-mesa" value="0" min="0" class="w-full p-1.5 border rounded" oninput="calcularVenta()">
                         </div>
@@ -229,16 +233,20 @@
                     <p class="text-xs font-bold text-gray-800">🔄 Devolución Envases Vacíos:</p>
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                            <label class="block font-semibold">Devolución Vacíos 20L:</label>
+                            <label class="block font-semibold">Dev. Vacíos 20L:</label>
                             <input type="number" id="vta-dev-20" value="0" min="0" class="w-full p-1.5 border rounded">
                         </div>
                         <div>
-                            <label class="block font-semibold">Devolución Vacíos 12L:</label>
+                            <label class="block font-semibold">Dev. Vacíos 12L:</label>
                             <input type="number" id="vta-dev-12" value="0" min="0" class="w-full p-1.5 border rounded">
                         </div>
-                        <div class="col-span-2">
-                            <label class="block font-semibold">Devolución Sifones Soda:</label>
+                        <div>
+                            <label class="block font-semibold">Dev. Sifones 1L:</label>
                             <input type="number" id="vta-dev-soda" value="0" min="0" class="w-full p-1.5 border rounded">
+                        </div>
+                        <div>
+                            <label class="block font-semibold">Dev. Sifones 500ml:</label>
+                            <input type="number" id="vta-dev-soda500" value="0" min="0" class="w-full p-1.5 border rounded">
                         </div>
                     </div>
 
@@ -302,7 +310,7 @@
                 </button>
             </div>
 
-            <!-- Formulario Alta / Edición (Con Vacíos Iniciales, Fachada y GPS) -->
+            <!-- Formulario Alta / Edición (Con Cámara Directa, Vacíos Iniciales y GPS) -->
             <div id="sec-form-cliente" class="bg-white p-4 rounded-xl shadow-md border-2 border-blue-500">
                 <h3 class="text-sm font-bold text-blue-900 mb-3" id="titulo-form-cliente">➕ Alta / Edición de Cliente / Posible Cliente</h3>
                 <input type="hidden" id="edit-cliente-id" value="">
@@ -362,20 +370,25 @@
                         <input type="text" id="alta-notas" placeholder="Ej. Puerta reja azul, pasar el domingo..." class="w-full p-2 border rounded-lg">
                     </div>
                     
-                    <!-- Vacíos iniciales en poder del cliente -->
+                    <!-- Vacíos iniciales en poder del cliente (Incluye Sifones 500ml) -->
                     <div class="sm:col-span-2 bg-yellow-50 p-2.5 rounded-lg border border-yellow-200">
-                        <label class="block font-bold text-yellow-800 mb-1">Bidones Vacíos Iniciales en Poder del Cliente:</label>
-                        <div class="grid grid-cols-3 gap-2">
+                        <label class="block font-bold text-yellow-800 mb-1">Bidones y Sifones Vacíos Iniciales en Poder del Cliente:</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             <div><label class="block font-semibold">Vacíos 20L:</label><input type="number" id="alta-vac-20" value="0" min="0" class="w-full p-1 border rounded bg-white"></div>
                             <div><label class="block font-semibold">Vacíos 12L:</label><input type="number" id="alta-vac-12" value="0" min="0" class="w-full p-1 border rounded bg-white"></div>
-                            <div><label class="block font-semibold">Sifones Soda:</label><input type="number" id="alta-vac-soda" value="0" min="0" class="w-full p-1 border rounded bg-white"></div>
+                            <div><label class="block font-semibold">Sifones 1L:</label><input type="number" id="alta-vac-soda" value="0" min="0" class="w-full p-1 border rounded bg-white"></div>
+                            <div><label class="block font-semibold">Sifones 500ml:</label><input type="number" id="alta-vac-soda500" value="0" min="0" class="w-full p-1 border rounded bg-white"></div>
                         </div>
                     </div>
 
+                    <!-- Cámara Directa Fachada -->
                     <div>
-                        <label class="block font-bold text-gray-700 mb-1">Foto de Fachada (Cámara o Archivo):</label>
-                        <input type="file" id="alta-foto-input" accept="image/*" capture="environment" class="w-full text-xs" onchange="previewFotoCliente(event)">
-                        <img id="alta-foto-preview" class="preview-img hidden mt-2" alt="Vista previa fachada">
+                        <label class="block font-bold text-gray-700 mb-1">Foto de Fachada:</label>
+                        <input type="file" id="alta-foto-input" accept="image/*" capture="environment" class="hidden" onchange="previewFotoCliente(event)">
+                        <button type="button" onclick="document.getElementById('alta-foto-input').click()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-xs shadow flex items-center justify-center gap-1 mb-2">
+                            <i class="fas fa-camera"></i> 📷 Abrir Cámara Directa
+                        </button>
+                        <img id="alta-foto-preview" class="preview-img hidden mt-1" alt="Vista previa fachada">
                     </div>
                     <div class="flex flex-col justify-end">
                         <button type="button" onclick="capturarGpsClienteEnVivo()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-3 rounded-lg text-xs shadow mb-1">
@@ -424,11 +437,11 @@
                         <strong class="text-lg text-yellow-300 font-bold" id="stk-cli-tot-12">0</strong>
                     </div>
                     <div class="bg-indigo-800 p-2.5 rounded-lg border border-indigo-700">
-                        <span class="text-gray-300 block">Sifones Soda</span>
+                        <span class="text-gray-300 block">Sifones 1L</span>
                         <strong class="text-lg text-yellow-300 font-bold" id="stk-cli-tot-soda">0</strong>
                     </div>
                     <div class="bg-indigo-800 p-2.5 rounded-lg border border-indigo-700">
-                        <span class="text-gray-300 block">Soda 500ml</span>
+                        <span class="text-gray-300 block">Sifones 500ml</span>
                         <strong class="text-lg text-yellow-300 font-bold" id="stk-cli-tot-soda500">0</strong>
                     </div>
                 </div>
@@ -769,8 +782,8 @@
             clienteSeleccionadoId: null,
             tempFotoData: "", tempGpsData: null,
             clientes: [
-                { id: 1, nombre: "Juan Pérez", zona: "Villa Media Agua", direccion: "Calle Barboza s/n", tel: "2645123456", dia: "Lunes", tipo: "Cliente Fijo", notas: "Puerta reja verde", estado: "Pendiente", activo: true, gps: { lat: -31.9800, lng: -68.4320 }, vacios: { b20: 2, b12: 0, soda: 1 }, deuda: 0, totalHistorico: 15000 },
-                { id: 2, nombre: "María Gómez", zona: "Los Berros - Parte Alta", direccion: "Ruta 40", tel: "2644987654", dia: "Lunes", tipo: "Posible Cliente", notas: "Al lado del almacén", estado: "Pendiente", activo: true, gps: { lat: -31.9500, lng: -68.4100 }, vacios: { b20: 0, b12: 0, soda: 0 }, deuda: 0, totalHistorico: 0 }
+                { id: 1, nombre: "Juan Pérez", zona: "Villa Media Agua", direccion: "Calle Barboza s/n", tel: "2645123456", dia: "Lunes", tipo: "Cliente Fijo", notas: "Puerta reja verde", estado: "Pendiente", activo: true, gps: { lat: -31.9800, lng: -68.4320 }, vacios: { b20: 2, b12: 0, soda: 1, soda500: 0 }, deuda: 0, totalHistorico: 15000 },
+                { id: 2, nombre: "María Gómez", zona: "Los Berros - Parte Alta", direccion: "Ruta 40", tel: "2644987654", dia: "Lunes", tipo: "Posible Cliente", notas: "Al lado del almacén", estado: "Pendiente", activo: true, gps: { lat: -31.9500, lng: -68.4100 }, vacios: { b20: 0, b12: 0, soda: 0, soda500: 0 }, deuda: 0, totalHistorico: 0 }
             ],
             historialCargas: [],
             recorridosGrabados: []
@@ -801,8 +814,6 @@
 
         function initMapaLeaflet() {
             mapLeaflet = L.map('mapa-calles-real').setView([-31.982, -68.433], 13);
-            
-            // Capa Satelital con Nombres de Calles (Esri World Imagery + Reference)
             const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 19,
                 attribution: '© Esri & OpenStreetMap'
@@ -810,15 +821,21 @@
             const labelsLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 19
             });
-            
             satLayer.addTo(mapLeaflet);
             labelsLayer.addTo(mapLeaflet);
         }
 
-        function guardarStorage() { localStorage.setItem('chosen_soderapp_v182_data', JSON.stringify(appState)); }
+        function guardarStorage() {
+            try {
+                localStorage.setItem('chosen_soderapp_v183_data', JSON.stringify(appState));
+            } catch (e) {
+                console.error("Error storage:", e);
+                mostrarModal("Alerta de Memoria", "La imagen es muy pesada. Intente con una foto más liviana.");
+            }
+        }
 
         function cargarStorage() {
-            const data = localStorage.getItem('chosen_soderapp_v182_data');
+            const data = localStorage.getItem('chosen_soderapp_v183_data');
             if (data) { try { appState = JSON.parse(data); } catch(e) {} }
         }
 
@@ -1166,7 +1183,8 @@
             const v20 = cli.vacios ? (cli.vacios.b20 || 0) : 0;
             const v12 = cli.vacios ? (cli.vacios.b12 || 0) : 0;
             const vsoda = cli.vacios ? (cli.vacios.soda || 0) : 0;
-            document.getElementById('fc-vacios-info').innerText = `20L: ${v20} | 12L: ${v12} | Sifones: ${vsoda}`;
+            const vsoda500 = cli.vacios ? (cli.vacios.soda500 || 0) : 0;
+            document.getElementById('fc-vacios-info').innerText = `20L: ${v20} | 12L: ${v12} | Sif.1L: ${vsoda} | Sif.500ml: ${vsoda500}`;
 
             document.getElementById('vta-estado-visita').value = cli.estado || 'Pendiente';
 
@@ -1185,9 +1203,10 @@
             const c20 = parseInt(document.getElementById('vta-cant-20').value) || 0;
             const c12 = parseInt(document.getElementById('vta-cant-12').value) || 0;
             const cSoda = parseInt(document.getElementById('vta-cant-soda').value) || 0;
+            const cSoda500 = parseInt(document.getElementById('vta-cant-soda500').value) || 0;
             const cMesa = parseInt(document.getElementById('vta-cant-mesa').value) || 0;
 
-            const total = (c20 * appState.precios.b20) + (c12 * appState.precios.b12) + (cSoda * appState.precios.soda) + (cMesa * appState.precios.mesa);
+            const total = (c20 * appState.precios.b20) + (c12 * appState.precios.b12) + (cSoda * appState.precios.soda) + (cSoda500 * (appState.precios.soda500 || 1200)) + (cMesa * appState.precios.mesa);
             document.getElementById('vta-total').value = total; 
             document.getElementById('vta-pago').value = total;
         }
@@ -1201,29 +1220,36 @@
             const c20 = parseInt(document.getElementById('vta-cant-20').value) || 0;
             const c12 = parseInt(document.getElementById('vta-cant-12').value) || 0;
             const cSoda = parseInt(document.getElementById('vta-cant-soda').value) || 0;
+            const cSoda500 = parseInt(document.getElementById('vta-cant-soda500').value) || 0;
             const cMesa = parseInt(document.getElementById('vta-cant-mesa').value) || 0;
 
             const dev20 = parseInt(document.getElementById('vta-dev-20').value) || 0;
             const dev12 = parseInt(document.getElementById('vta-dev-12').value) || 0;
             const devSoda = parseInt(document.getElementById('vta-dev-soda').value) || 0;
+            const devSoda500 = parseInt(document.getElementById('vta-dev-soda500').value) || 0;
 
             cli.estado = document.getElementById('vta-estado-visita').value;
             if (cli.estado === 'Pendiente' && total > 0) cli.estado = 'Entregado';
 
             cli.totalHistorico = (cli.totalHistorico || 0) + total;
-            if (!cli.vacios) cli.vacios = { b20: 0, b12: 0, soda: 0 };
-            cli.vacios.b20 = Math.max(0, cli.vacios.b20 + (c20 - dev20));
-            cli.vacios.b12 = Math.max(0, cli.vacios.b12 + (c12 - dev12));
-            cli.vacios.soda = Math.max(0, cli.vacios.soda + (cSoda - devSoda));
+            if (!cli.vacios) cli.vacios = { b20: 0, b12: 0, soda: 0, soda500: 0 };
+            cli.vacios.b20 = Math.max(0, (cli.vacios.b20 || 0) + (c20 - dev20));
+            cli.vacios.b12 = Math.max(0, (cli.vacios.b12 || 0) + (c12 - dev12));
+            cli.vacios.soda = Math.max(0, (cli.vacios.soda || 0) + (cSoda - devSoda));
+            cli.vacios.soda500 = Math.max(0, (cli.vacios.soda500 || 0) + (cSoda500 - devSoda500));
 
             appState.camionEnVivo.llenos.b20 = Math.max(0, appState.camionEnVivo.llenos.b20 - c20);
             appState.camionEnVivo.llenos.b12 = Math.max(0, appState.camionEnVivo.llenos.b12 - c12);
             appState.camionEnVivo.llenos.soda = Math.max(0, appState.camionEnVivo.llenos.soda - cSoda);
+            if(!appState.camionEnVivo.llenos.soda500) appState.camionEnVivo.llenos.soda500 = 0;
+            appState.camionEnVivo.llenos.soda500 = Math.max(0, appState.camionEnVivo.llenos.soda500 - cSoda500);
             appState.camionEnVivo.llenos.mesa = Math.max(0, appState.camionEnVivo.llenos.mesa - cMesa);
 
             appState.camionEnVivo.vacios.b20 += dev20;
             appState.camionEnVivo.vacios.b12 += dev12;
             appState.camionEnVivo.vacios.soda += devSoda;
+            if(!appState.camionEnVivo.vacios.soda500) appState.camionEnVivo.vacios.soda500 = 0;
+            appState.camionEnVivo.vacios.soda500 += devSoda500;
 
             if (medio === 'Efectivo') appState.finanzas.efectivo += total;
             else appState.finanzas.transferencia += total;
@@ -1231,11 +1257,13 @@
             appState.ventasDelDia.b20 += c20; 
             appState.ventasDelDia.b12 += c12;
             appState.ventasDelDia.soda += cSoda;
+            appState.ventasDelDia.soda500 = (appState.ventasDelDia.soda500 || 0) + cSoda500;
             appState.ventasDelDia.mesa += cMesa;
 
             appState.ventasSemana.b20 += c20; 
             appState.ventasSemana.b12 += c12;
             appState.ventasSemana.soda += cSoda;
+            appState.ventasSemana.soda500 = (appState.ventasSemana.soda500 || 0) + cSoda500;
             appState.ventasSemana.mesa += cMesa;
 
             guardarStorage();
@@ -1247,17 +1275,42 @@
             mostrarModal('Venta Exitosa', 'Se registró la entrega y se descontó del camión.');
         }
 
+        // Compresor automático de imagen para evitar saturar la memoria del celular
+        function comprimirImagen(file, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600;
+                    const MAX_HEIGHT = 600;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    callback(canvas.toDataURL('image/jpeg', 0.7));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
         function previewFotoCliente(event) {
             const file = event.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    appState.tempFotoData = e.target.result;
+                comprimirImagen(file, function(dataUrl) {
+                    appState.tempFotoData = dataUrl;
                     const preview = document.getElementById('alta-foto-preview');
-                    preview.src = e.target.result;
+                    preview.src = dataUrl;
                     preview.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
+                });
             }
         }
 
@@ -1293,6 +1346,7 @@
             const vac20 = parseInt(document.getElementById('alta-vac-20').value) || 0;
             const vac12 = parseInt(document.getElementById('alta-vac-12').value) || 0;
             const vacSoda = parseInt(document.getElementById('alta-vac-soda').value) || 0;
+            const vacSoda500 = parseInt(document.getElementById('alta-vac-soda500').value) || 0;
 
             const nuevoCli = {
                 id: editId ? parseInt(editId) : Date.now(),
@@ -1307,7 +1361,7 @@
                 activo: true,
                 foto: appState.tempFotoData || '',
                 gps: appState.tempGpsData || { lat: -31.980, lng: -68.433 },
-                vacios: { b20: vac20, b12: vac12, soda: vacSoda },
+                vacios: { b20: vac20, b12: vac12, soda: vacSoda, soda500: vacSoda500 },
                 deuda: 0, totalHistorico: 0
             };
 
@@ -1316,7 +1370,7 @@
                 if (idx !== -1) {
                     nuevoCli.foto = appState.tempFotoData || appState.clientes[idx].foto;
                     nuevoCli.gps = appState.tempGpsData || appState.clientes[idx].gps;
-                    nuevoCli.vacios = { b20: vac20, b12: vac12, soda: vacSoda };
+                    nuevoCli.vacios = { b20: vac20, b12: vac12, soda: vacSoda, soda500: vacSoda500 };
                     nuevoCli.activo = appState.clientes[idx].activo;
                     appState.clientes[idx] = nuevoCli;
                 }
@@ -1343,6 +1397,7 @@
             document.getElementById('alta-vac-20').value = '0';
             document.getElementById('alta-vac-12').value = '0';
             document.getElementById('alta-vac-soda').value = '0';
+            document.getElementById('alta-vac-soda500').value = '0';
             document.getElementById('alta-foto-input').value = '';
             document.getElementById('alta-foto-preview').classList.add('hidden');
             document.getElementById('gps-status-txt').innerText = 'GPS: No capturado';
@@ -1362,13 +1417,14 @@
                 const v20 = c.vacios ? (c.vacios.b20 || 0) : 0;
                 const v12 = c.vacios ? (c.vacios.b12 || 0) : 0;
                 const vsoda = c.vacios ? (c.vacios.soda || 0) : 0;
+                const vsoda500 = c.vacios ? (c.vacios.soda500 || 0) : 0;
 
                 cont.innerHTML += `
                     <div class="bg-gray-50 border p-2.5 rounded-lg flex justify-between items-center text-xs">
                         <div>
                             <strong>${c.nombre}</strong> <span class="text-blue-600">(${c.tipo})</span><br>
                             <span class="text-gray-600">${c.direccion} - Día: ${c.dia}</span><br>
-                            <span class="text-yellow-700 font-semibold">Vacíos: 20L(${v20}) 12L(${v12}) Sif(${vsoda})</span>
+                            <span class="text-yellow-700 font-semibold">Vacíos: 20L(${v20}) 12L(${v12}) Sif.1L(${vsoda}) Sif.500ml(${vsoda500})</span>
                             <span class="ml-2 px-2 py-0.5 rounded font-bold ${estadoClase}">${estadoTexto}</span>
                         </div>
                         <div class="flex gap-1">
@@ -1388,6 +1444,7 @@
                 renderClientesRuta();
                 renderPadronClientes();
                 renderMetricasClientes();
+                actualizarEnvasesClientesTotalesUI();
             }
         }
 
@@ -1406,6 +1463,7 @@
             document.getElementById('alta-vac-20').value = cli.vacios ? (cli.vacios.b20 || 0) : 0;
             document.getElementById('alta-vac-12').value = cli.vacios ? (cli.vacios.b12 || 0) : 0;
             document.getElementById('alta-vac-soda').value = cli.vacios ? (cli.vacios.soda || 0) : 0;
+            document.getElementById('alta-vac-soda500').value = cli.vacios ? (cli.vacios.soda500 || 0) : 0;
 
             appState.tempFotoData = cli.foto || '';
             appState.tempGpsData = cli.gps || null;
@@ -1454,7 +1512,8 @@
             const items = [
                 { nombre: 'Bidón 20L', cant: appState.ventasDelDia.b20, precio: appState.precios.b20, com: appState.comisiones.b20 },
                 { nombre: 'Bidón 12L', cant: appState.ventasDelDia.b12, precio: appState.precios.b12, com: appState.comisiones.b12 },
-                { nombre: 'Sifón Soda', cant: appState.ventasDelDia.soda, precio: appState.precios.soda, com: appState.comisiones.soda },
+                { nombre: 'Sifón Soda 1L', cant: appState.ventasDelDia.soda, precio: appState.precios.soda, com: appState.comisiones.soda },
+                { nombre: 'Sifón Soda 500ml', cant: appState.ventasDelDia.soda500 || 0, precio: appState.precios.soda500 || 1200, com: appState.comisiones.soda500 || 200 },
                 { nombre: 'Dispenser Mesa', cant: appState.ventasDelDia.mesa, precio: appState.precios.mesa, com: appState.comisiones.mesa }
             ];
 
@@ -1469,7 +1528,8 @@
             const itemsSem = [
                 { nombre: 'Bidón 20L', cant: appState.ventasSemana.b20, precio: appState.precios.b20 },
                 { nombre: 'Bidón 12L', cant: appState.ventasSemana.b12, precio: appState.precios.b12 },
-                { nombre: 'Sifón Soda', cant: appState.ventasSemana.soda, precio: appState.precios.soda },
+                { nombre: 'Sifón Soda 1L', cant: appState.ventasSemana.soda, precio: appState.precios.soda },
+                { nombre: 'Sifón Soda 500ml', cant: appState.ventasSemana.soda500 || 0, precio: appState.precios.soda500 || 1200 },
                 { nombre: 'Dispenser Mesa', cant: appState.ventasSemana.mesa, precio: appState.precios.mesa }
             ];
             itemsSem.forEach(it => {
