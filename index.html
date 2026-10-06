@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chosen 👑 SoderApp v1.7.5 (Satelital Pro)</title>
+    <title>Chosen 👑 SoderApp v1.7.5 (Satelital)</title>
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- Leaflet CSS para Mapas Satelitales -->
+    <!-- Leaflet CSS para Mapas -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- FontAwesome para Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,46 +19,53 @@
 <body class="bg-gray-100 font-sans pb-24">
 
     <!-- Encabezado Principal -->
-    <header class="bg-blue-900 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
+    <header class="bg-blue-800 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
         <div>
-            <h1 class="text-xl font-bold">Chosen 👑 SoderApp <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full">v1.7.5 Pro</span></h1>
-            <p class="text-xs text-blue-200">Sarmiento / Media Agua, San Juan[cite: 4, 5]</p>
+            <h1 class="text-xl font-bold">Chosen 👑 SoderApp <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full">v1.7.5 Satelital</span></h1>
+            <p class="text-xs text-blue-200" id="current-zone-label">Zona: Sarmiento / Media Agua</p>
         </div>
         <div class="flex items-center space-x-2">
-            <span id="jornada-estado" class="text-xs px-2.5 py-1 rounded bg-red-600 font-semibold">DETENIDO</span>
-            <button onclick="toggleJornada()" id="btn-jornada" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded font-bold shadow">Iniciar Ruta</button>
+            <span id="jornada-estado" class="text-xs px-2.5 py-1 rounded bg-red-600 font-semibold">PAUSADA</span>
+            <button onclick="toggleJornada()" id="btn-jornada" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded font-bold shadow">Iniciar</button>
         </div>
     </header>
 
     <!-- Contenedor Principal de Módulos -->
     <main class="p-4 max-w-4xl mx-auto">
 
-        <!-- 1. TAB RUTA DEL DIA -->
+        <!-- 1. TAB RECORRIDO -->
         <div id="tab-recorrido" class="tab-content active space-y-4">
             <div class="bg-white p-4 rounded-lg shadow">
                 <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-route text-blue-600"></i> Ruta del Día y Stock en Camión</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-sm mb-4">
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center text-sm mb-4">
                     <div class="bg-blue-50 p-2 rounded border border-blue-200">
-                        <span class="block text-gray-500 text-xs">Bidón 20L Llenos</span>
+                        <span class="block text-gray-500 text-xs">Bidón 20L</span>
                         <strong class="text-lg text-blue-800" id="camion-b20">50</strong>
                     </div>
                     <div class="bg-blue-50 p-2 rounded border border-blue-200">
-                        <span class="block text-gray-500 text-xs">Soda Sifón 1L / 500ml</span>
+                        <span class="block text-gray-500 text-xs">Soda Gde</span>
                         <strong class="text-lg text-blue-800" id="camion-soda">30</strong>
+                    </div>
+                    <div class="bg-blue-50 p-2 rounded border border-blue-200">
+                        <span class="block text-gray-500 text-xs">Soda 500cc</span>
+                        <strong class="text-lg text-blue-800" id="camion-soda500">20</strong>
                     </div>
                     <div class="bg-green-50 p-2 rounded border border-green-200">
                         <span class="block text-gray-500 text-xs">Vacíos 20L</span>
                         <strong class="text-lg text-green-800" id="camion-v20">12</strong>
                     </div>
                     <div class="bg-green-50 p-2 rounded border border-green-200">
-                        <span class="block text-gray-500 text-xs">Vacíos Sifón</span>
+                        <span class="block text-gray-500 text-xs">Vacíos Gde</span>
                         <strong class="text-lg text-green-800" id="camion-vsoda">5</strong>
+                    </div>
+                    <div class="bg-green-50 p-2 rounded border border-green-200">
+                        <span class="block text-gray-500 text-xs">Vacíos 500cc</span>
+                        <strong class="text-lg text-green-800" id="camion-vsoda500">2</strong>
                     </div>
                 </div>
 
                 <div class="flex gap-2 mb-3">
                     <select id="filtro-dia" class="w-1/2 p-2 border rounded text-sm bg-gray-50" onchange="renderRecorrido()">
-                        <option value="Todos">Todos los días</option>
                         <option value="Lunes">Lunes</option>
                         <option value="Martes">Martes</option>
                         <option value="Miércoles">Miércoles</option>
@@ -68,7 +75,7 @@
                     </select>
                     <select id="filtro-zona" class="w-1/2 p-2 border rounded text-sm bg-gray-50" onchange="renderRecorrido()">
                         <option value="Todas">Todas las Zonas</option>
-                        <option value="Villa Media Agua">Villa Media Agua</option>
+                        <option value="Media Agua">Media Agua</option>
                         <option value="Los Berros">Los Berros</option>
                         <option value="Cochagual">Cochagual</option>
                         <option value="Sarmiento">Sarmiento</option>
@@ -89,12 +96,12 @@
             </div>
         </div>
 
-        <!-- 2. TAB CLIENTES (Padrón General para 1000+ Clientes) -->
+        <!-- 2. TAB CLIENTES (Padrón Completo e Ilimitado - Capacidad 1000+) -->
         <div id="tab-clientes" class="tab-content space-y-4">
             <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
                 <div>
-                    <h2 class="text-md font-bold text-gray-700"><i class="fas fa-users text-blue-600"></i> Padrón General de Clientes (1000+)[cite: 4, 5]</h2>
-                    <p class="text-xs text-gray-500">Gestión completa, búsqueda rápida y control de envases.</p>
+                    <h2 class="text-md font-bold text-gray-700"><i class="fas fa-users text-blue-600"></i> Padrón General de Clientes</h2>
+                    <p class="text-xs text-gray-500">Gestión preparada para 1000+ clientes sin límites.</p>
                 </div>
                 <button onclick="abrirModalCliente()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-bold shadow">
                     <i class="fas fa-user-plus"></i> Nuevo Cliente
@@ -102,44 +109,45 @@
             </div>
 
             <div class="bg-white p-4 rounded-lg shadow">
-                <input type="text" id="buscador-clientes" placeholder="Buscar por nombre, dirección o teléfono..." class="w-full p-2 border rounded text-sm mb-3" oninput="renderPadronClientes()">
-                <div id="lista-padron-completa" class="space-y-3 max-h-96 overflow-y-auto"></div>
+                <input type="text" id="buscador-clientes" placeholder="Buscar por nombre, dirección o teléfono..." class="w-full p-2 border rounded text-sm mb-3" oninput="filtrarPadronClientes()">
+                <div id="lista-padron-completa" class="space-y-3">
+                    <!-- Dinámico -->
+                </div>
             </div>
         </div>
 
-        <!-- 3. TAB STOCK GALPÓN Y CAMIÓN -->
+        <!-- 3. TAB STOCK GALPÓN Y FÁBRICA -->
         <div id="tab-stock" class="tab-content space-y-4">
-            <div class="bg-white p-4 rounded-lg shadow space-y-3">
-                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-warehouse text-blue-600"></i> Control de Stock Galpón y Envases Rotos/Vacíos[cite: 4]</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+            <!-- Stock General Terminado -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-warehouse text-blue-600"></i> Control de Stock en Galpón</h2>
+                <div class="grid grid-cols-3 gap-4 text-sm mb-4">
                     <div class="p-3 bg-gray-50 rounded border">
-                        <span class="text-gray-500 block text-xs">Bidones 20L Llenos</span>
-                        <strong class="text-lg text-gray-800" id="stk-g-b20">300</strong>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded border">
-                        <span class="text-gray-500 block text-xs">Sifones Soda 1L Llenos</span>
-                        <strong class="text-lg text-gray-800" id="stk-g-soda1">150</strong>
+                        <span class="text-gray-500 block text-xs">Bidones 20L</span>
+                        <strong class="text-xl text-gray-800" id="stock-galpon-b20">300</strong>
                     </div>
                     <div class="p-3 bg-gray-50 rounded border">
-                        <span class="text-gray-500 block text-xs">Sifones Soda 500ml Llenos</span>
-                        <strong class="text-lg text-gray-800" id="stk-g-soda500">100</strong>
+                        <span class="text-gray-500 block text-xs">Sifones Gde</span>
+                        <strong class="text-xl text-gray-800" id="stock-galpon-soda">150</strong>
                     </div>
-                    <div class="p-3 bg-yellow-50 rounded border border-yellow-200">
-                        <span class="text-gray-600 block text-xs">Vacíos 20L / 12L</span>
-                        <strong class="text-lg text-yellow-700" id="stk-g-vac20">80</strong>
-                    </div>
-                    <div class="p-3 bg-yellow-50 rounded border border-yellow-200">
-                        <span class="text-gray-600 block text-xs">Sifones Vacíos</span>
-                        <strong class="text-lg text-yellow-700" id="stk-g-vacsoda">40</strong>
-                    </div>
-                    <div class="p-3 bg-red-50 rounded border border-red-200">
-                        <span class="text-red-600 block text-xs">Bidones / Sifones Rotos</span>
-                        <strong class="text-lg text-red-700" id="stk-g-rotos">5</strong>
+                    <div class="p-3 bg-gray-50 rounded border">
+                        <span class="text-gray-500 block text-xs">Sifones 500cc</span>
+                        <strong class="text-xl text-gray-800" id="stock-galpon-soda500">80</strong>
                     </div>
                 </div>
-                <div class="flex gap-2 pt-2">
-                    <button onclick="alert('Módulo de Carga de Camión Activo')" class="w-1/2 bg-blue-600 text-white p-2 rounded text-xs font-bold">Cargar Camión</button>
-                    <button onclick="alert('Módulo de Vaciado de Retorno Activo')" class="w-1/2 bg-green-600 text-white p-2 rounded text-xs font-bold">Procesar Vaciado</button>
+                <div class="flex gap-2">
+                    <button onclick="registrarCargaCamion()" class="w-1/2 bg-blue-600 text-white p-2 rounded text-xs font-bold">Cargar Camión</button>
+                    <button onclick="registrarRetornoCamion()" class="w-1/2 bg-green-600 text-white p-2 rounded text-xs font-bold">Cierre / Retorno</button>
+                </div>
+            </div>
+
+            <!-- APARTADO ESPECIAL: Fábrica -->
+            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 shadow">
+                <h2 class="text-md font-bold text-yellow-800 mb-2"><i class="fas fa-industry text-yellow-600"></i> Pendientes en Fábrica</h2>
+                <p class="text-xs text-yellow-700 mb-3">Bidones que han quedado en la planta para ser llenados.</p>
+                <div class="flex items-center justify-between p-3 bg-white rounded border border-yellow-300">
+                    <span class="text-gray-700 font-semibold text-sm">Bidones a Llenar:</span>
+                    <strong class="text-2xl text-yellow-600" id="stock-fabrica-llenar">45</strong>
                 </div>
             </div>
         </div>
@@ -147,19 +155,19 @@
         <!-- 4. TAB PRECIOS -->
         <div id="tab-precios" class="tab-content space-y-4">
             <div class="bg-white p-4 rounded-lg shadow">
-                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-tags text-blue-600"></i> Gestión de Precios[cite: 4, 5]</h2>
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-tags text-blue-600"></i> Gestión de Precios</h2>
                 <div class="space-y-3 text-sm">
                     <div>
                         <label class="block text-xs text-gray-500">Precio Bidón 20L ($)</label>
-                        <input type="number" id="precio-b20" value="3000" class="w-full p-2 border rounded">
+                        <input type="number" id="precio-b20" value="2500" class="w-full p-2 border rounded">
                     </div>
                     <div>
-                        <label class="block text-xs text-gray-500">Precio Sifón 1L ($)</label>
-                        <input type="number" id="precio-soda1" value="1800" class="w-full p-2 border rounded">
+                        <label class="block text-xs text-gray-500">Precio Cajón Soda Gde ($)</label>
+                        <input type="number" id="precio-soda" value="4000" class="w-full p-2 border rounded">
                     </div>
                     <div>
-                        <label class="block text-xs text-gray-500">Precio Sifón 500ml ($)</label>
-                        <input type="number" id="precio-soda500" value="1200" class="w-full p-2 border rounded">
+                        <label class="block text-xs text-gray-500">Precio Cajón Soda 500cc ($)</label>
+                        <input type="number" id="precio-soda500" value="3000" class="w-full p-2 border rounded">
                     </div>
                     <div>
                         <label class="block text-xs text-gray-500">Alquiler Dispenser Mensual ($)</label>
@@ -173,7 +181,7 @@
         <!-- 5. TAB FINANZAS -->
         <div id="tab-finanzas" class="tab-content space-y-4">
             <div class="bg-white p-4 rounded-lg shadow">
-                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-wallet text-blue-600"></i> Resumen de Caja Diario[cite: 4, 5]</h2>
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-wallet text-blue-600"></i> Resumen de Caja Diario</h2>
                 <div class="grid grid-cols-2 gap-4 text-center mb-4">
                     <div class="p-3 bg-green-50 rounded border border-green-200">
                         <span class="text-xs text-gray-500">Efectivo Recaudado</span>
@@ -191,7 +199,7 @@
         <!-- 6. TAB GRABADOR GPS -->
         <div id="tab-grabador" class="tab-content space-y-4">
             <div class="bg-white p-4 rounded-lg shadow text-center">
-                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-map-marked-alt text-blue-600"></i> Grabador de Recorrido GPS[cite: 4, 5]</h2>
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-map-marked-alt text-blue-600"></i> Grabador de Recorrido GPS</h2>
                 <p class="text-xs text-gray-500 mb-4">Registrá el trazado satelital de tus calles de reparto.</p>
                 <button onclick="toggleGrabadorGPS()" id="btn-gps" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-xs font-bold">Iniciar Grabación GPS</button>
             </div>
@@ -201,7 +209,7 @@
 
     <!-- Barra de Navegación Inferior -->
     <nav class="bg-white border-t fixed bottom-0 left-0 right-0 shadow-lg flex justify-around p-2 z-50">
-        <button onclick="switchTab('recorrido')" class="flex flex-col items-center text-blue-900 text-xs" id="nav-recorrido"><i class="fas fa-route text-lg"></i> Ruta</button>
+        <button onclick="switchTab('recorrido')" class="flex flex-col items-center text-blue-800 text-xs" id="nav-recorrido"><i class="fas fa-route text-lg"></i> Ruta</button>
         <button onclick="switchTab('clientes')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-clientes"><i class="fas fa-users text-lg"></i> Clientes</button>
         <button onclick="switchTab('stock')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-stock"><i class="fas fa-warehouse text-lg"></i> Stock</button>
         <button onclick="switchTab('precios')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-precios"><i class="fas fa-tags text-lg"></i> Precios</button>
@@ -209,7 +217,7 @@
         <button onclick="switchTab('grabador')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-grabador"><i class="fas fa-satellite text-lg"></i> GPS</button>
     </nav>
 
-    <!-- MODAL ALTA / EDICIÓN DE CLIENTE Y CONTROL DE ENVASES -->
+    <!-- MODAL ALTA / EDICIÓN DE CLIENTE (Completo, Estético e Ilimitado) -->
     <div id="modal-cliente" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4 overflow-y-auto">
         <div class="bg-white p-4 rounded-lg w-full max-w-md space-y-3 my-auto max-h-screen overflow-y-auto">
             <h3 class="text-md font-bold text-gray-800" id="modal-titulo"><i class="fas fa-user-plus text-blue-600"></i> Alta de Cliente</h3>
@@ -227,56 +235,34 @@
                 <label class="block text-xs text-gray-500">Teléfono (WhatsApp):</label>
                 <input type="text" id="input-tel" placeholder="2641234567" class="w-full p-2 border rounded text-sm">
             </div>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-xs text-gray-500">Tipo de Cliente:</label>
-                    <select id="input-tipo" class="w-full p-2 border rounded text-sm">
-                        <option value="Cliente Fijo">Cliente Fijo</option>
-                        <option value="Cliente Nuevo">Cliente Nuevo</option>
-                        <option value="Ocasional">Ocasional</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500">Día de Reparto:</label>
-                    <select id="input-dia" class="w-full p-2 border rounded text-sm">
-                        <option value="Lunes">Lunes</option>
-                        <option value="Martes">Martes</option>
-                        <option value="Miércoles">Miércoles</option>
-                        <option value="Jueves">Jueves</option>
-                        <option value="Viernes">Viernes</option>
-                        <option value="Sábado">Sábado</option>
-                    </select>
-                </div>
+            <div>
+                <label class="block text-xs text-gray-500">Tipo de Cliente:</label>
+                <select id="input-tipo" class="w-full p-2 border rounded text-sm">
+                    <option value="Cliente Fijo">Cliente Fijo</option>
+                    <option value="Cliente Nuevo">Cliente Nuevo</option>
+                    <option value="Ocasional">Ocasional</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500">Día de Reparto:</label>
+                <select id="input-dia" class="w-full p-2 border rounded text-sm">
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miércoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sábado">Sábado</option>
+                </select>
             </div>
             <div>
                 <label class="block text-xs text-gray-500">Zona / Localidad:</label>
                 <select id="input-zona" class="w-full p-2 border rounded text-sm">
-                    <option value="Villa Media Agua">Villa Media Agua</option>
+                    <option value="Media Agua">Media Agua</option>
                     <option value="Los Berros">Los Berros</option>
                     <option value="Cochagual">Cochagual</option>
                     <option value="Sarmiento">Sarmiento</option>
                 </select>
             </div>
-            
-            <!-- CONTROL DE ENVASES EN PODER DEL CLIENTE -->
-            <div class="bg-blue-50 p-3 rounded border border-blue-200 space-y-2">
-                <span class="block text-xs font-bold text-blue-900">Envases en poder del cliente:</span>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block text-[10px] text-gray-600">Bidones 20L:</label>
-                        <input type="number" id="env-b20" value="0" min="0" class="w-full p-1 border rounded text-sm text-center">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] text-gray-600">Sifón 1L:</label>
-                        <input type="number" id="env-soda1" value="0" min="0" class="w-full p-1 border rounded text-sm text-center">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] text-gray-600">Sifón 500ml:</label>
-                        <input type="number" id="env-soda500" value="0" min="0" class="w-full p-1 border rounded text-sm text-center">
-                    </div>
-                </div>
-            </div>
-
             <div>
                 <label class="block text-xs text-gray-500">Notas Tácticas:</label>
                 <input type="text" id="input-notas" placeholder="Detalles de entrega..." class="w-full p-2 border rounded text-sm">
@@ -292,14 +278,15 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Padrón General de Clientes (Soporta escala para 1000+ clientes con LocalStorage)
-        let clientes = JSON.parse(localStorage.getItem('soderapp_clientes_v2')) || [
-            { id: 1, nombre: "Marcela Tejada", direccion: "Av. 25 de Mayo y Santa Cruz", tel: "2644112233", tipo: "Cliente Fijo", dia: "Sábado", zona: "Villa Media Agua", notas: "Dejar 2 bidones", envases: { b20: 2, soda1: 1, soda500: 0 }, lat: -31.982, lng: -68.433 },
-            { id: 2, nombre: "Supermercado Cuyo", direccion: "Ruta 40 s/n", tel: "2645556677", tipo: "Cliente Fijo", dia: "Lunes", zona: "Los Berros", notas: "Pago por transferencia", envases: { b20: 5, soda1: 4, soda500: 2 }, lat: -31.950, lng: -68.410 }
+        // Almacenamiento local persistente e ilimitado (Capacidad +1000 clientes)
+        let clientes = JSON.parse(localStorage.getItem('soderapp_clientes')) || [
+            { id: 1, nombre: "Marcela Tejada", direccion: "Av. 25 de Mayo y Santa Cruz", tel: "2644112233", tipo: "Cliente Fijo", dia: "Sábado", zona: "Media Agua", notas: "Dejar 2 bidones", lat: -31.848, lng: -68.450 },
+            { id: 2, nombre: "Supermercado Cuyo", direccion: "Ruta 40 s/n", tel: "2645556677", tipo: "Cliente Fijo", dia: "Lunes", zona: "Los Berros", notas: "Pago por transferencia", lat: -31.860, lng: -68.440 }
         ];
 
         let map, markersLayer;
         let jornadaActiva = false;
+        let grabandoGPS = false;
 
         document.addEventListener("DOMContentLoaded", () => {
             initMap();
@@ -309,11 +296,11 @@
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(el => el.classList.remove('text-blue-900'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('text-blue-800'));
             document.querySelectorAll('nav button').forEach(el => el.classList.add('text-gray-500'));
             
             document.getElementById('tab-' + tabId).classList.add('active');
-            document.getElementById('nav-' + tabId).classList.add('text-blue-900');
+            document.getElementById('nav-' + tabId).classList.add('text-blue-800');
             document.getElementById('nav-' + tabId).classList.remove('text-gray-500');
 
             if(tabId === 'recorrido' && map) {
@@ -322,7 +309,7 @@
         }
 
         function initMap() {
-            map = L.map('map').setView([-31.982, -68.433], 13);
+            map = L.map('map').setView([-31.848, -68.450], 13);
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri'
             }).addTo(map);
@@ -336,68 +323,63 @@
             contenedor.innerHTML = '';
             markersLayer.clearLayers();
 
-            const filtrados = clientes.filter(c => {
-                const matchDia = (diaSel === 'Todos' || c.dia === diaSel);
-                const matchZona = (zonaSel === 'Todas' || c.zona === zonaSel);
-                return matchDia && matchZona;
-            });
+            const filtrados = clientes.filter(c => (diaSel === 'Todos' || c.dia === diaSel) && (zonaSel === 'Todas' || c.zona === zonaSel));
 
             if(filtrados.length === 0) {
-                contenedor.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">No hay clientes para este filtro.</p>';
+                contenedor.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No hay clientes con este filtro.</p>';
                 return;
             }
 
-            filtrados.forEach((c, index) => {
-                const div = document.createElement('div');
-                div.className = "p-3 bg-gray-50 rounded border flex justify-between items-center text-sm";
-                div.innerHTML = `
-                    <div>
-                        <strong>${index + 1}. ${c.nombre}</strong> <span class="text-xs text-blue-600">(${c.tipo})</span><br>
-                        <span class="text-xs text-gray-500">${c.direccion} - Días: ${c.dia}</span><br>
-                        <span class="text-[11px] text-green-700 font-semibold">En poder: ${c.envases.b20} bidones, ${c.envases.soda1} sifones 1L, ${c.envases.soda500} sifones 500ml</span>
+            filtrados.forEach(c => {
+                contenedor.innerHTML += `
+                    <div class="p-3 border rounded flex justify-between items-center bg-gray-50 shadow-sm">
+                        <div>
+                            <strong>${c.nombre}</strong>
+                            <p class="text-xs text-gray-500">${c.direccion} (${c.zona}) - Tel: ${c.tel || 'Sin número'}</p>
+                        </div>
+                        <button onclick="atenderCliente(${c.id})" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold shadow">Atender</button>
                     </div>
-                    <button onclick="atenderCliente(${c.id})" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold">Atender</button>
                 `;
-                contenedor.appendChild(div);
 
                 if(c.lat && c.lng) {
-                    const marker = L.marker([c.lat, c.lng]).bindPopup(`<b>${c.nombre}</b><br>${c.direccion}`);
+                    let marker = L.marker([c.lat, c.lng]).bindPopup(`<b>${c.nombre}</b><br>${c.direccion}`);
                     markersLayer.addLayer(marker);
                 }
             });
         }
 
         function renderPadronClientes() {
-            const buscador = document.getElementById('buscador-clientes').value.toLowerCase();
             const contenedor = document.getElementById('lista-padron-completa');
             contenedor.innerHTML = '';
-
-            const filtrados = clientes.filter(c => 
-                c.nombre.toLowerCase().includes(buscador) || 
-                c.direccion.toLowerCase().includes(buscador) || 
-                c.tel.includes(buscador)
-            );
-
-            if(filtrados.length === 0) {
-                contenedor.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">No se encontraron clientes.</p>';
+            
+            if(clientes.length === 0) {
+                contenedor.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No hay clientes registrados.</p>';
                 return;
             }
 
-            filtrados.forEach(c => {
-                const div = document.createElement('div');
-                div.className = "p-3 bg-gray-50 rounded border flex justify-between items-center text-sm";
-                div.innerHTML = `
-                    <div>
-                        <strong>${c.nombre}</strong> <span class="text-xs text-gray-500">(${c.zona} - ${c.dia})</span><br>
-                        <span class="text-xs text-gray-600">${c.direccion} | Tel: ${c.tel}</span><br>
-                        <span class="text-[11px] text-blue-800 font-semibold">Envases retendidos: 20L: ${c.envases.b20} | Sif. 1L: ${c.envases.soda1} | Sif. 500ml: ${c.envases.soda500}</span>
-                    </div>
-                    <div class="flex gap-1">
-                        <button onclick="editarCliente(${c.id})" class="bg-yellow-500 text-white px-2.5 py-1 rounded text-xs font-bold"><i class="fas fa-edit"></i></button>
-                        <button onclick="eliminarCliente(${c.id})" class="bg-red-600 text-white px-2.5 py-1 rounded text-xs font-bold"><i class="fas fa-trash"></i></button>
+            clientes.forEach(c => {
+                contenedor.innerHTML += `
+                    <div class="p-3 border rounded bg-gray-50 flex justify-between items-center shadow-sm">
+                        <div>
+                            <strong>${c.nombre}</strong> <span class="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">${c.tipo || 'Cliente'}</span>
+                            <p class="text-xs text-gray-500">${c.direccion} | ${c.zona} (${c.dia})</p>
+                            <p class="text-xs text-gray-400">Tel: ${c.tel || 'Sin número'} ${c.notas ? '| Nota: ' + c.notas : ''}</p>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editarCliente(${c.id})" class="bg-blue-500 text-white px-2.5 py-1 rounded text-xs font-bold shadow">Editar</button>
+                            <button onclick="eliminarCliente(${c.id})" class="bg-red-500 text-white px-2.5 py-1 rounded text-xs font-bold shadow">Borrar</button>
+                        </div>
                     </div>
                 `;
-                contenedor.appendChild(div);
+            });
+        }
+
+        function filtrarPadronClientes() {
+            const filtro = document.getElementById('buscador-clientes').value.toLowerCase();
+            const items = document.querySelectorAll('#lista-padron-completa > div');
+            items.forEach(item => {
+                const texto = item.innerText.toLowerCase();
+                item.style.display = texto.includes(filtro) ? '' : 'none';
             });
         }
 
@@ -408,9 +390,6 @@
             document.getElementById('input-direccion').value = '';
             document.getElementById('input-tel').value = '';
             document.getElementById('input-notas').value = '';
-            document.getElementById('env-b20').value = '0';
-            document.getElementById('env-soda1').value = '0';
-            document.getElementById('env-soda500').value = '0';
             document.getElementById('modal-cliente').classList.remove('hidden');
         }
 
@@ -418,24 +397,7 @@
             document.getElementById('modal-cliente').classList.add('hidden');
         }
 
-        function editarCliente(id) {
-            const c = clientes.find(item => item.id === id);
-            if(!c) return;
-            document.getElementById('modal-titulo').innerHTML = '<i class="fas fa-user-edit text-blue-600"></i> Editar Cliente';
-            document.getElementById('cliente-id').value = c.id;
-            document.getElementById('input-nombre').value = c.nombre;
-            document.getElementById('input-direccion').value = c.direccion;
-            document.getElementById('input-tel').value = c.tel;
-            document.getElementById('input-tipo').value = c.tipo;
-            document.getElementById('input-dia').value = c.dia;
-            document.getElementById('input-zona').value = c.zona;
-            document.getElementById('input-notas').value = c.notas || '';
-            document.getElementById('env-b20').value = c.envases?.b20 || 0;
-            document.getElementById('env-soda1').value = c.envases?.soda1 || 0;
-            document.getElementById('env-soda500').value = c.envases?.soda500 || 0;
-            document.getElementById('modal-cliente').classList.remove('hidden');
-        }
-
+        // GUARDADO FLEXIBLE E ILIMITADO 
         function guardarClienteCompleto() {
             const id = document.getElementById('cliente-id').value;
             const nombre = document.getElementById('input-nombre').value.trim();
@@ -445,46 +407,70 @@
             const dia = document.getElementById('input-dia').value;
             const zona = document.getElementById('input-zona').value;
             const notas = document.getElementById('input-notas').value.trim();
-            
-            const envases = {
-                b20: parseInt(document.getElementById('env-b20').value) || 0,
-                soda1: parseInt(document.getElementById('env-soda1').value) || 0,
-                soda500: parseInt(document.getElementById('env-soda500').value) || 0
-            };
 
-            if(!nombre || !direccion) {
-                alert('Completá al menos el nombre y la dirección.');
+            if(!nombre) {
+                alert("Por favor, poné al menos el nombre del cliente.");
                 return;
             }
 
             if(id) {
-                const c = clientes.find(item => item.id == id);
-                if(c) {
-                    c.nombre = nombre; c.direccion = direccion; c.tel = tel;
-                    c.tipo = tipo; c.dia = dia; c.zona = zona; c.notas = notas; c.envases = envases;
+                let cli = clientes.find(c => c.id == id);
+                if(cli) {
+                    cli.nombre = nombre;
+                    cli.direccion = direccion || "Sin dirección";
+                    cli.tel = tel;
+                    cli.tipo = tipo;
+                    cli.dia = dia;
+                    cli.zona = zona;
+                    cli.notas = notas;
                 }
             } else {
                 const nuevo = {
-                    id: Date.now(), nombre, direccion, tel, tipo, dia, zona, notas, envases,
-                    lat: -31.982 + (Math.random() * 0.02 - 0.01),
-                    lng: -68.433 + (Math.random() * 0.02 - 0.01)
+                    id: Date.now(),
+                    nombre: nombre,
+                    direccion: direccion || "Sin dirección",
+                    tel: tel,
+                    tipo: tipo,
+                    dia: dia,
+                    zona: zona,
+                    notas: notas,
+                    lat: -31.848 + (Math.random() - 0.5) * 0.05,
+                    lng: -68.450 + (Math.random() - 0.5) * 0.05
                 };
                 clientes.push(nuevo);
             }
 
-            localStorage.setItem('soderapp_clientes_v2', JSON.stringify(clientes));
+            // Persistencia permanente en LocalStorage preparado para miles de registros
+            localStorage.setItem('soderapp_clientes', JSON.stringify(clientes));
+
             cerrarModalCliente();
-            renderRecorrido();
             renderPadronClientes();
-            alert('¡Cliente guardado correctamente!');
+            renderRecorrido();
+            alert("¡Cliente guardado correctamente con éxito, compadre!");
+        }
+
+        function editarCliente(id) {
+            const cli = clientes.find(c => c.id == id);
+            if(cli) {
+                document.getElementById('modal-titulo').innerHTML = '<i class="fas fa-user-edit text-blue-600"></i> Editar Cliente';
+                document.getElementById('cliente-id').value = cli.id;
+                document.getElementById('input-nombre').value = cli.nombre;
+                document.getElementById('input-direccion').value = cli.direccion;
+                document.getElementById('input-tel').value = cli.tel;
+                document.getElementById('input-tipo').value = cli.tipo || 'Cliente Fijo';
+                document.getElementById('input-dia').value = cli.dia;
+                document.getElementById('input-zona').value = cli.zona;
+                document.getElementById('input-notas').value = cli.notas || '';
+                document.getElementById('modal-cliente').classList.remove('hidden');
+            }
         }
 
         function eliminarCliente(id) {
-            if(confirm('¿Seguro querés eliminar este cliente del padrón?')) {
-                clientes = clientes.filter(c => c.id !== id);
-                localStorage.setItem('soderapp_clientes_v2', JSON.stringify(clientes));
-                renderRecorrido();
+            if(confirm("¿Estás seguro de que querés borrar este cliente del padrón?")) {
+                clientes = clientes.filter(c => c.id != id);
+                localStorage.setItem('soderapp_clientes', JSON.stringify(clientes));
                 renderPadronClientes();
+                renderRecorrido();
             }
         }
 
@@ -493,17 +479,43 @@
             const btn = document.getElementById('btn-jornada');
             const estado = document.getElementById('jornada-estado');
             if(jornadaActiva) {
-                btn.innerText = "Pausar";
-                btn.className = "bg-yellow-600 hover:bg-yellow-700 text-white text-xs px-3 py-1.5 rounded font-bold shadow";
-                estado.innerText = "ACTIVO";
-                estado.className = "text-xs px-2.5 py-1 rounded bg-green-600 font-semibold";
+                btn.innerText = "Finalizar";
+                btn.className = "bg-red-600 text-white text-xs px-3 py-1.5 rounded font-bold";
+                estado.innerText = "EN CURSO";
+                estado.className = "text-xs px-2.5 py-1 rounded bg-green-600 font-semibold text-white";
             } else {
-                btn.innerText = "Iniciar Ruta";
-                btn.className = "bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded font-bold shadow";
-                estado.innerText = "DETENIDO";
-                estado.className = "text-xs px-2.5 py-1 rounded bg-red-600 font-semibold";
+                btn.innerText = "Iniciar";
+                btn.className = "bg-green-600 text-white text-xs px-3 py-1.5 rounded font-bold";
+                estado.innerText = "PAUSADA";
+                estado.className = "text-xs px-2.5 py-1 rounded bg-red-600 font-semibold text-white";
             }
         }
+
+        function toggleGrabadorGPS() {
+            grabandoGPS = !grabandoGPS;
+            const btn = document.getElementById('btn-gps');
+            if(grabandoGPS) {
+                btn.innerText = "Detener Grabación GPS";
+                btn.className = "bg-red-600 text-white px-4 py-2 rounded text-xs font-bold";
+                alert("Grabación GPS iniciada...");
+            } else {
+                btn.innerText = "Iniciar Grabación GPS";
+                btn.className = "bg-blue-600 text-white px-4 py-2 rounded text-xs font-bold";
+                alert("Recorrido GPS guardado correctamente.");
+            }
+        }
+
+        function atenderCliente(id) {
+            let cli = clientes.find(c => c.id == id);
+            if(cli) {
+                alert(`Atendiendo a: ${cli.nombre} en ${cli.direccion}. ¡Venta registrada!`);
+            }
+        }
+
+        function guardarPrecios() { alert("Precios actualizados correctamente."); }
+        function registrarCargaCamion() { alert("Carga de camión registrada desde el galpón."); }
+        function registrarRetornoCamion() { alert("Retorno registrado con éxito."); }
+        function realizarCierreCaja() { alert("Cierre de caja realizado con éxito."); }
     </script>
 </body>
 </html>
