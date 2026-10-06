@@ -879,4 +879,440 @@
         function guardarStorage() { localStorage.setItem('chosen_soderapp_v180_data', JSON.stringify(appState)); }
 
         function cargarStorage() {
-            const data =
+            const data = localStorage.getItem('chosen_soderapp_v180_data');
+            if (data) { try { appState = JSON.parse(data); } catch(e) {} }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.classList.remove('text-blue-700', 'font-bold');
+                b.classList.add('text-gray-500', 'font-semibold');
+            });
+            
+            const targetTab = document.getElementById('tab-' + tabId);
+            if(targetTab) targetTab.classList.add('active');
+
+            const navBtn = document.getElementById('nav-' + tabId);
+            if (navBtn) {
+                navBtn.classList.remove('text-gray-500', 'font-semibold');
+                navBtn.classList.add('text-blue-700', 'font-bold');
+            }
+
+            if (tabId === 'recorrido' && mapLeaflet) {
+                setTimeout(() => mapLeaflet.invalidateSize(), 300);
+            }
+        }
+
+        function toggleEstadoRuta() {
+            if (appState.estadoRuta === 'Activo') cambiarEstadoRuta('Pausado');
+            else cambiarEstadoRuta('Activo');
+        }
+
+        function cambiarEstadoRuta(nuevoEstado) {
+            appState.estadoRuta = nuevoEstado;
+            guardarStorage();
+            actualizarEstadoRutaUI();
+        }
+
+        function actualizarEstadoRutaUI() {
+            const lbl = document.getElementById('lbl-estado-ruta');
+            const lblTxt = document.getElementById('lbl-estado-ruta-txt');
+            const btnToggle = document.getElementById('btn-toggle-ruta');
+
+            if (lbl && lblTxt) {
+                lbl.innerText = appState.estadoRuta.toUpperCase();
+                lblTxt.innerText = appState.estadoRuta;
+                
+                if (appState.estadoRuta === 'Activo') {
+                    lbl.className = 'text-xs px-2.5 py-1 rounded bg-green-600 text-white font-bold';
+                    lblTxt.className = 'text-green-600 font-bold';
+                    btnToggle.innerText = '⏸ Pausar';
+                    btnToggle.className = 'bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1.5 rounded font-bold shadow';
+                } else if (appState.estadoRuta === 'Pausado') {
+                    lbl.className = 'text-xs px-2.5 py-1 rounded bg-yellow-500 text-white font-bold';
+                    lblTxt.className = 'text-yellow-600 font-bold';
+                    btnToggle.innerText = '🚀 Iniciar';
+                    btnToggle.className = 'bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded font-bold shadow';
+                } else {
+                    lbl.className = 'text-xs px-2.5 py-1 rounded bg-red-600 text-white font-bold';
+                    lblTxt.className = 'text-red-600 font-bold';
+                    btnToggle.innerText = '🚀 Iniciar';
+                    btnToggle.className = 'bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded font-bold shadow';
+                }
+            }
+        }
+
+        function finalizarRecorridoIrAVaciado() {
+            cambiarEstadoRuta('Finalizado');
+            switchTab('stock');
+            
+            document.getElementById('vac-dev-lleno-20').value = appState.camionEnVivo.llenos.b20;
+            document.getElementById('vac-dev-lleno-12').value = appState.camionEnVivo.llenos.b12;
+            document.getElementById('vac-dev-lleno-soda').value = appState.camionEnVivo.llenos.soda;
+            document.getElementById('vac-dev-lleno-soda500').value = appState.camionEnVivo.llenos.soda500 || 0;
+            document.getElementById('vac-dev-lleno-mesa').value = appState.camionEnVivo.llenos.mesa;
+
+            document.getElementById('vac-ing-vac-20').value = appState.camionEnVivo.vacios.b20;
+            document.getElementById('vac-ing-vac-12').value = appState.camionEnVivo.vacios.b12;
+            document.getElementById('vac-ing-vac-soda').value = appState.camionEnVivo.vacios.soda;
+            document.getElementById('vac-ing-vac-soda500').value = appState.camionEnVivo.vacios.soda500 || 0;
+
+            mostrarModal('Recorrido Finalizado', 'Revisá los datos en la pantalla de Vaciado y Devolución.');
+        }
+
+        function cargarInputsPrecios() {
+            document.getElementById('prc-b20').value = appState.precios.b20;
+            document.getElementById('prc-b12').value = appState.precios.b12;
+            document.getElementById('prc-soda').value = appState.precios.soda;
+            document.getElementById('prc-soda500').value = appState.precios.soda500 || 1200;
+            document.getElementById('prc-fc').value = appState.precios.fc;
+            document.getElementById('prc-mesa').value = appState.precios.mesa;
+        }
+
+        function guardarPrecios(notificar = false) {
+            appState.precios.b20 = parseInt(document.getElementById('prc-b20').value) || 0;
+            appState.precios.b12 = parseInt(document.getElementById('prc-b12').value) || 0;
+            appState.precios.soda = parseInt(document.getElementById('prc-soda').value) || 0;
+            appState.precios.soda500 = parseInt(document.getElementById('prc-soda500').value) || 0;
+            appState.precios.fc = parseInt(document.getElementById('prc-fc').value) || 0;
+            appState.precios.mesa = parseInt(document.getElementById('prc-mesa').value) || 0;
+            guardarStorage(); actualizarFinanzasUI();
+            if (notificar) mostrarModal('Precios Guardados', 'Las tarifas se actualizaron correctamente.');
+        }
+
+        function cargarInputsComisiones() {
+            document.getElementById('com-20').value = appState.comisiones.b20;
+            document.getElementById('com-12').value = appState.comisiones.b12;
+            document.getElementById('com-soda').value = appState.comisiones.soda;
+            document.getElementById('com-soda500').value = appState.comisiones.soda500 || 200;
+            document.getElementById('com-mesa').value = appState.comisiones.mesa;
+        }
+
+        function guardarComisiones() {
+            appState.comisiones.b20 = parseInt(document.getElementById('com-20').value) || 0;
+            appState.comisiones.b12 = parseInt(document.getElementById('com-12').value) || 0;
+            appState.comisiones.soda = parseInt(document.getElementById('com-soda').value) || 0;
+            appState.comisiones.soda500 = parseInt(document.getElementById('com-soda500').value) || 0;
+            appState.comisiones.mesa = parseInt(document.getElementById('com-mesa').value) || 0;
+            guardarStorage(); actualizarFinanzasUI();
+        }
+
+        function cargarInputsStockGalpon() {
+            document.getElementById('stk-galpon-20').value = appState.galpon.b20.llenos;
+            document.getElementById('stk-galpon-12').value = appState.galpon.b12.llenos;
+            document.getElementById('stk-galpon-soda').value = appState.galpon.soda.llenos;
+            document.getElementById('stk-galpon-soda500').value = appState.galpon.soda500 ? appState.galpon.soda500.llenos : 0;
+            document.getElementById('stk-galpon-fc').value = appState.galpon.fc.llenos;
+            document.getElementById('stk-galpon-mesa').value = appState.galpon.mesa.llenos;
+
+            document.getElementById('stk-fabrica-20').value = appState.galpon.b20.fabrica;
+            document.getElementById('stk-fabrica-12').value = appState.galpon.b12.fabrica;
+            document.getElementById('stk-fabrica-soda').value = appState.galpon.soda.fabrica;
+            document.getElementById('stk-fabrica-soda500').value = appState.galpon.soda500 ? appState.galpon.soda500.fabrica : 0;
+
+            document.getElementById('stk-rotos-20').value = appState.galpon.b20.rotos || 0;
+            document.getElementById('stk-rotos-12').value = appState.galpon.b12.rotos || 0;
+            document.getElementById('stk-rotos-soda').value = appState.galpon.soda.rotos || 0;
+            document.getElementById('stk-rotos-soda500').value = appState.galpon.soda500 ? (appState.galpon.soda500.rotos || 0) : 0;
+        }
+
+        function actualizarGalponEdicion() {
+            appState.galpon.b20.llenos = parseInt(document.getElementById('stk-galpon-20').value) || 0;
+            appState.galpon.b12.llenos = parseInt(document.getElementById('stk-galpon-12').value) || 0;
+            appState.galpon.soda.llenos = parseInt(document.getElementById('stk-galpon-soda').value) || 0;
+            if(!appState.galpon.soda500) appState.galpon.soda500 = { llenos:0, fabrica:0, rotos:0 };
+            appState.galpon.soda500.llenos = parseInt(document.getElementById('stk-galpon-soda500').value) || 0;
+            appState.galpon.fc.llenos = parseInt(document.getElementById('stk-galpon-fc').value) || 0;
+            appState.galpon.mesa.llenos = parseInt(document.getElementById('stk-galpon-mesa').value) || 0;
+
+            appState.galpon.b20.fabrica = parseInt(document.getElementById('stk-fabrica-20').value) || 0;
+            appState.galpon.b12.fabrica = parseInt(document.getElementById('stk-fabrica-12').value) || 0;
+            appState.galpon.soda.fabrica = parseInt(document.getElementById('stk-fabrica-soda').value) || 0;
+            appState.galpon.soda500.fabrica = parseInt(document.getElementById('stk-fabrica-soda500').value) || 0;
+
+            appState.galpon.b20.rotos = parseInt(document.getElementById('stk-rotos-20').value) || 0;
+            appState.galpon.b12.rotos = parseInt(document.getElementById('stk-rotos-12').value) || 0;
+            appState.galpon.soda.rotos = parseInt(document.getElementById('stk-rotos-soda').value) || 0;
+            appState.galpon.soda500.rotos = parseInt(document.getElementById('stk-rotos-soda500').value) || 0;
+
+            guardarStorage();
+        }
+
+        function cargarStockACamion() {
+            const c20 = parseInt(document.getElementById('carga-camion-20').value) || 0;
+            const c12 = parseInt(document.getElementById('carga-camion-12').value) || 0;
+            const cSoda = parseInt(document.getElementById('carga-camion-soda').value) || 0;
+            const cSoda500 = parseInt(document.getElementById('carga-camion-soda500').value) || 0;
+            const cMesa = parseInt(document.getElementById('carga-camion-mesa').value) || 0;
+
+            if(!appState.galpon.soda500) appState.galpon.soda500 = { llenos:0, fabrica:0, rotos:0 };
+
+            if(c20 > appState.galpon.b20.llenos || c12 > appState.galpon.b12.llenos || cSoda > appState.galpon.soda.llenos || cSoda500 > appState.galpon.soda500.llenos || cMesa > appState.galpon.mesa.llenos) {
+                mostrarModal('Stock Insuficiente', 'No podés cargar más de lo disponible en Galpón.'); return;
+            }
+
+            appState.galpon.b20.llenos -= c20; 
+            appState.galpon.b12.llenos -= c12;
+            appState.galpon.soda.llenos -= cSoda; 
+            appState.galpon.soda500.llenos -= cSoda500;
+            appState.galpon.mesa.llenos -= cMesa;
+
+            if(!appState.camionEnVivo.llenos.soda500) appState.camionEnVivo.llenos.soda500 = 0;
+            appState.camionEnVivo.llenos.b20 += c20; 
+            appState.camionEnVivo.llenos.b12 += c12;
+            appState.camionEnVivo.llenos.soda += cSoda; 
+            appState.camionEnVivo.llenos.soda500 += cSoda500;
+            appState.camionEnVivo.llenos.mesa += cMesa;
+
+            const diaSel = document.getElementById('sel-dia-trabajo').value;
+            appState.historialCargas.push({
+                id: Date.now(), fecha: new Date().toLocaleDateString(), dia: diaSel,
+                c20, c12, cSoda, cSoda500, cMesa
+            });
+
+            document.getElementById('carga-camion-20').value = 0; 
+            document.getElementById('carga-camion-12').value = 0;
+            document.getElementById('carga-camion-soda').value = 0; 
+            document.getElementById('carga-camion-soda500').value = 0;
+            document.getElementById('carga-camion-mesa').value = 0;
+
+            cargarInputsStockGalpon(); actualizarStockCamionEnVivoUI(); renderHistorialCargas(); guardarStorage();
+            mostrarModal('Carga Exitosa', 'El camión se cargó y la mercadería pasó al Stock de Salida.');
+        }
+
+        function actualizarStockCamionEnVivoUI() {
+            document.getElementById('vivo-lleno-20').innerText = appState.camionEnVivo.llenos.b20;
+            document.getElementById('vivo-lleno-12').innerText = appState.camionEnVivo.llenos.b12;
+            document.getElementById('vivo-lleno-soda').innerText = appState.camionEnVivo.llenos.soda;
+            document.getElementById('vivo-lleno-soda500').innerText = appState.camionEnVivo.llenos.soda500 || 0;
+            document.getElementById('vivo-lleno-mesa').innerText = appState.camionEnVivo.llenos.mesa;
+
+            document.getElementById('vivo-vac-20').innerText = appState.camionEnVivo.vacios.b20;
+            document.getElementById('vivo-vac-12').innerText = appState.camionEnVivo.vacios.b12;
+            document.getElementById('vivo-vac-soda').innerText = appState.camionEnVivo.vacios.soda;
+            document.getElementById('vivo-vac-soda500').innerText = appState.camionEnVivo.vacios.soda500 || 0;
+        }
+
+        function procesarVaciadoRetorno() {
+            const devLleno20 = parseInt(document.getElementById('vac-dev-lleno-20').value) || 0;
+            const devLleno12 = parseInt(document.getElementById('vac-dev-lleno-12').value) || 0;
+            const devLlenoSoda = parseInt(document.getElementById('vac-dev-lleno-soda').value) || 0;
+            const devLlenoSoda500 = parseInt(document.getElementById('vac-dev-lleno-soda500').value) || 0;
+            const devLlenoMesa = parseInt(document.getElementById('vac-dev-lleno-mesa').value) || 0;
+
+            const ingVac20 = parseInt(document.getElementById('vac-ing-vac-20').value) || 0;
+            const ingVac12 = parseInt(document.getElementById('vac-ing-vac-12').value) || 0;
+            const ingVacSoda = parseInt(document.getElementById('vac-ing-vac-soda').value) || 0;
+            const ingVacSoda500 = parseInt(document.getElementById('vac-ing-vac-soda500').value) || 0;
+
+            const pinch20 = parseInt(document.getElementById('pinch-20').value) || 0;
+            const pinch12 = parseInt(document.getElementById('pinch-12').value) || 0;
+            const pinchSoda = parseInt(document.getElementById('pinch-soda').value) || 0;
+            const pinchSoda500 = parseInt(document.getElementById('pinch-soda500').value) || 0;
+
+            if(!appState.galpon.soda500) appState.galpon.soda500 = { llenos:0, fabrica:0, rotos:0 };
+
+            appState.galpon.b20.llenos += devLleno20; 
+            appState.galpon.b12.llenos += devLleno12;
+            appState.galpon.soda.llenos += devLlenoSoda; 
+            appState.galpon.soda500.llenos += devLlenoSoda500;
+            appState.galpon.mesa.llenos += devLlenoMesa;
+
+            appState.galpon.b20.fabrica += ingVac20; 
+            appState.galpon.b12.fabrica += ingVac12;
+            appState.galpon.soda.fabrica += ingVacSoda;
+            appState.galpon.soda500.fabrica += ingVacSoda500;
+
+            appState.galpon.b20.rotos = (appState.galpon.b20.rotos || 0) + pinch20;
+            appState.galpon.b12.rotos = (appState.galpon.b12.rotos || 0) + pinch12;
+            appState.galpon.soda.rotos = (appState.galpon.soda.rotos || 0) + pinchSoda;
+            appState.galpon.soda500.rotos = (appState.galpon.soda500.rotos || 0) + pinchSoda500;
+
+            appState.camionEnVivo = { 
+                llenos: { b20: 0, b12: 0, soda: 0, soda500: 0, mesa: 0 }, 
+                vacios: { b20: 0, b12: 0, soda: 0, soda500: 0 } 
+            };
+
+            cargarInputsStockGalpon(); actualizarStockCamionEnVivoUI(); guardarStorage();
+            mostrarModal('Vaciado Completado', 'Se acreditaron los llenos, vacíos y pinchados devueltos al Galpón.');
+        }
+
+        function renderHistorialCargas() {
+            const cont = document.getElementById('historial-cargas-dias'); cont.innerHTML = '';
+            if (!appState.historialCargas || appState.historialCargas.length === 0) {
+                cont.innerHTML = '<p class="text-xs text-gray-500">No hay cargas registradas aún.</p>'; return;
+            }
+            appState.historialCargas.forEach(h => {
+                cont.innerHTML += `
+                    <div class="bg-gray-50 border p-2.5 rounded-lg flex justify-between items-center text-xs">
+                        <div>
+                            <strong>📅 ${h.dia} (${h.fecha})</strong><br>
+                            <span class="text-gray-600">Carga: 20L: ${h.c20} | 12L: ${h.c12} | Soda 1L: ${h.cSoda} | Soda 500ml: ${h.cSoda500||0} | Mesa: ${h.cMesa}</span>
+                        </div>
+                        <button onclick="eliminarHistorialCarga(${h.id})" class="text-red-600 hover:text-red-800 font-bold px-2 py-1">🗑️️</button>
+                    </div>`;
+            });
+        }
+
+        function eliminarHistorialCarga(id) {
+            appState.historialCargas = appState.historialCargas.filter(h => h.id !== id);
+            guardarStorage(); renderHistorialCargas();
+        }
+
+        function renderClientesRuta() {
+            const diaSel = document.getElementById('sel-dia-trabajo').value;
+            const zonaSel = document.getElementById('select-zona').value;
+            const listaContainer = document.getElementById('lista-clientes-ruta');
+            listaContainer.innerHTML = '';
+
+            mapMarkers.forEach(m => mapLeaflet.removeLayer(m));
+            mapMarkers = [];
+
+            const filtrados = appState.clientes.filter(c => (zonaSel === "Todas" || c.zona === zonaSel) && c.dia === diaSel && c.activo !== false);
+            document.getElementById('cant-ruta').innerText = filtrados.length;
+
+            const colores = { Pendiente: '#f97316', Entregado: '#22c55e', NoEstaba: '#ef4444', Volver: '#eab308', NoDejo: '#94a3b8' };
+            const bounds = [];
+
+            filtrados.forEach((c, idx) => {
+                const el = document.createElement('div');
+                el.className = 'border-l-4 rounded-lg p-2.5 bg-white border shadow-sm flex justify-between items-center text-xs';
+                el.style.borderLeftColor = colores[c.estado || 'Pendiente'];
+
+                el.innerHTML = `
+                    <div>
+                        <strong>${idx + 1}. ${c.nombre}</strong> <span class="text-blue-600">(${c.tipo||'Cliente Fijo'})</span><br>
+                        <span class="text-gray-500">${c.direccion}</span>
+                    </div>
+                    <button onclick="abrirFichaCliente(${c.id})" class="bg-gray-800 hover:bg-black text-white px-2.5 py-1 rounded font-bold">
+                        Atender
+                    </button>`;
+                listaContainer.appendChild(el);
+
+                if (c.gps && c.gps.lat && c.gps.lng) {
+                    const customIcon = L.divIcon({
+                        className: 'custom-div-icon',
+                        html: `<div style="background-color:${colores[c.estado || 'Pendiente']}; width:28px; height:28px; border-radius:50%; color:white; font-weight:bold; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); font-size:0.8rem;">${idx + 1}</div>`,
+                        iconSize: [28, 28],
+                        iconAnchor: [14, 14]
+                    });
+
+                    const marker = L.marker([c.gps.lat, c.gps.lng], { icon: customIcon }).addTo(mapLeaflet)
+                        .bindPopup(`<b>${c.nombre}</b><br>${c.direccion}`);
+                    
+                    marker.on('click', () => abrirFichaCliente(c.id));
+                    mapMarkers.push(marker);
+                    bounds.push([c.gps.lat, c.gps.lng]);
+                }
+            });
+
+            if (bounds.length > 0) {
+                mapLeaflet.fitBounds(bounds, { padding: [30, 30] });
+            }
+        }
+
+        function abrirFichaCliente(id) {
+            const cli = appState.clientes.find(c => c.id === id); if (!cli) return;
+            appState.clienteSeleccionadoId = id;
+            document.getElementById('fc-nombre').innerText = cli.nombre;
+            document.getElementById('fc-tipo').innerText = cli.tipo || 'Cliente Fijo';
+            document.getElementById('fc-direccion').innerText = cli.direccion;
+            document.getElementById('fc-notas').innerText = cli.notas || 'Sin notas';
+            document.getElementById('fc-tel').innerText = cli.tel || 'S/T';
+            document.getElementById('vta-estado-visita').value = cli.estado || 'Pendiente';
+
+            const img = document.getElementById('fc-foto');
+            if (cli.foto) { img.src = cli.foto; img.classList.remove('hidden'); } else { img.classList.add('hidden'); }
+            document.getElementById('ficha-cliente').classList.remove('hidden');
+            calcularVenta();
+        }
+
+        function cambiarEstadoDirecto() {
+            const cli = appState.clientes.find(c => c.id === appState.clienteSeleccionadoId);
+            if (cli) { cli.estado = document.getElementById('vta-estado-visita').value; guardarStorage(); renderClientesRuta(); }
+        }
+
+        function calcularVenta() {
+            const c20 = parseInt(document.getElementById('vta-cant-20').value) || 0;
+            const c12 = parseInt(document.getElementById('vta-cant-12').value) || 0;
+            const cSoda = parseInt(document.getElementById('vta-cant-soda').value) || 0;
+            const cSoda500 = parseInt(document.getElementById('vta-cant-soda500').value) || 0;
+            const cMesa = parseInt(document.getElementById('vta-cant-mesa').value) || 0;
+
+            const total = (c20 * appState.precios.b20) + (c12 * appState.precios.b12) + (cSoda * appState.precios.soda) + (cSoda500 * (appState.precios.soda500||1200)) + (cMesa * appState.precios.mesa);
+            document.getElementById('vta-total').value = total; 
+            document.getElementById('vta-pago').value = total;
+        }
+
+        function completarVenta() {
+            const cli = appState.clientes.find(c => c.id === appState.clienteSeleccionadoId);
+            if (!cli) return;
+            const total = parseInt(document.getElementById('vta-total').value) || 0;
+            const medio = document.getElementById('vta-medio').value;
+
+            const c20 = parseInt(document.getElementById('vta-cant-20').value) || 0;
+            const c12 = parseInt(document.getElementById('vta-cant-12').value) || 0;
+            const cSoda = parseInt(document.getElementById('vta-cant-soda').value) || 0;
+            const cSoda500 = parseInt(document.getElementById('vta-cant-soda500').value) || 0;
+            const cMesa = parseInt(document.getElementById('vta-cant-mesa').value) || 0;
+
+            const dev20 = parseInt(document.getElementById('vta-dev-20').value) || 0;
+            const dev12 = parseInt(document.getElementById('vta-dev-12').value) || 0;
+            const devSoda = parseInt(document.getElementById('vta-dev-soda').value) || 0;
+            const devSoda500 = parseInt(document.getElementById('vta-dev-soda500').value) || 0;
+
+            cli.estado = document.getElementById('vta-estado-visita').value;
+            if (cli.estado === 'Pendiente') cli.estado = 'Entregado';
+
+            cli.totalHistorico = (cli.totalHistorico || 0) + total;
+            if (!cli.vacios) cli.vacios = { b20: 0, b12: 0, soda: 0, soda500: 0 };
+            cli.vacios.b20 = Math.max(0, cli.vacios.b20 + (c20 - dev20));
+            cli.vacios.b12 = Math.max(0, cli.vacios.b12 + (c12 - dev12));
+            cli.vacios.soda = Math.max(0, cli.vacios.soda + (cSoda - devSoda));
+            cli.vacios.soda500 = Math.max(0, (cli.vacios.soda500 || 0) + (cSoda500 - devSoda500));
+
+            appState.camionEnVivo.llenos.b20 = Math.max(0, appState.camionEnVivo.llenos.b20 - c20);
+            appState.camionEnVivo.llenos.b12 = Math.max(0, appState.camionEnVivo.llenos.b12 - c12);
+            appState.camionEnVivo.llenos.soda = Math.max(0, appState.camionEnVivo.llenos.soda - cSoda);
+            if(!appState.camionEnVivo.llenos.soda500) appState.camionEnVivo.llenos.soda500 = 0;
+            appState.camionEnVivo.llenos.soda500 = Math.max(0, appState.camionEnVivo.llenos.soda500 - cSoda500);
+            appState.camionEnVivo.llenos.mesa = Math.max(0, appState.camionEnVivo.llenos.mesa - cMesa);
+
+            appState.camionEnVivo.vacios.b20 += dev20;
+            appState.camionEnVivo.vacios.b12 += dev12;
+            appState.camionEnVivo.vacios.soda += devSoda;
+            if(!appState.camionEnVivo.vacios.soda500) appState.camionEnVivo.vacios.soda500 = 0;
+            appState.camionEnVivo.vacios.soda500 += devSoda500;
+
+            if (medio === 'Efectivo') appState.finanzas.efectivo += total;
+            else appState.finanzas.transferencia += total;
+
+            appState.ventasDelDia.b20 += c20; 
+            appState.ventasDelDia.b12 += c12;
+            appState.ventasDelDia.soda += cSoda;
+            appState.ventasDelDia.soda500 += cSoda500;
+            appState.ventasDelDia.mesa += cMesa;
+
+            guardarStorage();
+            actualizarStockCamionEnVivoUI();
+            renderClientesRuta();
+            document.getElementById('ficha-cliente').classList.add('hidden');
+        }
+
+        function renderPadronClientes() {}
+        function renderMetricasClientes() {}
+        function actualizarFinanzasUI() {}
+        function renderRecorridosGuardados() {}
+        function actualizarEnvasesClientesTotalesUI() {}
+        function mostrarModal(titulo, msg) {
+            document.getElementById('modal-title').innerText = titulo;
+            document.getElementById('modal-msg').innerText = msg;
+            document.getElementById('app-modal').classList.remove('hidden');
+        }
+        function cerrarModal() { document.getElementById('app-modal').classList.add('hidden'); }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
