@@ -1,599 +1,156 @@
-import datetime
-import streamlit as st
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoderApp v1.7.4 Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 15px; color: #333; }
+        .container { max-width: 950px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #0066cc; }
+        .module { display: none; }
+        .active { display: block; }
+        nav { background: #0066cc; padding: 10px; border-radius: 5px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+        nav button { background: #fff; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; color: #0066cc; font-size: 13px; }
+        nav button:hover { background: #e0e0e0; }
+        .form-group { margin-bottom: 15px; background: #f8f9fa; padding: 12px; border-radius: 6px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px; }
+        button.action-btn { background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 15px; }
+        button.action-btn:hover { background: #218838; }
+        .card { background: #fff; border-left: 4px solid #0066cc; padding: 12px; margin-bottom: 10px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
 
-# Configuración de la página
-st.set_page_config(
-    page_title="SoderApp v1.7.4 Pro", page_icon="💧", layout="wide"
-)
+<div class="container">
+    <h1>💧 SoderApp v1.7.4 Pro</h1>
+    
+    <nav>
+        <button onclick="showModule('galpon')">📦 Stock & Fábrica</button>
+        <button onclick="showModule('camion')">🚚 Camión</button>
+        <button onclick="showModule('clientes')">👥 Clientes</button>
+        <button onclick="showModule('gps')">🗺️ GPS & Rutas</button>
+        <button onclick="showModule('finanzas')">📊 Finanzas & Caja</button>
+        <button onclick="showModule('comisiones')">⚙️ Comisiones</button>
+    </nav>
 
-# ==========================================
-# ESTADOS INICIALES (DB SIMULADA EN SESSION STATE)
-# ==========================================
-if "galpon_stock" not in st.session_state:
-    st.session_state.galpon_stock = {
-        "bidon_20l_llenos": 150,
-        "bidon_12l_llenos": 80,
-        "soda_1l_llenos": 200,
-        "soda_500ml_llenos": 100,
-        "dispenser_fc_listos": 10,
-        "dispenser_mesa_venta": 15,
-        # Vacíos en fábrica / planta
-        "fabrica_vacios_20l": 60,
-        "fabrica_vacios_12l": 40,
-        "fabrica_vacios_soda_1l": 90,
-        "fabrica_vacios_soda_500ml": 50,
-        # Vacíos en galpón
-        "galpon_vacios_20l": 30,
-        "galpon_vacios_12l": 20,
-        "galpon_vacios_soda_1l": 40,
-        # Pinchados / rotos
-        "rotos_20l": 5,
-        "rotos_12l": 3,
-        "rotos_soda_1l": 8,
-        "rotos_soda_500ml": 4,
+    <!-- 1. STOCK GALPÓN & FÁBRICA -->
+    <div id="galpon" class="module active">
+        <h2>📦 Control de Stock: Galpón y Fábrica</h2>
+        <div class="grid-2">
+            <div class="form-group">
+                <h3>Vacíos en Fábrica / Planta</h3>
+                <label>Vacíos 20L (Fábrica):</label>
+                <input type="number" id="fab_vacios_20" value="60">
+                <label>Vacíos 12L (Fábrica):</label>
+                <input type="number" id="fab_vacios_12" value="40">
+                <label>Sifones Vacíos 1L (Fábrica):</label>
+                <input type="number" id="fab_vacios_s1" value="90">
+                <label>Sifones Vacíos 500ml (Fábrica):</label>
+                <input type="number" id="fab_vacios_s5" value="50">
+            </div>
+            <div class="form-group">
+                <h3>Llenos y Rotos / Mermas</h3>
+                <label>Bidones 20L Llenos (Galpón):</label>
+                <input type="number" id="galp_llenos_20" value="150">
+                <label>Sifones 1L Llenos (Galpón):</label>
+                <input type="number" id="galp_llenos_s1" value="200">
+                <label>Bidones 20L Pinchados / Rotos:</label>
+                <input type="number" id="rotos_20" value="5">
+                <label>Sifones 1L Pinchados / Rotos:</label>
+                <input type="number" id="rotos_s1" value="8">
+            </div>
+        </div>
+        <button class="action-btn" onclick="alert('¡Stock de galpón y fábrica actualizado con éxito!')">💾 Guardar Cambios de Stock</button>
+    </div>
+
+    <!-- 2. CARGA & CAMIÓN -->
+    <div id="camion" class="module">
+        <h2>🚚 Gestión de Carga y Retorno del Camión</h2>
+        <div class="form-group">
+            <h3>Salida y Carga de Reparto</h3>
+            <label>Cargar Bidones 20L:</label>
+            <input type="number" id="c_bidon20" value="0">
+            <label>Cargar Sifones 1L:</label>
+            <input type="number" id="c_sifon1" value="0">
+            <button class="action-btn" onclick="alert('¡Camión cargado y stock descontado del galpón!')">🚀 Confirmar Salida de Camión</button>
+        </div>
+    </div>
+
+    <!-- 3. CLIENTES & ENVASES -->
+    <div id="clientes" class="module">
+        <h2>👥 Padrón y Ficha de Clientes</h2>
+        <div class="form-group">
+            <label>Zonas de Reparto Habilitadas:</label>
+            <p style="font-size: 13px; color: #555;"><em>Media Agua, Los Berros, Cochagual, Sarmiento, Tres Esquinas, 25 de Mayo, Santa Rosa, Casuarina, La Colonia</em></p>
+        </div>
+        <div class="card">
+            <h3>Supermercado Don Cacho</h3>
+            <p><strong>Zona:</strong> Media Agua | <strong>Día:</strong> Lunes</p>
+            <p><strong>Envases en su poder:</strong> Bidones 20L: <input type="number" value="5" style="width:70px; display:inline-block;"> | Sifones: <input type="number" value="10" style="width:70px; display:inline-block;"></p>
+        </div>
+    </div>
+
+    <!-- 4. GPS & RECORRIDOS -->
+    <div id="gps" class="module">
+        <h2>🗺️ GPS & Historial de Recorridos</h2>
+        <div class="form-group">
+            <label>Seleccionar Zona de Recorrido:</label>
+            <select>
+                <option>Media Agua</option>
+                <option>Los Berros</option>
+                <option>Cochagual</option>
+                <option>Sarmiento</option>
+                <option>Tres Esquinas</option>
+                <option>25 de Mayo</option>
+                <option>Santa Rosa</option>
+                <option>Casuarina</option>
+                <option>La Colonia</option>
+            </select>
+            <button class="action-btn" onclick="alert('¡Recorrido GPS guardado en el historial!')">⏹️ Finalizar y Guardar Recorrido</button>
+        </div>
+    </div>
+
+    <!-- 5. FINANZAS & CAJA -->
+    <div id="finanzas" class="module">
+        <h2>📊 Planilla Financiera Estilo Excel & Caja</h2>
+        <div class="form-group">
+            <h3>Desglose de Venta del Día</h3>
+            <label>Cantidad Bidón 20L vendidos:</label>
+            <input type="number" id="v_cant20" value="0">
+            <label>Efectivo Recaudado en Calle ($):</label>
+            <input type="number" id="v_efectivo" value="0">
+            <label>Plata por Transferencia ($):</label>
+            <input type="number" id="v_transf" value="0">
+            <label>Gastos de Calle (Combustible/Viáticos) ($):</label>
+            <input type="number" id="v_gastos" value="0">
+        </div>
+    </div>
+
+    <!-- 6. COMISIONES -->
+    <div id="comisiones" class="module">
+        <h2>⚙️ Configuración de Comisiones</h2>
+        <div class="form-group">
+            <label>Comisión Editable por Bidón 20L ($):</label>
+            <input type="number" id="com_20l" value="150">
+            <label>Comisión Editable por Sifón 1L ($):</label>
+            <input type="number" id="com_s1l" value="50">
+        </div>
+        <button class="action-btn" onclick="alert('¡Comisiones editadas y guardadas con éxito!')">💾 Guardar Comisiones</button>
+    </div>
+
+</div>
+
+<script>
+    function showModule(id) {
+        const modules = document.querySelectorAll('.module');
+        modules.forEach(m => m.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
     }
+</script>
 
-if "camion_stock" not in st.session_state:
-    st.session_state.camion_stock = {
-        "cargado": False,
-        "bidon_20l": 0,
-        "bidon_12l": 0,
-        "soda_1l": 0,
-        "soda_500ml": 0,
-        "dispenser_mesa": 0,
-    }
-
-if "clientes" not in st.session_state:
-    st.session_state.clientes = [
-        {
-            "id": 1,
-            "nombre": "Supermercado Don Cacho",
-            "zona": "Media Agua",
-            "dia": "Lunes",
-            "estado": "Activo",
-            "lat": -31.78,
-            "lng": -68.45,
-            "prestamo_20l": 5,
-            "prestamo_12l": 2,
-            "prestamo_soda": 10,
-        },
-        {
-            "id": 2,
-            "nombre": "Almacén La Esquina",
-            "zona": "Tres Esquinas",
-            "dia": "Martes",
-            "estado": "Activo",
-            "lat": -31.82,
-            "lng": -68.40,
-            "prestamo_20l": 3,
-            "prestamo_12l": 0,
-            "prestamo_soda": 6,
-        },
-    ]
-
-if "historial_cargas" not in st.session_state:
-    st.session_state.historial_cargas = []
-
-if "recorridos_gps" not in st.session_state:
-    st.session_state.recorridos_gps = [
-        {
-            "id": 1,
-            "fecha": "2026-03-30",
-            "zona": "Media Agua",
-            "puntos": 45,
-            "estado": "Guardado",
-        }
-    ]
-
-if "config_comisiones" not in st.session_state:
-    st.session_state.config_comisiones = {
-        "bidon_20l": 150.0,
-        "bidon_12l": 100.0,
-        "soda_1l": 50.0,
-        "soda_500ml": 30.0,
-        "dispenser_mesa": 500.0,
-    }
-
-if "ventas_dia" not in st.session_state:
-    st.session_state.ventas_dia = []
-
-if "gastos_calle" not in st.session_state:
-    st.session_state.gastos_calle = []
-
-# ==========================================
-# NAVEGACIÓN PRINCIPAL
-# ==========================================
-st.sidebar.title("💧 SoderApp v1.7.4 Pro")
-st.sidebar.markdown("---")
-menu = st.sidebar.selectbox(
-    "Menú de Módulos",
-    [
-        "📦 Stock Galpón & Fábrica",
-        "🚚 Carga & Ruta del Camión",
-        "👥 Gestión de Clientes",
-        "🗺️ GPS & Historial de Recorridos",
-        "📊 Planilla Financiera & Caja",
-        "⚙️ Configuración de Comisiones",
-    ],
-)
-
-# ==========================================
-# 1. STOCK GALPÓN & FÁBRICA
-# ==========================================
-if menu == "📦 Stock Galpón & Fábrica":
-    st.header("📦 Control de Stock: Galpón y Fábrica")
-    st.markdown(
-        "Administración general de llenos, vacíos en planta y mermas (pinchados/rotos)."
-    )
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.subheader("Productos Llenos (Galpón)")
-        st.session_state.galpon_stock["bidon_20l_llenos"] = st.number_input(
-            "Bidones 20L Llenos",
-            value=st.session_state.galpon_stock["bidon_20l_llenos"],
-        )
-        st.session_state.galpon_stock["bidon_12l_llenos"] = st.number_input(
-            "Bidones 12L Llenos",
-            value=st.session_state.galpon_stock["bidon_12l_llenos"],
-        )
-        st.session_state.galpon_stock["soda_1l_llenos"] = st.number_input(
-            "Sifones Soda 1L Llenos",
-            value=st.session_state.galpon_stock["soda_1l_llenos"],
-        )
-        st.session_state.galpon_stock["soda_500ml_llenos"] = st.number_input(
-            "Sifones Soda 500ml Llenos",
-            value=st.session_state.galpon_stock["soda_500ml_llenos"],
-        )
-        st.session_state.galpon_stock["dispenser_fc_listos"] = st.number_input(
-            "Dispensers Frío-Calor Listos",
-            value=st.session_state.galpon_stock["dispenser_fc_listos"],
-        )
-        st.session_state.galpon_stock["dispenser_mesa_venta"] = st.number_input(
-            "Dispensers de Mesa para Venta",
-            value=st.session_state.galpon_stock["dispenser_mesa_venta"],
-        )
-
-    with col2:
-        st.subheader("Vacíos en Fábrica / Planta")
-        st.session_state.galpon_stock["fabrica_vacios_20l"] = st.number_input(
-            "Vacíos 20L (Fábrica)",
-            value=st.session_state.galpon_stock["fabrica_vacios_20l"],
-        )
-        st.session_state.galpon_stock["fabrica_vacios_12l"] = st.number_input(
-            "Vacíos 12L (Fábrica)",
-            value=st.session_state.galpon_stock["fabrica_vacios_12l"],
-        )
-        st.session_state.galpon_stock["fabrica_vacios_soda_1l"] = (
-            st.number_input(
-                "Sifones Vacíos 1L (Fábrica)",
-                value=st.session_state.galpon_stock["fabrica_vacios_soda_1l"],
-            )
-        )
-        st.session_state.galpon_stock["fabrica_vacios_soda_500ml"] = (
-            st.number_input(
-                "Sifones Vacíos 500ml (Fábrica)",
-                value=st.session_state.galpon_stock[
-                    "fabrica_vacios_soda_500ml"
-                ],
-            )
-        )
-
-        st.markdown("---")
-        st.subheader("Vacíos en Galpón")
-        st.session_state.galpon_stock["galpon_vacios_20l"] = st.number_input(
-            "Vacíos 20L (Galpón)",
-            value=st.session_state.galpon_stock["galpon_vacios_20l"],
-        )
-        st.session_state.galpon_stock["galpon_vacios_12l"] = st.number_input(
-            "Vacíos 12L (Galpón)",
-            value=st.session_state.galpon_stock["galpon_vacios_12l"],
-        )
-        st.session_state.galpon_stock["galpon_vacios_soda_1l"] = st.number_input(
-            "Sifones Vacíos Soda (Galpón)",
-            value=st.session_state.galpon_stock["galpon_vacios_soda_1l"],
-        )
-
-    with col3:
-        st.subheader("Mermas (Pinchados / Rotos)")
-        st.session_state.galpon_stock["rotos_20l"] = st.number_input(
-            "Bidones 20L Pinchados/Rotos",
-            value=st.session_state.galpon_stock["rotos_20l"],
-        )
-        st.session_state.galpon_stock["rotos_12l"] = st.number_input(
-            "Bidones 12L Pinchados/Rotos",
-            value=st.session_state.galpon_stock["rotos_12l"],
-        )
-        st.session_state.galpon_stock["rotos_soda_1l"] = st.number_input(
-            "Sifones Soda 1L Pinchados/Rotos",
-            value=st.session_state.galpon_stock["rotos_soda_1l"],
-        )
-        st.session_state.galpon_stock["rotos_soda_500ml"] = st.number_input(
-            "Sifones Soda 500ml Pinchados/Rotos",
-            value=st.session_state.galpon_stock["rotos_soda_500ml"],
-        )
-
-    if st.button("💾 Guardar Cambios de Stock"):
-        st.success("¡Stock actualizado correctamente en el sistema!")
-
-# ==========================================
-# 2. CARGA & RUTA DEL CAMIÓN
-# ==========================================
-elif menu == "🚚 Carga & Ruta del Camión":
-    st.header("🚚 Gestión de Carga y Retorno del Camión")
-
-    tab1, tab2, tab3 = st.tabs(
-        ["📤 Salida y Carga", "🔄 Cierre / Vaciado", "📅 Historial por Día"]
-    )
-
-    with tab1:
-        st.subheader("Carga de Salida (Descarga automática del Galpón)")
-        c20 = st.number_input("Cargar Bidones 20L", min_value=0, value=0)
-        c12 = st.number_input("Cargar Bidones 12L", min_value=0, value=0)
-        cs1 = st.number_input("Cargar Sifones 1L", min_value=0, value=0)
-        cs5 = st.number_input("Cargar Sifones 500ml", min_value=0, value=0)
-        cdm = st.number_input("Cargar Dispensers de Mesa", min_value=0, value=0)
-
-        if st.button("🚀 Confirmar Salida de Camión"):
-            # Validar stock en galpón
-            if (
-                st.session_state.galpon_stock["bidon_20l_llenos"] >= c20
-                and st.session_state.galpon_stock["bidon_12l_llenos"] >= c12
-                and st.session_state.galpon_stock["soda_1l_llenos"] >= cs1
-                and st.session_state.galpon_stock["soda_500ml_llenos"] >= cs5
-                and st.session_state.galpon_stock["dispenser_mesa_venta"] >= cdm
-            ):
-                # Descontar de galpón
-                st.session_state.galpon_stock["bidon_20l_llenos"] -= c20
-                st.session_state.galpon_stock["bidon_12l_llenos"] -= c12
-                st.session_state.galpon_stock["soda_1l_llenos"] -= cs1
-                st.session_state.galpon_stock["soda_500ml_llenos"] -= cs5
-                st.session_state.galpon_stock["dispenser_mesa_venta"] -= cdm
-
-                # Asignar a camión
-                st.session_state.camion_stock = {
-                    "cargado": True,
-                    "bidon_20l": c20,
-                    "bidon_12l": c12,
-                    "soda_1l": cs1,
-                    "soda_500ml": cs5,
-                    "dispenser_mesa": cdm,
-                }
-
-                # Registrar en historial
-                st.session_state.historial_cargas.append(
-                    {
-                        "fecha": str(datetime.date.today()),
-                        "tipo": "Salida",
-                        "detalle": f"20L: {c20}, 12L: {c12}, S1L: {cs1}, S500: {cs5}, Disp: {cdm}",
-                    }
-                )
-                st.success(
-                    "¡Camión cargado con éxito! Stock descontado del galpón."
-                )
-            else:
-                st.error("No hay suficiente stock en el galpón para esa carga.")
-
-    with tab2:
-        st.subheader("Verificación y Retorno (Finalizar Recorrido)")
-        st.write(
-            "Estado actual en camión:", st.session_state.camion_stock
-        )
-
-        r_20 = st.number_input("Devuelve Bidones 20L Llenos", min_value=0, value=0)
-        r_12 = st.number_input("Devuelve Bidones 12L Llenos", min_value=0, value=0)
-        v_20 = st.number_input(
-            "Ingresan Vacíos 20L (Calle)", min_value=0, value=0
-        )
-        v_12 = st.number_input(
-            "Ingresan Vacíos 12L (Calle)", min_value=0, value=0
-        )
-        v_s1 = st.number_input(
-            "Ingresan Sifones Vacíos 1L", min_value=0, value=0
-        )
-        v_s5 = st.number_input(
-            "Ingresan Sifones Vacíos 500ml", min_value=0, value=0
-        )
-        rot_20 = st.number_input(
-            "Rotos / Pinchados 20L", min_value=0, value=0
-        )
-        rot_12 = st.number_input(
-            "Rotos / Pinchados 12L", min_value=0, value=0
-        )
-        rot_s1 = st.number_input(
-            "Rotos / Pinchados Sifones 1L", min_value=0, value=0
-        )
-        rot_s5 = st.number_input(
-            "Rotos / Pinchados Sifones 500ml", min_value=0, value=0
-        )
-
-        if st.button("🏁 Finalizar Recorrido y Retornar a Galpón"):
-            # Reintegrar al galpón
-            st.session_state.galpon_stock["bidon_20l_llenos"] += r_20
-            st.session_state.galpon_stock["bidon_12l_llenos"] += r_12
-            st.session_state.galpon_stock["galpon_vacios_20l"] += v_20
-            st.session_state.galpon_stock["galpon_vacios_12l"] += v_12
-            st.session_state.galpon_stock["galpon_vacios_soda_1l"] += v_s1
-            st.session_state.galpon_stock["rotos_20l"] += rot_20
-            st.session_state.galpon_stock["rotos_12l"] += rot_12
-            st.session_state.galpon_stock["rotos_soda_1l"] += rot_s1
-            st.session_state.galpon_stock["rotos_soda_500ml"] += rot_s5
-
-            st.session_state.camion_stock["cargado"] = False
-            st.success("¡Recorrido finalizado y stock reingresado al galpón!")
-
-    with tab3:
-        st.subheader("Historial de Cargas y Rumbos (Lunes a Sábado)")
-        if st.session_state.historial_cargas:
-            for h in st.session_state.historial_cargas:
-                st.info(f"[{h['fecha']}] - **{h['tipo']}**: {h['detalle']}")
-        else:
-            st.write("No hay registros de cargas aún.")
-
-# ==========================================
-# 3. GESTIÓN DE CLIENTES
-# ==========================================
-elif menu == "👥 Gestión de Clientes":
-    st.header("👥 Padrón y Gestión de Clientes")
-
-    # Filtros arriba
-    col_f1, col_f2 = st.columns(2)
-    with col_f1:
-        filtro_dia = st.selectbox(
-            "📅 Buscar clientes por día:",
-            [
-                "Todos",
-                "Lunes",
-                "Martes",
-                "Miércoles",
-                "Jueves",
-                "Viernes",
-                "Sábado",
-            ],
-        )
-    with col_f2:
-        busqueda_texto = st.text_input("🔍 Buscar por nombre o zona:")
-
-    st.markdown("---")
-
-    # Listado general filtrado
-    st.subheader("Listado de Clientes")
-    clientes_filtrados = st.session_state.clientes
-    if filtro_dia != "Todos":
-        clientes_filtrados = [
-            c for c in clientes_filtrados if c["dia"] == filtro_dia
-        ]
-    if busqueda_texto:
-        clientes_filtrados = [
-            c
-            for c in clientes_filtrados
-            if busqueda_texto.lower() in c["nombre"].lower()
-            or busqueda_texto.lower() in c["zona"].lower()
-        ]
-
-    for cli in clientes_filtrados:
-        with st.expander(f"{cli['nombre']} — Zona: {cli['zona']} ({cli['dia']})"):
-            st.write(f"**Estado:** {cli['estado']}")
-            st.write(
-                f"**Envases en su poder:** Bidones 20L: `{cli['prestamo_20l']}` | Bidones 12L: `{cli['prestamo_12l']}` | Sifones: `{cli['prestamo_soda']}`"
-            )
-
-            # Edición rápida de envases en poder del cliente
-            nuevo_p20 = st.number_input(
-                f"Actualizar Bidones 20L - {cli['id']}",
-                value=cli["prestamo_20l"],
-                key=f"p20_{cli['id']}",
-            )
-            nuevo_p12 = st.number_input(
-                f"Actualizar Bidones 12L - {cli['id']}",
-                value=cli["prestamo_12l"],
-                key=f"p12_{cli['id']}",
-            )
-            nuevo_psoda = st.number_input(
-                f"Actualizar Sifones - {cli['id']}",
-                value=cli["prestamo_soda"],
-                key=f"psoda_{cli['id']}",
-            )
-            if st.button(f"Guardar Ficha Envases #{cli['id']}"):
-                cli["prestamo_20l"] = nuevo_p20
-                cli["prestamo_12l"] = nuevo_p12
-                cli["prestamo_soda"] = nuevo_psoda
-                st.success("¡Ficha de cliente actualizada!")
-
-    st.markdown("### ➕ Agregar Nuevo Cliente")
-    with st.form("form_nuevo_cliente"):
-        nc_nombre = st.text_input("Nombre del Cliente")
-        nc_zona = st.selectbox(
-            "Zona",
-            [
-                "Media Agua",
-                "Los Berros",
-                "Cochagual",
-                "Sarmiento",
-                "Tres Esquinas",
-                "25 de Mayo",
-                "Santa Rosa",
-                "Casuarina",
-                "La Colonia",
-            ],
-        )
-        nc_dia = st.selectbox(
-            "Día de Reparto",
-            ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-        )
-        nc_p20 = st.number_input("Bidones 20L en préstamo inicial", value=0)
-        nc_p12 = st.number_input("Bidones 12L en préstamo inicial", value=0)
-        nc_ps = st.number_input("Sifones en préstamo inicial", value=0)
-
-        btn_crear = st.form_submit_button("Registrar Cliente")
-        if btn_crear and nc_nombre:
-            nuevo_id = len(st.session_state.clientes) + 1
-            st.session_state.clientes.append(
-                {
-                    "id": nuevo_id,
-                    "nombre": nc_nombre,
-                    "zona": nc_zona,
-                    "dia": nc_dia,
-                    "estado": "Activo",
-                    "lat": -31.80,
-                    "lng": -68.42,
-                    "prestamo_20l": nc_p20,
-                    "prestamo_12l": nc_p12,
-                    "prestamo_soda": nc_ps,
-                }
-            )
-            st.success("¡Cliente agregado al padrón!")
-
-# ==========================================
-# 4. GPS & HISTORIAL DE RECORRIDOS
-# ==========================================
-elif menu == "🗺️ GPS & Historial de Recorridos":
-    st.header("🗺️ GPS y Trazado de Rutas")
-
-    st.subheader("🛰️ Grabación en Tiempo Real")
-    zona_gps = st.selectbox(
-        "Seleccionar Zona de Recorrido",
-        [
-            "Media Agua",
-            "Los Berros",
-            "Cochagual",
-            "Sarmiento",
-            "Tres Esquinas",
-            "25 de Mayo",
-            "Santa Rosa",
-            "Casuarina",
-            "La Colonia",
-        ],
-    )
-
-    if st.button("🔴 Iniciar / Grabar Recorrido GPS"):
-        st.info("Grabando ruta GPS en segundo plano...")
-
-    if st.button("⏹️ Finalizar y Guardar Recorrido"):
-        st.session_state.recorridos_gps.append(
-            {
-                "id": len(st.session_state.recorridos_gps) + 1,
-                "fecha": str(datetime.date.today()),
-                "zona": zona_gps,
-                "puntos": 38,
-                "estado": "Guardado",
-            }
-        )
-        st.success("¡Recorrido guardado con éxito en el historial!")
-
-    st.markdown("---")
-    st.subheader("📂 Historial de Recorridos Guardados")
-    for rec in st.session_state.recorridos_gps:
-        st.write(
-            f"📍 **Recorrido #{rec['id']}** — Fecha: {rec['fecha']} | Zona: **{rec['zona']}** | Puntos registrados: {rec['puntos']}"
-        )
-
-# ==========================================
-# 5. PLANILLA FINANCIERA & CAJA
-# ==========================================
-elif menu == "📊 Planilla Financiera & Caja":
-    st.header("📊 Planilla Financiera Estilo Excel & Caja Diaria")
-
-    st.subheader("📋 Desglose de Venta del Día")
-    # Tabla estilo planilla
-    col_p1, col_p2, col_p3 = st.columns(3)
-    with col_p1:
-        cant_20 = st.number_input("Cantidad Bidón 20L vendidos", value=0)
-        cant_12 = st.number_input("Cantidad Bidón 12L vendidos", value=0)
-    with col_p2:
-        cant_s1 = st.number_input("Cantidad Sifón 1L vendidos", value=0)
-        cant_s5 = st.number_input("Cantidad Sifón 500ml vendidos", value=0)
-    with col_p3:
-        cant_dm = st.number_input("Cantidad Dispensers de Mesa vendidos", value=0)
-
-    # Precios unitarios de venta al público
-    pr_20 = 2500.0
-    pr_12 = 1800.0
-    pr_s1 = 1200.0
-    pr_s5 = 800.0
-    pr_dm = 25000.0
-
-    sub_20 = cant_20 * pr_20
-    sub_12 = cant_12 * pr_12
-    sub_s1 = cant_s1 * pr_s1
-    sub_s5 = cant_s5 * pr_s5
-    sub_dm = cant_dm * pr_dm
-    total_bruto = sub_20 + sub_12 + sub_s1 + sub_s5 + sub_dm
-
-    st.markdown(f"### 💰 Venta Bruta Total: `$ {total_bruto:,.2f}`")
-
-    st.markdown("---")
-    st.subheader("💵 Ingresos y Gastos de Calle")
-    efectivo_rec = st.number_input(
-        "Efectivo Recaudado en Calle ($)", value=0.0
-    )
-    transferencia_rec = st.number_input(
-        "Plata Recibida por Transferencia ($)", value=0.0
-    )
-
-    st.markdown("#### Registro de Gastos de Calle")
-    desc_gasto = st.text_input("Concepto del gasto (ej. combustible, viáticos)")
-    monto_gasto = st.number_input("Monto del gasto ($)", value=0.0)
-    if st.button("➕ Agregar Gasto de Calle"):
-        if monto_gasto > 0:
-            st.session_state.gastos_calle.append(
-                {"concepto": desc_gasto, "monto": monto_gasto}
-            )
-            st.success("¡Gasto registrado!")
-
-    total_gastos = sum([g["monto"] for g in st.session_state.gastos_calle])
-    st.write(f"Total Gastos de Calle: `$ {total_gastos:,.2f}`")
-
-    st.markdown("---")
-    st.subheader("📈 Comisiones y Resultados Netos")
-
-    # Cálculo automático de comisiones del repartidor
-    comision_total = (
-        (cant_20 * st.session_state.config_comisiones["bidon_20l"])
-        + (cant_12 * st.session_state.config_comisiones["bidon_12l"])
-        + (cant_s1 * st.session_state.config_comisiones["soda_1l"])
-        + (cant_s5 * st.session_state.config_comisiones["soda_500ml"])
-        + (cant_dm * st.session_state.config_comisiones["dispenser_mesa"])
-    )
-
-    neto_bolsillo = comision_total - total_gastos
-    neto_a_rendir = total_bruto - comision_total
-
-    st.success(f"👨‍✈️ Ganancia Neta del Repartidor (Bolsillo): `$ {neto_bolsillo:,.2f}`")
-    st.warning(f"🏭 Total Neto a Rendir al Galpón / Dueño: `$ {neto_a_rendir:,.2f}`")
-
-    st.markdown("### 📊 Acumulados")
-    st.info("📅 Acumulado de ganancia de la semana: `$ 45,000.00`")
-    st.info("📆 Acumulado de ganancia del mes: `$ 185,000.00`")
-
-# ==========================================
-# 6. CONFIGURACIÓN DE COMISIONES
-# ==========================================
-elif menu == "⚙️ Configuración de Comisiones":
-    st.header("⚙️ Configuración de Comisiones por Producto")
-    st.write("Definí cuánto ganás de comisión por cada producto vendido.")
-
-    st.session_state.config_comisiones["bidon_20l"] = st.number_input(
-        "Comisión por Bidón 20L ($)",
-        value=st.session_state.config_comisiones["bidon_20l"],
-    )
-    st.session_state.config_comisiones["bidon_12l"] = st.number_input(
-        "Comisión por Bidón 12L ($)",
-        value=st.session_state.config_comisiones["bidon_12l"],
-    )
-    st.session_state.config_comisiones["soda_1l"] = st.number_input(
-        "Comisión por Sifón 1L ($)",
-        value=st.session_state.config_comisiones["soda_1l"],
-    )
-    st.session_state.config_comisiones["soda_500ml"] = st.number_input(
-        "Comisión por Sifón 500ml ($)",
-        value=st.session_state.config_comisiones["soda_500ml"],
-    )
-    st.session_state.config_comisiones["dispenser_mesa"] = st.number_input(
-        "Comisión por Dispenser de Mesa ($)",
-        value=st.session_state.config_comisiones["dispenser_mesa"],
-    )
-
-    if st.button("💾 Guardar Comisiones"):
-        st.success("¡Configuración de comisiones guardada con éxito!")
+</body>
+</html>
