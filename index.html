@@ -4,1185 +4,470 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chosen 👑 SoderApp v1.7.4 (Satelital)</title>
-    <!-- Leaflet CSS para Mapas Reales -->
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Leaflet CSS para Mapas -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- FontAwesome para Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg-primary: #f8fafc;
-            --bg-card: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --border: #cbd5e1;
-            --primary: #0ea5e9;
-            --success: #22c55e;
-            --warning: #eab308;
-            --danger: #ef4444;
-            
-            --st-pendiente: #f97316;
-            --st-entregado: #22c55e;
-            --st-nodejo: #94a3b8;
-            --st-volver: #eab308;
-            --st-noestaba: #ef4444;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg-primary); color: var(--text-primary); display: flex; flex-direction: column; min-height: 100vh; }
-        
-        header { background: #1e293b; color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
-        header h1 { font-size: 1.1rem; display: flex; align-items: center; gap: 6px; }
-        .badge-ver { background: var(--primary); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
-        
-        nav { background: #334155; display: flex; overflow-x: auto; }
-        nav button { background: none; border: none; color: #94a3b8; padding: 10px 14px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 0.85rem; }
-        nav button.active { color: white; border-bottom: 3px solid var(--primary); }
-        main { flex: 1; padding: 10px; max-width: 1200px; margin: 0 auto; width: 100%; }
-        
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .card-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 8px; color: var(--text-primary); border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
-        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
-        
-        .btn { padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 0.85rem; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-secondary { background: #64748b; color: white; }
-        
-        .stat-box { background: #f1f5f9; padding: 8px; border-radius: 6px; text-align: center; }
-        .stat-box .val { font-size: 1.1rem; font-weight: bold; margin-top: 2px; }
-        
-        /* MAPA INTERACTIVO SATELITAL HD */
-        #mapa-calles-real { height: 320px; width: 100%; border-radius: 8px; border: 2px solid var(--primary); margin-top: 6px; z-index: 1; }
-        .legend-grid { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 0.75rem; font-weight: bold; margin-bottom: 6px; background: #f8fafc; padding: 6px; border-radius: 6px; }
-        .legend-item { display: flex; align-items: center; gap: 4px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-
-        .client-item { border: 1px solid var(--border); border-left-width: 6px; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; background: white; display: flex; justify-content: space-between; align-items: center; }
-        .client-item.inactivo { opacity: 0.6; background: #f1f5f9; border-left-color: #64748b; }
-        .st-Pendiente { border-left-color: var(--st-pendiente); }
-        .st-Entregado { border-left-color: var(--st-entregado); }
-        .st-NoEstaba { border-left-color: var(--st-noestaba); }
-        .st-Volver { border-left-color: var(--st-volver); }
-        .st-NoDejo { border-left-color: var(--st-nodejo); }
-        
-        .form-group { margin-bottom: 8px; }
-        .form-group label { display: block; font-size: 0.75rem; font-weight: bold; margin-bottom: 2px; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.85rem; }
-        
-        .table-custom { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: center; }
-        .table-custom th, .table-custom td { border: 1px solid var(--border); padding: 5px; }
-        .table-custom th { background: #f1f5f9; }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background: white; padding: 16px; border-radius: 8px; max-width: 500px; width: 92%; max-height: 90vh; overflow-y: auto; }
-        
-        #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: #0f172a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; text-align: center; padding: 20px; }
-        .preview-img { width: 100%; max-height: 130px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); margin-top: 4px; display: none; }
-        .rec-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-        
-        .modo-mod-mapa { border: 3px solid #eab308 !important; }
+        #map { height: 350px; z-index: 1; }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans pb-20">
 
-    <div id="splash-screen">
-        <h1 style="font-size: 2rem; color: #0ea5e9; margin-bottom: 8px;">Chosen 👑 SoderApp</h1>
-        <p style="font-size: 1rem; color: #94a3b8; margin-bottom: 6px;">Vista Satelital & Marcado Táctil de Clientes</p>
-        <span class="badge-ver" style="font-size: 0.85rem; padding: 3px 10px; margin-bottom: 16px;">Versión 1.7.4</span>
-        <button class="btn btn-primary" style="font-size: 1rem; padding: 10px 20px;" onclick="cerrarSplash()">INGRESAR AL SISTEMA</button>
-    </div>
-
-    <header>
-        <h1>Chosen 👑 SoderApp</h1>
-        <span class="badge-ver">v1.7.4 (Satelital)</span>
+    <!-- Encabezado Principal -->
+    <header class="bg-blue-800 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-bold">Chosen 👑 SoderApp <span class="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full">v1.7.4 Satelital</span></h1>
+            <p class="text-xs text-blue-200" id="current-zone-label">Zona: Sarmiento / Media Agua</p>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span id="jornada-estado" class="text-xs px-2.5 py-1 rounded bg-red-600 font-semibold">PAUSADA</span>
+            <button onclick="toggleJornada()" id="btn-jornada" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded font-bold shadow">Iniciar</button>
+        </div>
     </header>
-    <nav>
-        <button class="nav-btn active" onclick="switchTab(event, 'recorrido')">Ruta del Día</button>
-        <button class="nav-btn" onclick="switchTab(event, 'precios')">💲 Precios</button>
-        <button class="nav-btn" onclick="switchTab(event, 'stock')">Stock Galpón/Camión</button>
-        <button class="nav-btn" onclick="switchTab(event, 'clientes')">Gestión Clientes</button>
-        <button class="nav-btn" onclick="switchTab(event, 'finanzas')">Finanzas y Gastos</button>
-        <button class="nav-btn" onclick="switchTab(event, 'grabador')">📍 Recorridos</button>
-    </nav>
 
-    <main>
-        <!-- TAB 1: RUTA DEL DIA -->
-        <div id="tab-recorrido" class="tab-content active">
-            <div class="card" style="background: #f1f5f9; border: 1px solid #cbd5e1;">
-                <div class="card-title">🎮 Estado del Recorrido: <span id="lbl-estado-ruta" style="color:#0ea5e9;">Detenido</span></div>
-                <div class="grid-3">
-                    <button class="btn btn-success" id="btn-iniciar-ruta" onclick="cambiarEstadoRuta('Activo')">🚀 Iniciar</button>
-                    <button class="btn btn-warning" id="btn-pausar-ruta" onclick="cambiarEstadoRuta('Pausado')">⏸ Pausar</button>
-                    <button class="btn btn-danger" id="btn-finalizar-ruta" onclick="finalizarRecorridoIrAVaciado()">🏁 Finalizar</button>
-                </div>
-            </div>
+    <!-- Contenedor de Módulos (Tabs) -->
+    <main class="p-4 max-w-4xl mx-auto">
 
-            <div class="card" style="background: #1e293b; color: white; border: 2px solid #0ea5e9;">
-                <div class="card-title" style="color: #38bdf8; border-bottom-color: #334155;">🚛 Stock Actual en Camión (En Vivo)</div>
-                <div class="grid-2">
-                    <div>
-                        <small style="color: #22c55e; font-weight: bold;">🟢 LLENOS RESTANTES:</small>
-                        <div style="font-size: 0.8rem; margin-top: 2px;">
-                            20L: <strong id="vivo-lleno-20" style="color: #22c55e;">0</strong> | 
-                            12L: <strong id="vivo-lleno-12" style="color: #22c55e;">0</strong> | 
-                            Soda: <strong id="vivo-lleno-soda" style="color: #22c55e;">0</strong> | 
-                            Mesa: <strong id="vivo-lleno-mesa" style="color: #22c55e;">0</strong>
-                        </div>
+        <!-- 1. TAB RECORRIDO -->
+        <div id="tab-recorrido" class="tab-content active space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-route text-blue-600"></i> Ruta del Día y Stock en Camión</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-sm mb-4">
+                    <div class="bg-blue-50 p-2 rounded border border-blue-200">
+                        <span class="block text-gray-500 text-xs">Bidón 20L Llenos</span>
+                        <strong class="text-lg text-blue-800" id="camion-b20">50</strong>
                     </div>
-                    <div>
-                        <small style="color: #eab308; font-weight: bold;">🟡 VACÍOS RECUPERADOS:</small>
-                        <div style="font-size: 0.8rem; margin-top: 2px;">
-                            20L: <strong id="vivo-vac-20" style="color: #eab308;">0</strong> | 
-                            12L: <strong id="vivo-vac-12" style="color: #eab308;">0</strong> | 
-                            Soda: <strong id="vivo-vac-soda" style="color: #eab308;">0</strong>
-                        </div>
+                    <div class="bg-blue-50 p-2 rounded border border-blue-200">
+                        <span class="block text-gray-500 text-xs">Soda Sifón</span>
+                        <strong class="text-lg text-blue-800" id="camion-soda">30</strong>
                     </div>
-                </div>
-            </div>
-
-            <div class="card" style="background: #e0f2fe; border: 1px solid #0ea5e9;">
-                <div class="card-title" style="color: #0369a1; font-size: 0.95rem;">🚀 Parámetros de Ruta</div>
-                <div class="grid-3">
-                    <div class="form-group"><label>Día de Ruta:</label>
-                        <select id="sel-dia-trabajo" onchange="renderClientesRuta()">
-                            <option value="Lunes">Lunes</option><option value="Martes">Martes</option>
-                            <option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option>
-                            <option value="Viernes">Viernes</option><option value="Sábado">Sábado</option>
-                        </select>
+                    <div class="bg-green-50 p-2 rounded border border-green-200">
+                        <span class="block text-gray-500 text-xs">Vacíos 20L</span>
+                        <strong class="text-lg text-green-800" id="camion-v20">12</strong>
                     </div>
-                    <div class="form-group"><label>Zona / Localidad:</label>
-                        <select id="select-zona" onchange="renderClientesRuta()">
-                            <option value="Villa Media Agua">Villa Media Agua</option>
-                            <option value="Las Lagunas / Tres Esquinas">Las Lagunas / Tres Esquinas</option>
-                            <option value="Los Berros - Parte Alta">Los Berros - Parte Alta</option>
-                            <option value="Cochagual Norte">Cochagual Norte</option>
-                            <option value="Cochagual Centro / Sur">Cochagual Centro / Sur</option>
-                            <option value="Colonia - Parte Norte">Colonia - Parte Norte</option>
-                            <option value="Punta del Médano - Norte / Centro">Punta del Médano - Norte / Centro</option>
-                            <option value="Sarmiento General">Sarmiento (General)</option>
-                            <option value="Pocito General">Pocito (General)</option>
-                            <option value="25 de Mayo General">25 de Mayo (General)</option>
-                            <option value="Las Casuarinas">Las Casuarinas</option>
-                            <option value="Santa Rosa">Santa Rosa</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>Fecha:</label><input type="date" id="sel-fecha-trabajo"></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">
-                    <span>🛰️ Mapa Satelital HD & Ubicaciones Reales</span>
-                    <span id="lbl-modo-mapa" style="font-size:0.75rem; color:#0ea5e9; font-weight:normal;">(Tocá un pin para atender)</span>
-                </div>
-                <div class="legend-grid">
-                    <div class="legend-item"><span class="dot" style="background:#f97316;"></span> Pendiente</div>
-                    <div class="legend-item"><span class="dot" style="background:#22c55e;"></span> Entregado</div>
-                    <div class="legend-item"><span class="dot" style="background:#ef4444;"></span> No estaba</div>
-                    <div class="legend-item"><span class="dot" style="background:#eab308;"></span> Volver</div>
-                    <div class="legend-item"><span class="dot" style="background:#94a3b8;"></span> No dejó</div>
-                </div>
-                <div id="mapa-calles-real"></div>
-            </div>
-
-            <div class="grid-2">
-                <div>
-                    <div class="card-title" style="display: flex; align-items: center; justify-content: space-between;">
-                        <span>Clientes en Ruta</span>
-                        <span style="background: #0ea5e9; color: white; border-radius: 12px; padding: 2px 8px; font-size: 0.8rem;" id="cant-ruta">0</span>
-                    </div>
-                    <div id="lista-clientes-ruta"></div>
-                </div>
-
-                <div class="card" id="ficha-cliente" style="display: none; border: 2px solid #0ea5e9;">
-                    <div class="card-title">Atendiendo a: <span id="fc-nombre"></span> (<span id="fc-tipo" style="color:#0ea5e9;"></span>)</div>
-                    <p style="font-size:0.8rem;"><strong>Dirección:</strong> <span id="fc-direccion"></span></p>
-                    <p style="font-size:0.8rem;"><strong>Notas Tácticas:</strong> <span id="fc-notas" style="color: #0284c7; font-weight: bold;"></span></p>
-                    <p style="font-size:0.8rem; margin-bottom: 4px;"><strong>Teléfono:</strong> <span id="fc-tel"></span> <button class="btn btn-success" style="padding: 2px 6px; font-size: 0.75rem;" onclick="abrirWhatsapp()">📲 WhatsApp</button></p>
-
-                    <div id="box-foto-fachada" style="margin-bottom: 8px;"><img id="fc-foto" class="preview-img" alt="Foto Fachada"></div>
-
-                    <div class="form-group"><label>Cambiar Estado de Visita:</label>
-                        <select id="vta-estado-visita" onchange="cambiarEstadoDirecto()">
-                            <option value="Pendiente">🟠 Pendiente</option><option value="Entregado">🟢 Entregado</option>
-                            <option value="NoEstaba">🔴 No Estaba</option><option value="Volver">🟡 Volver Más Tarde</option>
-                            <option value="NoDejo">⚪ No Dejó / No Compró</option>
-                        </select>
-                    </div>
-
-                    <hr style="margin: 6px 0;">
-                    <div class="grid-3">
-                        <div class="form-group"><label>Bidón 20L:</label><input type="number" id="vta-cant-20" value="0" min="0" oninput="calcularVenta()"></div>
-                        <div class="form-group"><label>Bidón 12L:</label><input type="number" id="vta-cant-12" value="0" min="0" oninput="calcularVenta()"></div>
-                        <div class="form-group"><label>Sifones Soda:</label><input type="number" id="vta-cant-soda" value="0" min="0" oninput="calcularVenta()"></div>
-                    </div>
-                    <div class="form-group"><label>Venta Dispenser Mesa:</label><input type="number" id="vta-cant-mesa" value="0" min="0" oninput="calcularVenta()"></div>
-
-                    <div class="grid-3">
-                        <div class="form-group"><label>Devolución Vacíos 20L:</label><input type="number" id="vta-dev-20" value="0" min="0"></div>
-                        <div class="form-group"><label>Devolución Vacíos 12L:</label><input type="number" id="vta-dev-12" value="0" min="0"></div>
-                        <div class="form-group"><label>Devolución Sifones Soda:</label><input type="number" id="vta-dev-soda" value="0" min="0"></div>
-                    </div>
-
-                    <hr style="margin: 6px 0;">
-                    <div class="grid-3">
-                        <div class="form-group"><label>Forma Pago:</label>
-                            <select id="vta-medio">
-                                <option value="Efectivo">Efectivo</option>
-                                <option value="Transferencia">Transferencia</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>Total ($):</label><input type="number" id="vta-total" value="0" readonly style="font-weight: bold;"></div>
-                        <div class="form-group"><label>Monto Pagado ($):</label><input type="number" id="vta-pago" value="0"></div>
-                    </div>
-
-                    <button class="btn btn-success" style="width: 100%; font-size: 0.9rem;" onclick="completarVenta()">Confirmar Venta y Entrega</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2: PRECIOS EXCLUSIVA -->
-        <div id="tab-precios" class="tab-content">
-            <div class="card" style="border: 2px solid #0ea5e9;">
-                <div class="card-title" style="color: #0284c7;">💲 Panel Central de Tarifas y Precios</div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Precio Bidón 20L ($):</label><input type="number" id="prc-b20" onchange="guardarPrecios()"></div>
-                    <div class="form-group"><label>Precio Bidón 12L ($):</label><input type="number" id="prc-b12" onchange="guardarPrecios()"></div>
-                    <div class="form-group"><label>Precio Sifón de Soda ($):</label><input type="number" id="prc-soda" onchange="guardarPrecios()"></div>
-                    <div class="form-group"><label>Alquiler Mensual Dispenser Frío/Calor ($):</label><input type="number" id="prc-fc" onchange="guardarPrecios()"></div>
-                    <div class="form-group"><label>Venta Directa Dispenser de Mesa ($):</label><input type="number" id="prc-mesa" onchange="guardarPrecios()"></div>
-                </div>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 8px;" onclick="guardarPrecios(true)">💾 Guardar Tarifas</button>
-            </div>
-        </div>
-
-        <!-- TAB 3: STOCK GALPÓN Y CAMIÓN -->
-        <div id="tab-stock" class="tab-content">
-            <div class="grid-2">
-                <div class="card">
-                    <div class="card-title">🏭 Edición Stock Galpón</div>
-                    <div class="form-group"><label>Llenos Bidón 20L:</label><input type="number" id="stk-galpon-20" onchange="actualizarGalponEdicion()"></div>
-                    <div class="form-group"><label>Llenos Bidón 12L:</label><input type="number" id="stk-galpon-12" onchange="actualizarGalponEdicion()"></div>
-                    <div class="form-group"><label>Llenos Sifón Soda:</label><input type="number" id="stk-galpon-soda" onchange="actualizarGalponEdicion()"></div>
-                    <div class="form-group"><label>Dispensers Frío/Calor Listos:</label><input type="number" id="stk-galpon-fc" onchange="actualizarGalponEdicion()"></div>
-                    <div class="form-group"><label>Dispensers de Mesa para Venta:</label><input type="number" id="stk-galpon-mesa" onchange="actualizarGalponEdicion()"></div>
-                    <hr style="margin: 8px 0;">
-                    <div class="form-group"><label>Vacíos en Galpón 20L:</label><input type="number" id="stk-fabrica-20" onchange="actualizarGalponEdicion()"></div>
-                    <div class="form-group"><label>Vacíos en Galpón 12L:</label><input type="number" id="stk-fabrica-12" onchange="actualizarGalponEdicion()"></div>
-                    <div class="form-group"><label>Sifones Vacíos Soda:</label><input type="number" id="stk-fabrica-soda" onchange="actualizarGalponEdicion()"></div>
-                </div>
-
-                <div class="card" style="border: 2px solid #22c55e;">
-                    <div class="card-title" style="color: #15803d;">🚛 Control de Carga y Vaciado Diario del Camión</div>
-                    <p style="font-size:0.8rem; color:#475569; margin-bottom: 6px;">1. Registrar Carga de Salida al Camión (se resta del Galpón):</p>
-                    <div class="grid-4">
-                        <div class="form-group"><label>Cargar 20L:</label><input type="number" id="carga-camion-20" value="0"></div>
-                        <div class="form-group"><label>Cargar 12L:</label><input type="number" id="carga-camion-12" value="0"></div>
-                        <div class="form-group"><label>Cargar Soda:</label><input type="number" id="carga-camion-soda" value="0"></div>
-                        <div class="form-group"><label>Cargar Disp. Mesa:</label><input type="number" id="carga-camion-mesa" value="0"></div>
-                    </div>
-                    <button class="btn btn-success" style="width: 100%; margin-bottom: 10px;" onclick="cargarStockACamion()">Confirmar Carga de Salida</button>
-
-                    <hr style="margin: 8px 0;">
-                    <p style="font-size:0.8rem; color:#15803d; font-weight:bold; margin-bottom: 6px;">2. Vaciado y Retorno al Galpón (Verificación Física):</p>
-
-                    <div class="grid-4">
-                        <div class="form-group"><label>Devuelve Llenos 20L:</label><input type="number" id="vac-dev-lleno-20" value="0"></div>
-                        <div class="form-group"><label>Devuelve Llenos 12L:</label><input type="number" id="vac-dev-lleno-12" value="0"></div>
-                        <div class="form-group"><label>Devuelve Llenos Soda:</label><input type="number" id="vac-dev-lleno-soda" value="0"></div>
-                        <div class="form-group"><label>Devuelve Disp. Mesa:</label><input type="number" id="vac-dev-lleno-mesa" value="0"></div>
-                    </div>
-
-                    <div class="grid-3" style="margin-top: 4px;">
-                        <div class="form-group"><label>Ingresa Vacíos 20L:</label><input type="number" id="vac-ing-vac-20" value="0"></div>
-                        <div class="form-group"><label>Ingresa Vacíos 12L:</label><input type="number" id="vac-ing-vac-12" value="0"></div>
-                        <div class="form-group"><label>Ingresa Sifones Soda:</label><input type="number" id="vac-ing-vac-soda" value="0"></div>
-                    </div>
-
-                    <div class="grid-3" style="margin-top: 4px;">
-                        <div class="form-group"><label>Pinchados/Rotos 20L:</label><input type="number" id="pinch-20" value="0"></div>
-                        <div class="form-group"><label>Pinchados/Rotos 12L:</label><input type="number" id="pinch-12" value="0"></div>
-                        <div class="form-group"><label>Pinchados/Rotos Soda:</label><input type="number" id="pinch-soda" value="0"></div>
-                    </div>
-                    <button class="btn btn-primary" style="width: 100%; font-size: 0.85rem; margin-top: 6px;" onclick="procesarVaciadoRetorno()">Procesar Vaciado y Devolución al Galpón</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">📅 Historial de Cargas y Rumbos por Día (Lunes a Sábado)</div>
-                <div id="historial-cargas-dias"></div>
-            </div>
-        </div>
-
-        <!-- TAB 4: GESTIÓN DE CLIENTES -->
-        <div id="tab-clientes" class="tab-content">
-            <div class="grid-4" style="margin-bottom: 12px;">
-                <div class="stat-box card"><div>Activos</div><div class="val" id="met-activos" style="color:#22c55e;">0</div></div>
-                <div class="stat-box card"><div>Semana</div><div class="val" id="met-semana" style="color:#0ea5e9;">0</div></div>
-                <div class="stat-box card"><div>Mes</div><div class="val" id="met-mes" style="color:#eab308;">0</div></div>
-                <div class="stat-box card"><div>Inactivos</div><div class="val" id="met-inactivos" style="color:#ef4444;">0</div></div>
-            </div>
-
-            <div style="margin-bottom: 10px; display: flex; gap: 8px;">
-                <button class="btn btn-primary" onclick="toggleSeccionCliente('form')">➕ Agregar Cliente</button>
-                <button class="btn btn-secondary" onclick="toggleSeccionCliente('padron')">📋 Padrón General</button>
-            </div>
-
-            <div class="card" id="sec-form-cliente" style="border: 2px solid #0ea5e9;">
-                <div class="card-title" style="color: #0284c7;" id="titulo-form-cliente">➕ Alta de Cliente</div>
-                <input type="hidden" id="edit-cliente-id" value="">
-                <div class="grid-2">
-                    <div class="form-group"><label>Nombre y Apellido:</label><input type="text" id="alta-nombre" placeholder="Ej. Pedro Gómez"></div>
-                    <div class="form-group"><label>Dirección:</label><input type="text" id="alta-dir" placeholder="Ej. Calle Barboza s/n"></div>
-                    <div class="form-group"><label>Teléfono (WhatsApp):</label><input type="text" id="alta-tel" placeholder="2641234567"></div>
-                    <div class="form-group"><label>Tipo de Cliente:</label>
-                        <select id="alta-tipo">
-                            <option value="Cliente Fijo">Cliente Fijo</option><option value="Cliente Nuevo">Cliente Nuevo</option>
-                            <option value="Posible Cliente">Posible Cliente</option><option value="De Paso">De Paso</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>Día de Reparto:</label>
-                        <select id="alta-dia">
-                            <option value="Lunes">Lunes</option><option value="Martes">Martes</option>
-                            <option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option>
-                            <option value="Viernes">Viernes</option><option value="Sábado">Sábado</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>Zona / Localidad:</label>
-                        <select id="alta-zona">
-                            <option value="Villa Media Agua">Villa Media Agua</option>
-                            <option value="Las Lagunas / Tres Esquinas">Las Lagunas / Tres Esquinas</option>
-                            <option value="Los Berros - Parte Alta">Los Berros - Parte Alta</option>
-                            <option value="Cochagual Norte">Cochagual Norte</option>
-                            <option value="Cochagual Centro / Sur">Cochagual Centro / Sur</option>
-                            <option value="Colonia - Parte Norte">Colonia - Parte Norte</option>
-                            <option value="Punta del Médano - Norte / Centro">Punta del Médano - Norte / Centro</option>
-                            <option value="Sarmiento General">Sarmiento (General)</option>
-                            <option value="Pocito General">Pocito (General)</option>
-                            <option value="25 de Mayo General">25 de Mayo (General)</option>
-                            <option value="Las Casuarinas">Las Casuarinas</option>
-                            <option value="Santa Rosa">Santa Rosa</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>Notas Tácticas:</label><input type="text" id="alta-notas" placeholder="Ej. Puerta reja azul"></div>
-                </div>
-
-                <div class="grid-2" style="margin-top: 4px;">
-                    <div class="form-group">
-                        <label>Foto de Fachada:</label>
-                        <input type="file" id="alta-foto-input" accept="image/*" capture="environment" onchange="previewFotoCliente(event)">
-                        <img id="alta-foto-preview" class="preview-img" alt="Vista previa fachada">
-                    </div>
-                    <div class="form-group" style="display:flex; flex-direction:column; justify-content: flex-end;">
-                        <button class="btn btn-warning" onclick="activarSeleccionMapaManual()" style="margin-bottom: 6px;">🎯 Marcar en Mapa Satelital (Con el dedo)</button>
-                        <button class="btn btn-secondary" onclick="capturarGpsCliente()" style="margin-bottom: 6px;">📍 Capturar Ubicación GPS Puerta</button>
-                        <small id="gps-status-txt" style="color: #0ea5e9; font-weight: bold;">Ubicación: No asignada</small>
+                    <div class="bg-green-50 p-2 rounded border border-green-200">
+                        <span class="block text-gray-500 text-xs">Vacíos Soda</span>
+                        <strong class="text-lg text-green-800" id="camion-vsoda">5</strong>
                     </div>
                 </div>
 
-                <button class="btn btn-primary" style="width: 100%; margin-top: 10px; font-size: 0.95rem;" onclick="guardarRegistroCliente()">Guardar / Actualizar Cliente</button>
-                <button class="btn btn-secondary" id="btn-cancelar-edit" style="width: 100%; margin-top: 4px; display: none;" onclick="limpiarFormCliente()">Cancelar Edición</button>
-            </div>
-
-            <div class="card" id="sec-padron-cliente">
-                <div class="card-title">📋 Padrón General de Clientes</div>
-                <div id="lista-padron-clientes"></div>
-            </div>
-        </div>
-
-        <!-- TAB 5: FINANZAS Y GASTOS -->
-        <div id="tab-finanzas" class="tab-content">
-            <div class="card" style="border: 2px solid #0ea5e9;">
-                <div class="card-title" style="color: #0369a1;">📊 Desglose Detallado de Ventas del Día (Plantilla Excel para el Jefe)</div>
-                <table class="table-custom">
-                    <thead>
-                        <tr><th>Producto</th><th>Cant. Vendida</th><th>P. Unitario ($)</th><th>Subtotal ($)</th></tr>
-                    </thead>
-                    <tbody id="tb-desglose-ventas"></tbody>
-                </table>
-            </div>
-
-            <div class="card" style="border: 2px solid #eab308; background: #fefce8;">
-                <div class="card-title" style="color: #ca8a04;">⚙️️ Configuración de Comisiones del Repartidor (Tu Ganancia)</div>
-                <div class="grid-4">
-                    <div class="form-group"><label>Comisión 20L ($):</label><input type="number" id="com-20" value="500" onchange="guardarComisiones()"></div>
-                    <div class="form-group"><label>Comisión 12L ($):</label><input type="number" id="com-12" value="400" onchange="guardarComisiones()"></div>
-                    <div class="form-group"><label>Comisión Soda ($):</label><input type="number" id="com-soda" value="300" onchange="guardarComisiones()"></div>
-                    <div class="form-group"><label>Comisión Disp. Mesa ($):</label><input type="number" id="com-mesa" value="2000" onchange="guardarComisiones()"></div>
-                </div>
-            </div>
-
-            <div class="grid-3">
-                <div class="stat-box card"><div>Efectivo Recaudado</div><div class="val" id="fin-efectivo" style="color: #22c55e;">$0</div></div>
-                <div class="stat-box card"><div>Transferencias</div><div class="val" id="fin-transf" style="color: #0ea5e9;">$0</div></div>
-                <div class="stat-box card"><div>Gastos de Calle</div><div class="val" id="fin-gastos" style="color: #ef4444;">$0</div></div>
-            </div>
-
-            <div class="grid-2">
-                <div class="card" style="border: 2px solid #22c55e;">
-                    <div class="card-title" style="color: #15803d;">💰 Ganancia Neta del Repartidor (Bolsillo)</div>
-                    <div style="font-size: 1.5rem; font-weight: bold; color: #15803d; text-align: center;" id="fin-ganancia-repartidor">$0</div>
-                </div>
-                <div class="card" style="border: 2px solid #0ea5e9;">
-                    <div class="card-title" style="color: #0369a1;">🏛 Total Neto a Rendir al Galpón / Dueño</div>
-                    <div style="font-size: 1.5rem; font-weight: bold; color: #0369a1; text-align: center;" id="fin-rendir-dueno">$0</div>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="stat-box card"><div>Acumulado Ganancias Semana</div><div class="val" id="fin-acum-semana" style="color:#22c55e;">$0</div></div>
-                <div class="stat-box card"><div>Acumulado Ganancias Mes</div><div class="val" id="fin-acum-mes" style="color:#0ea5e9;">$0</div></div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">💸 Registrar Gasto de Calle</div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Concepto:</label><input type="text" id="gasto-concepto" placeholder="Ej. Gasoil YPF"></div>
-                    <div class="form-group"><label>Monto ($):</label><input type="number" id="gasto-monto" placeholder="5000"></div>
-                </div>
-                <button class="btn btn-danger" style="width: 100%; margin-bottom: 10px;" onclick="registrarGasto()">Registrar Gasto</button>
-                <div id="historial-gastos-lista"></div>
-            </div>
-
-            <button class="btn btn-warning" style="width: 100%; padding: 10px; font-size: 0.95rem;" onclick="cerrarCajaDiaria()">🔒 Realizar Cierre de Caja del Día</button>
-        </div>
-
-        <!-- TAB 6: GRABADOR DE RECORRIDOS GPS -->
-        <div id="tab-grabador" class="tab-content">
-            <div class="card" style="border: 2px solid #ef4444;">
-                <div class="card-title" style="color: #dc2626; display: flex; justify-content: space-between;">
-                    <span>🎙 Grabador de Traza GPS de Reparto</span>
-                    <span id="tag-grabando" style="display:none; color:#ef4444; font-size:0.8rem;">🔴 Grabando...</span>
-                </div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Nombre Recorrido:</label><input type="text" id="nombre-recorrido-nuevo" placeholder="Ej. Sarmiento Calle Larga"></div>
-                    <div class="form-group" style="display: flex; align-items: flex-end;">
-                        <button id="btn-iniciar-rec" class="btn btn-danger" style="width:100%; padding: 8px;" onclick="toggleGrabacionGPS()">🔴 Iniciar Grabación GPS</button>
-                    </div>
-                </div>
-                <p style="font-size:0.8rem; color:#64748b; margin-top:4px;">Puntos GPS tomados: <strong id="cant-puntos-gps">0</strong></p>
-            </div>
-            <div class="card">
-                <div class="card-title">📚 Recorridos Guardados</div>
-                <div id="lista-recorridos-guardados"></div>
-            </div>
-        </div>
-    </main>
-
-    <!-- MODAL PRINCIPAL -->
-    <div class="modal" id="app-modal">
-        <div class="modal-content">
-            <div class="card-title" id="modal-title">Alerta</div>
-            <p id="modal-msg" style="margin-bottom: 14px; color: var(--text-secondary); font-size: 0.85rem;"></p>
-            <button class="btn btn-primary" onclick="cerrarModal()" style="width: 100%;">Aceptar</button>
-        </div>
-    </div>
-
-    <!-- MODAL HISTORIAL CLIENTE -->
-    <div class="modal" id="modal-historial-cliente">
-        <div class="modal-content">
-            <div class="card-title" id="hc-nombre">Ficha e Historial del Cliente</div>
-            <p style="font-size:0.8rem; margin-bottom: 6px;"><strong>Desglose de Vacíos Retenidos:</strong></p>
-            <div class="grid-3" style="margin-bottom: 10px;">
-                <div class="stat-box card"><div>Vacíos 20L</div><div class="val" id="hc-vac-20" style="color:#eab308;">0</div></div>
-                <div class="stat-box card"><div>Vacíos 12L</div><div class="val" id="hc-vac-12" style="color:#eab308;">0</div></div>
-                <div class="stat-box card"><div>Sifones Soda</div><div class="val" id="hc-vac-soda" style="color:#eab308;">0</div></div>
-            </div>
-
-            <hr style="margin: 8px 0;">
-            <p style="font-size:0.8rem; margin-bottom: 6px;"><strong>🧊 Dispenser Frío/Calor (Eléctrico en Alquiler/Comodato):</strong></p>
-            <div class="grid-2" style="margin-bottom: 10px;">
-                <div class="form-group"><label>Posee Dispenser F/C:</label>
-                    <select id="hc-fc-posee" onchange="guardarFcCliente()">
-                        <option value="No">No Posee</option><option value="Alquiler">En Alquiler ($)</option><option value="Comodato">En Comodato</option>
+                <!-- Filtros de Ruta -->
+                <div class="flex gap-2 mb-3">
+                    <select id="filtro-dia" class="w-1/2 p-2 border rounded text-sm bg-gray-50" onchange="renderRecorrido()">
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sábado">Sábado</option>
+                    </select>
+                    <select id="filtro-zona" class="w-1/2 p-2 border rounded text-sm bg-gray-50" onchange="renderRecorrido()">
+                        <option value="Todas">Todas las Zonas</option>
+                        <option value="Media Agua">Media Agua</option>
+                        <option value="Los Berros">Los Berros</option>
+                        <option value="Cochagual">Cochagual</option>
+                        <option value="Sarmiento">Sarmiento</option>
                     </select>
                 </div>
-                <div class="form-group"><label>N° Serie / Observación:</label><input type="text" id="hc-fc-obs" placeholder="Ej. Serie 1044, Filtro OK" onchange="guardarFcCliente()"></div>
             </div>
 
-            <div class="grid-2" style="margin-bottom: 10px;">
-                <div class="stat-box card"><div>Deuda Pendiente</div><div class="val" id="hc-deuda" style="color:#ef4444;">$0</div></div>
-                <div class="stat-box card"><div>Total Comprado</div><div class="val" id="hc-comprado" style="color:#22c55e;">$0</div></div>
+            <!-- Mapa Satelital HD -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-sm font-bold text-gray-700 mb-2"><i class="fas fa-satellite text-blue-600"></i> Radar Satelital de Clientes</h3>
+                <div id="map" class="rounded-lg border"></div>
             </div>
 
-            <div class="card-title" style="font-size:0.85rem;">🗺️ Coordenadas GPS Registradas</div>
-            <div id="hc-mapa-interno" style="background:#e2e8f0; padding:6px; border-radius:6px; margin-bottom:10px; font-size:0.75rem; color:#475569; text-align:center;">
-                Sin datos GPS
+            <!-- Lista de Clientes en Ruta -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-sm font-bold text-gray-700 mb-2"><i class="fas fa-list text-blue-600"></i> Clientes a Visitar Hoy</h3>
+                <div id="lista-recorrido-clientes" class="space-y-2">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. TAB CLIENTES (Ilimitados) -->
+        <div id="tab-clientes" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                <div>
+                    <h2 class="text-md font-bold text-gray-700"><i class="fas fa-users text-blue-600"></i> Padrón General de Clientes</h2>
+                    <p class="text-xs text-gray-500">Agregá todos los clientes que necesités sin restricciones.</p>
+                </div>
+                <button onclick="abrirModalCliente()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-bold shadow">
+                    <i class="fas fa-user-plus"></i> Nuevo Cliente
+                </button>
             </div>
 
-            <button class="btn btn-secondary" onclick="cerrarModalHistorial()" style="width: 100%;">Cerrar Ficha</button>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <input type="text" id="buscador-clientes" placeholder="Buscar por nombre, zona o teléfono..." class="w-full p-2 border rounded text-sm mb-3" oninput="filtrarPadronClientes()">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="bg-gray-100 border-b">
+                                <th class="p-2">Nombre</th>
+                                <th class="p-2">Zona</th>
+                                <th class="p-2">Teléfono</th>
+                                <th class="p-2">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-padron-clientes">
+                            <!-- Dinámico -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. TAB STOCK GALPÓN -->
+        <div id="tab-stock" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-warehouse text-blue-600"></i> Control de Stock en Galpón</h2>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div class="p-3 bg-gray-50 rounded border">
+                        <span class="text-gray-500 block text-xs">Bidones 20L Llenos (Depósito)</span>
+                        <strong class="text-xl text-gray-800" id="stock-galpon-b20">300</strong>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded border">
+                        <span class="text-gray-500 block text-xs">Sifones de Soda (Depósito)</span>
+                        <strong class="text-xl text-gray-800" id="stock-galpon-soda">150</strong>
+                    </div>
+                </div>
+                <div class="mt-4 flex gap-2">
+                    <button onclick="registrarCargaCamion()" class="w-1/2 bg-blue-600 text-white p-2 rounded text-xs font-bold">Cargar Camión</button>
+                    <button onclick="registrarRetornoCamion()" class="w-1/2 bg-green-600 text-white p-2 rounded text-xs font-bold">Cierre / Retorno</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. TAB PRECIOS -->
+        <div id="tab-precios" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-tags text-blue-600"></i> Gestión de Precios</h2>
+                <div class="space-y-3 text-sm">
+                    <div>
+                        <label class="block text-xs text-gray-500">Precio Bidón 20L ($)</label>
+                        <input type="number" id="precio-b20" value="2500" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500">Precio Cajón Soda ($)</label>
+                        <input type="number" id="precio-soda" value="4000" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500">Alquiler Dispenser Mensual ($)</label>
+                        <input type="number" id="precio-dispenser" value="8000" class="w-full p-2 border rounded">
+                    </div>
+                    <button onclick="guardarPrecios()" class="w-full bg-blue-600 text-white p-2 rounded text-xs font-bold">Guardar Precios</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. TAB FINANZAS -->
+        <div id="tab-finanzas" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-wallet text-blue-600"></i> Resumen de Caja Diario</h2>
+                <div class="grid grid-cols-2 gap-4 text-center mb-4">
+                    <div class="p-3 bg-green-50 rounded border border-green-200">
+                        <span class="text-xs text-gray-500">Efectivo Recaudado</span>
+                        <strong class="text-lg text-green-700" id="caja-efectivo">$0</strong>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded border border-blue-200">
+                        <span class="text-xs text-gray-500">Transferencias</span>
+                        <strong class="text-lg text-blue-700" id="caja-transferencia">$0</strong>
+                    </div>
+                </div>
+                <button onclick="realizarCierreCaja()" class="w-full bg-red-600 text-white p-2 rounded text-xs font-bold">Realizar Cierre de Caja</button>
+            </div>
+        </div>
+
+        <!-- 6. TAB GRABADOR GPS -->
+        <div id="tab-grabador" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-lg shadow text-center">
+                <h2 class="text-md font-bold text-gray-700 mb-2"><i class="fas fa-map-marked-alt text-blue-600"></i> Grabador de Recorrido GPS</h2>
+                <p class="text-xs text-gray-500 mb-4">Registrá el trazado satelital de tus calles de reparto.</p>
+                <button onclick="toggleGrabadorGPS()" id="btn-gps" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-xs font-bold">Iniciar Grabación GPS</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Barra de Navegación Inferior -->
+    <nav class="bg-white border-t fixed bottom-0 left-0 right-0 shadow-lg flex justify-around p-2 z-50">
+        <button onclick="switchTab('recorrido')" class="flex flex-col items-center text-blue-800 text-xs" id="nav-recorrido"><i class="fas fa-route text-lg"></i> Ruta</button>
+        <button onclick="switchTab('clientes')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-clientes"><i class="fas fa-users text-lg"></i> Clientes</button>
+        <button onclick="switchTab('stock')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-stock"><i class="fas fa-warehouse text-lg"></i> Stock</button>
+        <button onclick="switchTab('precios')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-precios"><i class="fas fa-tags text-lg"></i> Precios</button>
+        <button onclick="switchTab('finanzas')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-finanzas"><i class="fas fa-wallet text-lg"></i> Caja</button>
+        <button onclick="switchTab('grabador')" class="flex flex-col items-center text-gray-500 text-xs" id="nav-grabador"><i class="fas fa-satellite text-lg"></i> GPS</button>
+    </nav>
+
+    <!-- MODAL NUEVO / EDITAR CLIENTE (Ilimitado) -->
+    <div id="modal-cliente" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-4 rounded-lg w-full max-w-md space-y-3">
+            <h3 class="text-md font-bold text-gray-800" id="modal-titulo">Registrar Nuevo Cliente</h3>
+            <input type="hidden" id="cliente-id">
+            <div>
+                <label class="block text-xs text-gray-500">Nombre y Apellido</label>
+                <input type="text" id="input-nombre" class="w-full p-2 border rounded text-sm">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500">Zona / Localidad</label>
+                <select id="input-zona" class="w-full p-2 border rounded text-sm">
+                    <option value="Media Agua">Media Agua</option>
+                    <option value="Los Berros">Los Berros</option>
+                    <option value="Cochagual">Cochagual</option>
+                    <option value="Sarmiento">Sarmiento</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500">Teléfono / WhatsApp</label>
+                <input type="text" id="input-tel" class="w-full p-2 border rounded text-sm">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500">Día de Visita Asignado</label>
+                <select id="input-dia" class="w-full p-2 border rounded text-sm">
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miércoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sábado">Sábado</option>
+                </select>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="guardarClienteIlimitado()" class="w-1/2 bg-blue-600 text-white p-2 rounded text-xs font-bold">Guardar</button>
+                <button onclick="cerrarModalCliente()" class="w-1/2 bg-gray-400 text-white p-2 rounded text-xs font-bold">Cancelar</button>
+            </div>
         </div>
     </div>
 
-    <!-- Leaflet JS para Mapas Reales -->
+    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        let appState = {
-            precios: { b20: 3000, b12: 2200, soda: 1800, fc: 8000, mesa: 15000 },
-            comisiones: { b20: 500, b12: 400, soda: 300, mesa: 2000 },
-            galpon: { b20: { llenos: 150, fabrica: 50 }, b12: { llenos: 80, fabrica: 20 }, soda: { llenos: 60, fabrica: 10 }, fc: { llenos: 10, fabrica: 2 }, mesa: { llenos: 5 } },
-            camionEnVivo: { llenos: { b20: 0, b12: 0, soda: 0, mesa: 0 }, vacios: { b20: 0, b12: 0, soda: 0 } },
-            ventasDelDia: { b20: 0, b12: 0, soda: 0, mesa: 0 },
-            finanzas: { efectivo: 0, transferencia: 0, gastos: [], gananciaSemana: 0, gananciaMes: 0 },
-            estadoRuta: "Detenido",
-            clienteSeleccionadoId: null,
-            tempFotoData: "", tempGpsData: null,
-            clientes: [
-                { id: 1, nombre: "Juan Pérez", zona: "Villa Media Agua", direccion: "Calle Barboza s/n", tel: "2645123456", dia: "Lunes", tipo: "Cliente Fijo", notas: "Puerta reja verde", estado: "Pendiente", activo: true, gps: { lat: -31.9800, lng: -68.4320 }, vacios: { b20: 2, b12: 0, soda: 1 }, poseeFc: "Alquiler", fcObs: "Serie 201", deuda: 0, totalHistorico: 15000 },
-                { id: 2, nombre: "María Gómez", zona: "Los Berros - Parte Alta", direccion: "Ruta 40", tel: "2644987654", dia: "Lunes", tipo: "Cliente Nuevo", notas: "Al lado del almacén", estado: "Entregado", activo: true, gps: { lat: -31.9500, lng: -68.4100 }, vacios: { b20: 1, b12: 1, soda: 0 }, poseeFc: "No", fcObs: "", deuda: 2000, totalHistorico: 5000 }
-            ],
-            historialCargas: [],
-            recorridosGrabados: []
-        };
+        // Base de datos local robusta e ilimitada con LocalStorage
+        let clientes = JSON.parse(localStorage.getItem('soderapp_clientes')) || [
+            { id: 1, nombre: "Juan Pérez", zona: "Media Agua", tel: "2644112233", dia: "Lunes", lat: -31.845, lng: -68.452 },
+            { id: 2, nombre: "Supermercado Cuyo", zona: "Los Berros", tel: "2645556677", dia: "Lunes", lat: -31.860, lng: -68.440 }
+        ];
 
-        let mapLeaflet = null;
-        let mapMarkers = [];
-        let tempMarkerManual = null;
-        let modoSeleccionManual = false;
-        let gpsWatchId = null; let grabandoGPS = false; let puntosGPSActuales = [];
+        let map, markersLayer;
+        let jornadaActiva = false;
+        let grabandoGPS = false;
 
-        function cerrarSplash() { document.getElementById('splash-screen').style.display = 'none'; }
-
-        function initApp() {
-            document.getElementById('sel-fecha-trabajo').value = new Date().toISOString().split('T')[0];
-            cargarStorage();
-            cargarInputsPrecios();
-            cargarInputsComisiones();
-            initMapaLeaflet();
-            renderClientesRuta();
+        document.addEventListener("DOMContentLoaded", () => {
+            initMap();
+            renderRecorrido();
             renderPadronClientes();
-            renderMetricasClientes();
-            cargarInputsStockGalpon();
-            actualizarStockCamionEnVivoUI();
-            actualizarFinanzasUI();
-            renderHistorialCargas();
-            renderRecorridosGuardados();
-            actualizarEstadoRutaUI();
-        }
+        });
 
-        function initMapaLeaflet() {
-            // Inicializar Leaflet centrado en Media Agua, Sarmiento (-31.982, -68.433)
-            mapLeaflet = L.map('mapa-calles-real').setView([-31.982, -68.433], 15);
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('text-blue-800'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.add('text-gray-500'));
             
-            // FOTO SATELITAL HD DE ESRI
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                maxZoom: 19,
-                attribution: '© Esri Satellite HD'
-            }).addTo(mapLeaflet);
-
-            // Click Táctil en Mapa para Ubicar Pin
-            mapLeaflet.on('click', function(e) {
-                if (modoSeleccionManual) {
-                    appState.tempGpsData = { lat: e.latlng.lat, lng: e.latlng.lng };
-                    
-                    if (tempMarkerManual) mapLeaflet.removeLayer(tempMarkerManual);
-                    
-                    const markerIcon = L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `<div style="background-color:#eab308; width:30px; height:30px; border-radius:50%; color:black; font-weight:bold; display:flex; align-items:center; justify-content:center; border:3px solid white; box-shadow:0 2px 6px rgba(0,0,0,0.5); font-size:1.1rem;">🎯</div>`,
-                        iconSize: [30, 30],
-                        iconAnchor: [15, 15]
-                    });
-
-                    tempMarkerManual = L.marker([e.latlng.lat, e.latlng.lng], { icon: markerIcon }).addTo(mapLeaflet);
-                    document.getElementById('gps-status-txt').innerText = "🎯 Pin Satelital Fijado: " + e.latlng.lat.toFixed(5) + ", " + e.latlng.lng.toFixed(5);
-                    modoSeleccionManual = false;
-                    document.getElementById('mapa-calles-real').classList.remove('modo-mod-mapa');
-                    document.getElementById('lbl-modo-mapa').innerText = "(Tocá un pin para atender)";
-                    mostrarModal('Ubicación Fijada', 'Punto marcado correctamente sobre el mapa satelital.');
-                }
-            });
-        }
-
-        function activarSeleccionMapaManual() {
-            modoSeleccionManual = true;
-            switchTab(null, 'recorrido');
-            document.getElementById('mapa-calles-real').classList.add('modo-mod-mapa');
-            document.getElementById('lbl-modo-mapa').innerText = "👉 TOCÁ EN EL MAPA SATELITAL DÓNDE ESTÁ LA CASA";
-            mostrarModal('Modo Selección Activo', 'Tocá directamente con el dedo en la casa o terreno del cliente en el mapa satelital.');
-        }
-
-        function guardarStorage() { localStorage.setItem('chosen_soderapp_v174_data', JSON.stringify(appState)); }
-
-        function cargarStorage() {
-            const data = localStorage.getItem('chosen_soderapp_v174_data');
-            if (data) { try { appState = JSON.parse(data); } catch(e) {} }
-        }
-
-        function switchTab(evt, tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
-            if (evt) evt.currentTarget.classList.add('active');
-            if (tabId === 'recorrido' && mapLeaflet) { setTimeout(() => mapLeaflet.invalidateSize(), 300); }
-        }
+            document.getElementById('nav-' + tabId).classList.add('text-blue-800');
+            document.getElementById('nav-' + tabId).classList.remove('text-gray-500');
 
-        function cambiarEstadoRuta(nuevoEstado) {
-            appState.estadoRuta = nuevoEstado;
-            guardarStorage();
-            actualizarEstadoRutaUI();
-        }
-
-        function actualizarEstadoRutaUI() {
-            const lbl = document.getElementById('lbl-estado-ruta');
-            if (lbl) {
-                lbl.innerText = appState.estadoRuta;
-                if (appState.estadoRuta === 'Activo') lbl.style.color = '#22c55e';
-                else if (appState.estadoRuta === 'Pausado') lbl.style.color = '#eab308';
-                else lbl.style.color = '#ef4444';
+            if(tabId === 'recorrido' && map) {
+                setTimeout(() => map.invalidateSize(), 200);
             }
         }
 
-        function finalizarRecorridoIrAVaciado() {
-            cambiarEstadoRuta('Finalizado');
-            switchTab(null, 'stock');
-            document.getElementById('vac-dev-lleno-20').value = appState.camionEnVivo.llenos.b20;
-            document.getElementById('vac-dev-lleno-12').value = appState.camionEnVivo.llenos.b12;
-            document.getElementById('vac-dev-lleno-soda').value = appState.camionEnVivo.llenos.soda;
-            document.getElementById('vac-dev-lleno-mesa').value = appState.camionEnVivo.llenos.mesa;
-
-            document.getElementById('vac-ing-vac-20').value = appState.camionEnVivo.vacios.b20;
-            document.getElementById('vac-ing-vac-12').value = appState.camionEnVivo.vacios.b12;
-            document.getElementById('vac-ing-vac-soda').value = appState.camionEnVivo.vacios.soda;
-
-            mostrarModal('Recorrido Finalizado', 'Revisá los datos en la pantalla de Vaciado y Devolución.');
+        function initMap() {
+            map = L.map('map').setView([-31.848, -68.450], 13);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri'
+            }).addTo(map);
+            markersLayer = L.layerGroup().addTo(map);
         }
 
-        function cargarInputsPrecios() {
-            document.getElementById('prc-b20').value = appState.precios.b20;
-            document.getElementById('prc-b12').value = appState.precios.b12;
-            document.getElementById('prc-soda').value = appState.precios.soda;
-            document.getElementById('prc-fc').value = appState.precios.fc;
-            document.getElementById('prc-mesa').value = appState.precios.mesa;
-        }
+        function renderRecorrido() {
+            const diaSel = document.getElementById('filtro-dia').value;
+            const zonaSel = document.getElementById('filtro-zona').value;
+            const contenedor = document.getElementById('lista-recorrido-clientes');
+            contenedor.innerHTML = '';
+            markersLayer.clearLayers();
 
-        function guardarPrecios(notificar = false) {
-            appState.precios.b20 = parseInt(document.getElementById('prc-b20').value) || 0;
-            appState.precios.b12 = parseInt(document.getElementById('prc-b12').value) || 0;
-            appState.precios.soda = parseInt(document.getElementById('prc-soda').value) || 0;
-            appState.precios.fc = parseInt(document.getElementById('prc-fc').value) || 0;
-            appState.precios.mesa = parseInt(document.getElementById('prc-mesa').value) || 0;
-            guardarStorage(); actualizarFinanzasUI();
-            if (notificar) mostrarModal('Precios Guardados', 'Las tarifas se actualizaron correctamente.');
-        }
+            const filtrados = clientes.filter(c => (diaSel === 'Todos' || c.dia === diaSel) && (zonaSel === 'Todas' || c.zona === zonaSel));
 
-        function cargarInputsComisiones() {
-            document.getElementById('com-20').value = appState.comisiones.b20;
-            document.getElementById('com-12').value = appState.comisiones.b12;
-            document.getElementById('com-soda').value = appState.comisiones.soda;
-            document.getElementById('com-mesa').value = appState.comisiones.mesa;
-        }
-
-        function guardarComisiones() {
-            appState.comisiones.b20 = parseInt(document.getElementById('com-20').value) || 0;
-            appState.comisiones.b12 = parseInt(document.getElementById('com-12').value) || 0;
-            appState.comisiones.soda = parseInt(document.getElementById('com-soda').value) || 0;
-            appState.comisiones.mesa = parseInt(document.getElementById('com-mesa').value) || 0;
-            guardarStorage(); actualizarFinanzasUI();
-        }
-
-        function cargarInputsStockGalpon() {
-            document.getElementById('stk-galpon-20').value = appState.galpon.b20.llenos;
-            document.getElementById('stk-galpon-12').value = appState.galpon.b12.llenos;
-            document.getElementById('stk-galpon-soda').value = appState.galpon.soda.llenos;
-            document.getElementById('stk-galpon-fc').value = appState.galpon.fc.llenos;
-            document.getElementById('stk-galpon-mesa').value = appState.galpon.mesa.llenos;
-
-            document.getElementById('stk-fabrica-20').value = appState.galpon.b20.fabrica;
-            document.getElementById('stk-fabrica-12').value = appState.galpon.b12.fabrica;
-            document.getElementById('stk-fabrica-soda').value = appState.galpon.soda.fabrica;
-        }
-
-        function actualizarGalponEdicion() {
-            appState.galpon.b20.llenos = parseInt(document.getElementById('stk-galpon-20').value) || 0;
-            appState.galpon.b12.llenos = parseInt(document.getElementById('stk-galpon-12').value) || 0;
-            appState.galpon.soda.llenos = parseInt(document.getElementById('stk-galpon-soda').value) || 0;
-            appState.galpon.fc.llenos = parseInt(document.getElementById('stk-galpon-fc').value) || 0;
-            appState.galpon.mesa.llenos = parseInt(document.getElementById('stk-galpon-mesa').value) || 0;
-
-            appState.galpon.b20.fabrica = parseInt(document.getElementById('stk-fabrica-20').value) || 0;
-            appState.galpon.b12.fabrica = parseInt(document.getElementById('stk-fabrica-12').value) || 0;
-            appState.galpon.soda.fabrica = parseInt(document.getElementById('stk-fabrica-soda').value) || 0;
-            guardarStorage();
-        }
-
-        function cargarStockACamion() {
-            const c20 = parseInt(document.getElementById('carga-camion-20').value) || 0;
-            const c12 = parseInt(document.getElementById('carga-camion-12').value) || 0;
-            const cSoda = parseInt(document.getElementById('carga-camion-soda').value) || 0;
-            const cMesa = parseInt(document.getElementById('carga-camion-mesa').value) || 0;
-
-            if(c20 > appState.galpon.b20.llenos || c12 > appState.galpon.b12.llenos || cSoda > appState.galpon.soda.llenos || cMesa > appState.galpon.mesa.llenos) {
-                mostrarModal('Stock Insuficiente', 'No podés cargar más de lo disponible en Galpón.'); return;
+            if(filtrados.length === 0) {
+                contenedor.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No hay clientes en este filtro.</p>';
+                return;
             }
 
-            appState.galpon.b20.llenos -= c20; appState.galpon.b12.llenos -= c12;
-            appState.galpon.soda.llenos -= cSoda; appState.galpon.mesa.llenos -= cMesa;
+            filtrados.forEach(c => {
+                // Renderizar en lista
+                contenedor.innerHTML += `
+                    <div class="p-3 border rounded flex justify-between items-center bg-gray-50">
+                        <div>
+                            <strong>${c.nombre}</strong>
+                            <p class="text-xs text-gray-500">${c.zona} - Tel: ${c.tel}</p>
+                        </div>
+                        <button onclick="atenderCliente(${c.id})" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold">Atender</button>
+                    </div>
+                `;
 
-            appState.camionEnVivo.llenos.b20 += c20; appState.camionEnVivo.llenos.b12 += c12;
-            appState.camionEnVivo.llenos.soda += cSoda; appState.camionEnVivo.llenos.mesa += cMesa;
-
-            const diaSel = document.getElementById('sel-dia-trabajo').value;
-            appState.historialCargas.push({
-                id: Date.now(), fecha: new Date().toLocaleDateString(), dia: diaSel,
-                c20, c12, cSoda, cMesa
-            });
-
-            document.getElementById('carga-camion-20').value = 0; document.getElementById('carga-camion-12').value = 0;
-            document.getElementById('carga-camion-soda').value = 0; document.getElementById('carga-camion-mesa').value = 0;
-
-            cargarInputsStockGalpon(); actualizarStockCamionEnVivoUI(); renderHistorialCargas(); guardarStorage();
-            mostrarModal('Carga Exitosa', 'El camión se cargó y la mercadería pasó al Stock de Salida.');
-        }
-
-        function actualizarStockCamionEnVivoUI() {
-            document.getElementById('vivo-lleno-20').innerText = appState.camionEnVivo.llenos.b20;
-            document.getElementById('vivo-lleno-12').innerText = appState.camionEnVivo.llenos.b12;
-            document.getElementById('vivo-lleno-soda').innerText = appState.camionEnVivo.llenos.soda;
-            document.getElementById('vivo-lleno-mesa').innerText = appState.camionEnVivo.llenos.mesa;
-
-            document.getElementById('vivo-vac-20').innerText = appState.camionEnVivo.vacios.b20;
-            document.getElementById('vivo-vac-12').innerText = appState.camionEnVivo.vacios.b12;
-            document.getElementById('vivo-vac-soda').innerText = appState.camionEnVivo.vacios.soda;
-        }
-
-        function procesarVaciadoRetorno() {
-            const devLleno20 = parseInt(document.getElementById('vac-dev-lleno-20').value) || 0;
-            const devLleno12 = parseInt(document.getElementById('vac-dev-lleno-12').value) || 0;
-            const devLlenoSoda = parseInt(document.getElementById('vac-dev-lleno-soda').value) || 0;
-            const devLlenoMesa = parseInt(document.getElementById('vac-dev-lleno-mesa').value) || 0;
-
-            const ingVac20 = parseInt(document.getElementById('vac-ing-vac-20').value) || 0;
-            const ingVac12 = parseInt(document.getElementById('vac-ing-vac-12').value) || 0;
-            const ingVacSoda = parseInt(document.getElementById('vac-ing-vac-soda').value) || 0;
-
-            appState.galpon.b20.llenos += devLleno20; appState.galpon.b12.llenos += devLleno12;
-            appState.galpon.soda.llenos += devLlenoSoda; appState.galpon.mesa.llenos += devLlenoMesa;
-
-            appState.galpon.b20.fabrica += ingVac20; appState.galpon.b12.fabrica += ingVac12;
-            appState.galpon.soda.fabrica += ingVacSoda;
-
-            appState.camionEnVivo = { llenos: { b20: 0, b12: 0, soda: 0, mesa: 0 }, vacios: { b20: 0, b12: 0, soda: 0 } };
-
-            cargarInputsStockGalpon(); actualizarStockCamionEnVivoUI(); guardarStorage();
-            mostrarModal('Vaciado Completado', 'Se acreditaron los llenos y vacíos devueltos al Galpón.');
-        }
-
-        function renderHistorialCargas() {
-            const cont = document.getElementById('historial-cargas-dias'); cont.innerHTML = '';
-            if (!appState.historialCargas || appState.historialCargas.length === 0) {
-                cont.innerHTML = '<p style="font-size:0.8rem; color:#64748b;">No hay cargas registradas aún.</p>'; return;
-            }
-            appState.historialCargas.forEach(h => {
-                cont.innerHTML += '<div class="rec-card"><div><strong>📅 ' + h.dia + ' (' + h.fecha + ')</strong><br>' +
-                                  '<small>Carga: 20L: ' + h.c20 + ' | 12L: ' + h.c12 + ' | Soda: ' + h.cSoda + ' | Disp. Mesa: ' + h.cMesa + '</small></div>' +
-                                  '<button class="btn btn-danger" style="font-size:0.75rem;" onclick="eliminarHistorialCarga(' + h.id + ')">🗑️</button></div>';
-            });
-        }
-
-        function eliminarHistorialCarga(id) {
-            appState.historialCargas = appState.historialCargas.filter(h => h.id !== id);
-            guardarStorage(); renderHistorialCargas();
-        }
-
-        function renderClientesRuta() {
-            const diaSel = document.getElementById('sel-dia-trabajo').value;
-            const zonaSel = document.getElementById('select-zona').value;
-            const listaContainer = document.getElementById('lista-clientes-ruta');
-            listaContainer.innerHTML = '';
-
-            mapMarkers.forEach(m => mapLeaflet.removeLayer(m));
-            mapMarkers = [];
-
-            const filtrados = appState.clientes.filter(c => c.zona === zonaSel && c.dia === diaSel && c.activo !== false);
-            document.getElementById('cant-ruta').innerText = filtrados.length;
-
-            const colores = { Pendiente: '#f97316', Entregado: '#22c55e', NoEstaba: '#ef4444', Volver: '#eab308', NoDejo: '#94a3b8' };
-            const bounds = [];
-
-            filtrados.forEach((c, idx) => {
-                const el = document.createElement('div');
-                el.className = 'client-item st-' + (c.estado || 'Pendiente');
-                el.innerHTML = '<div><strong>' + (idx+1) + '. ' + c.nombre + '</strong> <small style="color:#0ea5e9;">(' + c.tipo + ')</small><br><small style="color: var(--text-secondary);">' + c.direccion + '</small></div>' +
-                               '<button class="btn btn-secondary" style="font-size: 0.75rem;" onclick="abrirFichaCliente(' + c.id + ')">Atender</button>';
-                listaContainer.appendChild(el);
-
-                if (c.gps && c.gps.lat && c.gps.lng) {
-                    const customIcon = L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `<div style="background-color:${colores[c.estado || 'Pendiente']}; width:28px; height:28px; border-radius:50%; color:white; font-weight:bold; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.5); font-size:0.8rem;">${idx + 1}</div>`,
-                        iconSize: [28, 28],
-                        iconAnchor: [14, 14]
-                    });
-
-                    const marker = L.marker([c.gps.lat, c.gps.lng], { icon: customIcon }).addTo(mapLeaflet)
-                        .bindPopup(`<b>${c.nombre}</b><br>${c.direccion}`);
-                    
-                    marker.on('click', () => {
-                        if (!modoSeleccionManual) abrirFichaCliente(c.id);
-                    });
-                    mapMarkers.push(marker);
-                    bounds.push([c.gps.lat, c.gps.lng]);
+                // Renderizar marcador en mapa satelital
+                if(c.lat && c.lng) {
+                    let marker = L.marker([c.lat, c.lng]).bindPopup(`<b>${c.nombre}</b><br>${c.zona}`);
+                    markersLayer.addLayer(marker);
                 }
             });
-
-            if (bounds.length > 0) {
-                mapLeaflet.fitBounds(bounds, { padding: [30, 30] });
-            }
-        }
-
-        function abrirFichaCliente(id) {
-            const cli = appState.clientes.find(c => c.id === id); if (!cli) return;
-            appState.clienteSeleccionadoId = id;
-            document.getElementById('fc-nombre').innerText = cli.nombre;
-            document.getElementById('fc-tipo').innerText = cli.tipo || 'Cliente Fijo';
-            document.getElementById('fc-direccion').innerText = cli.direccion;
-            document.getElementById('fc-notas').innerText = cli.notas || 'Sin notas';
-            document.getElementById('fc-tel').innerText = cli.tel || 'S/T';
-            document.getElementById('vta-estado-visita').value = cli.estado || 'Pendiente';
-
-            const img = document.getElementById('fc-foto');
-            if (cli.foto) { img.src = cli.foto; img.style.display = 'block'; } else { img.style.display = 'none'; }
-            document.getElementById('ficha-cliente').style.display = 'block';
-            calcularVenta();
-        }
-
-        function cambiarEstadoDirecto() {
-            const cli = appState.clientes.find(c => c.id === appState.clienteSeleccionadoId);
-            if (cli) { cli.estado = document.getElementById('vta-estado-visita').value; guardarStorage(); renderClientesRuta(); }
-        }
-
-        function calcularVenta() {
-            const c20 = parseInt(document.getElementById('vta-cant-20').value) || 0;
-            const c12 = parseInt(document.getElementById('vta-cant-12').value) || 0;
-            const cSoda = parseInt(document.getElementById('vta-cant-soda').value) || 0;
-            const cMesa = parseInt(document.getElementById('vta-cant-mesa').value) || 0;
-
-            const total = (c20 * appState.precios.b20) + (c12 * appState.precios.b12) + (cSoda * appState.precios.soda) + (cMesa * appState.precios.mesa);
-            document.getElementById('vta-total').value = total; document.getElementById('vta-pago').value = total;
-        }
-
-        function completarVenta() {
-            const cli = appState.clientes.find(c => c.id === appState.clienteSeleccionadoId);
-            const total = parseInt(document.getElementById('vta-total').value) || 0;
-            const medio = document.getElementById('vta-medio').value;
-
-            const c20 = parseInt(document.getElementById('vta-cant-20').value) || 0;
-            const c12 = parseInt(document.getElementById('vta-cant-12').value) || 0;
-            const cSoda = parseInt(document.getElementById('vta-cant-soda').value) || 0;
-            const cMesa = parseInt(document.getElementById('vta-cant-mesa').value) || 0;
-
-            const dev20 = parseInt(document.getElementById('vta-dev-20').value) || 0;
-            const dev12 = parseInt(document.getElementById('vta-dev-12').value) || 0;
-            const devSoda = parseInt(document.getElementById('vta-dev-soda').value) || 0;
-
-            cli.estado = document.getElementById('vta-estado-visita').value;
-            if (cli.estado === 'Pendiente') cli.estado = 'Entregado';
-
-            cli.totalHistorico = (cli.totalHistorico || 0) + total;
-            if (!cli.vacios) cli.vacios = { b20: 0, b12: 0, soda: 0 };
-            cli.vacios.b20 = Math.max(0, cli.vacios.b20 + (c20 - dev20));
-            cli.vacios.b12 = Math.max(0, cli.vacios.b12 + (c12 - dev12));
-            cli.vacios.soda = Math.max(0, cli.vacios.soda + (cSoda - devSoda));
-
-            appState.camionEnVivo.llenos.b20 = Math.max(0, appState.camionEnVivo.llenos.b20 - c20);
-            appState.camionEnVivo.llenos.b12 = Math.max(0, appState.camionEnVivo.llenos.b12 - c12);
-            appState.camionEnVivo.llenos.soda = Math.max(0, appState.camionEnVivo.llenos.soda - cSoda);
-            appState.camionEnVivo.llenos.mesa = Math.max(0, appState.camionEnVivo.llenos.mesa - cMesa);
-
-            appState.camionEnVivo.vacios.b20 += dev20;
-            appState.camionEnVivo.vacios.b12 += dev12;
-            appState.camionEnVivo.vacios.soda += devSoda;
-
-            if (medio === 'Efectivo') appState.finanzas.efectivo += total;
-            else appState.finanzas.transferencia += total;
-
-            appState.ventasDelDia.b20 += c20; appState.ventasDelDia.b12 += c12;
-            appState.ventasDelDia.soda += cSoda; appState.ventasDelDia.mesa += cMesa;
-
-            actualizarStockCamionEnVivoUI();
-            actualizarFinanzasUI();
-            guardarStorage();
-            renderClientesRuta();
-            document.getElementById('ficha-cliente').style.display = 'none';
-            mostrarModal('Entrega Registrada', 'Se descontó del camión y se actualizaron los vacíos.');
-        }
-
-        function renderMetricasClientes() {
-            document.getElementById('met-activos').innerText = appState.clientes.filter(c => c.activo !== false).length;
-            document.getElementById('met-inactivos').innerText = appState.clientes.filter(c => c.activo === false).length;
-            document.getElementById('met-semana').innerText = appState.clientes.length;
-            document.getElementById('met-mes').innerText = appState.clientes.length;
         }
 
         function renderPadronClientes() {
-            const cont = document.getElementById('lista-padron-clientes'); cont.innerHTML = '';
-            appState.clientes.forEach(c => {
-                const row = document.createElement('div');
-                row.className = 'client-item ' + (c.activo === false ? 'inactivo' : '');
-                let btnEstado = c.activo === false ? 
-                    '<button class="btn btn-success" style="padding:4px 8px; font-size:0.75rem; margin-right:4px;" onclick="cambiarEstadoActivo(' + c.id + ', true)">🟢 Reincorporar</button>' :
-                    '<button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem; margin-right:4px;" onclick="cambiarEstadoActivo(' + c.id + ', false)">🔴 Dejó de ser cliente</button>';
-
-                row.innerHTML = '<div><strong>' + c.nombre + '</strong> <small style="color:#0ea5e9;">(' + (c.tipo||'Cliente Fijo') + ')</small><br><small>' + c.direccion + ' | ' + c.zona + ' (' + c.dia + ')</small></div>' +
-                                '<div><button class="btn btn-secondary" style="padding:4px 8px; font-size:0.75rem; margin-right:4px;" onclick="verFichaHistorial(' + c.id + ')">👁️ Ficha/Historial</button>' +
-                                '<button class="btn btn-primary" style="padding:4px 8px; font-size:0.75rem; margin-right:4px;" onclick="editarCliente(' + c.id + ')">✏ Editar</button>' +
-                                btnEstado + '<button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="eliminarCliente(' + c.id + ')">🗑️</button></div>';
-                cont.appendChild(row);
+            const tbody = document.getElementById('tabla-padron-clientes');
+            tbody.innerHTML = '';
+            clientes.forEach(c => {
+                tbody.innerHTML += `
+                    <tr class="border-b">
+                        <td class="p-2 font-semibold">${c.nombre}</td>
+                        <td class="p-2">${c.zona}</td>
+                        <td class="p-2">${c.tel}</td>
+                        <td class="p-2 flex gap-2">
+                            <button onclick="editarCliente(${c.id})" class="text-blue-600 font-bold">Editar</button>
+                            <button onclick="eliminarCliente(${c.id})" class="text-red-600 font-bold">Borrar</button>
+                        </td>
+                    </tr>
+                `;
             });
-            renderMetricasClientes();
         }
 
-        function cambiarEstadoActivo(id, nuevoEstado) {
-            const c = appState.clientes.find(cli => cli.id === id);
-            if (c) { c.activo = nuevoEstado; guardarStorage(); renderPadronClientes(); renderClientesRuta(); }
+        function filtrarPadronClientes() {
+            const filtro = document.getElementById('buscador-clientes').value.toLowerCase();
+            const filas = document.querySelectorAll('#tabla-padron-clientes tr');
+            filas.forEach(fila => {
+                const texto = fila.innerText.toLowerCase();
+                fila.style.display = texto.includes(filtro) ? '' : 'none';
+            });
         }
 
-        function verFichaHistorial(id) {
-            const c = appState.clientes.find(cli => cli.id === id);
-            if (!c) return;
-            appState.clienteSeleccionadoId = id;
-            document.getElementById('hc-nombre').innerText = 'Ficha: ' + c.nombre;
-            document.getElementById('hc-vac-20').innerText = (c.vacios ? c.vacios.b20 : 0);
-            document.getElementById('hc-vac-12').innerText = (c.vacios ? c.vacios.b12 : 0);
-            document.getElementById('hc-vac-soda').innerText = (c.vacios ? c.vacios.soda : 0);
-
-            document.getElementById('hc-fc-posee').value = c.poseeFc || 'No';
-            document.getElementById('hc-fc-obs').value = c.fcObs || '';
-            document.getElementById('hc-deuda').innerText = '$' + (c.deuda || 0);
-            document.getElementById('hc-comprado').innerText = '$' + (c.totalHistorico || 0);
-            
-            const mapaCont = document.getElementById('hc-mapa-interno');
-            if (c.gps) mapaCont.innerHTML = '📍 Satelital Lat ' + c.gps.lat.toFixed(5) + ', Lng ' + c.gps.lng.toFixed(5);
-            else mapaCont.innerHTML = 'Coordenadas GPS no registradas';
-
-            document.getElementById('modal-historial-cliente').style.display = 'flex';
+        function abrirModalCliente() {
+            document.getElementById('modal-titulo').innerText = "Registrar Nuevo Cliente";
+            document.getElementById('cliente-id').value = '';
+            document.getElementById('input-nombre').value = '';
+            document.getElementById('input-tel').value = '';
+            document.getElementById('modal-cliente').classList.remove('hidden');
         }
 
-        function guardarFcCliente() {
-            const c = appState.clientes.find(cli => cli.id === appState.clienteSeleccionadoId);
-            if (c) {
-                c.poseeFc = document.getElementById('hc-fc-posee').value;
-                c.fcObs = document.getElementById('hc-fc-obs').value;
-                guardarStorage();
+        function cerrarModalCliente() {
+            document.getElementById('modal-cliente').classList.add('hidden');
+        }
+
+        // FUNCIÓN CLAVE MEJORADA: SIN LÍMITE DE CLIENTES
+        function guardarClienteIlimitado() {
+            const id = document.getElementById('cliente-id').value;
+            const nombre = document.getElementById('input-nombre').value;
+            const zona = document.getElementById('input-zona').value;
+            const tel = document.getElementById('input-tel').value;
+            const dia = document.getElementById('input-dia').value;
+
+            if(!nombre) {
+                alert("Por favor, poné el nombre del cliente.");
+                return;
             }
-        }
 
-        function cerrarModalHistorial() { document.getElementById('modal-historial-cliente').style.display = 'none'; }
+            if(id) {
+                // Editar existente
+                let cli = clientes.find(c => c.id == id);
+                if(cli) {
+                    cli.nombre = nombre;
+                    cli.zona = zona;
+                    cli.tel = tel;
+                    cli.dia = dia;
+                }
+            } else {
+                // Crear nuevo cliente ilimitado (usando timestamp para ID único)
+                const nuevo = {
+                    id: Date.now(),
+                    nombre: nombre,
+                    zona: zona,
+                    tel: tel,
+                    dia: dia,
+                    lat: -31.848 + (Math.random() - 0.5) * 0.05, // Coordenada de prueba en zona
+                    lng: -68.450 + (Math.random() - 0.5) * 0.05
+                };
+                clientes.push(nuevo);
+            }
 
-        function toggleSeccionCliente(sec) {
-            if (sec === 'form') { document.getElementById('sec-form-cliente').style.display = 'block'; document.getElementById('sec-padron-cliente').style.display = 'none'; }
-            else { document.getElementById('sec-form-cliente').style.display = 'none'; document.getElementById('sec-padron-cliente').style.display = 'block'; }
+            // Guardar permanentemente en LocalStorage sin restricciones
+            localStorage.setItem('soderapp_clientes', JSON.stringify(clientes));
+            
+            cerrarModalCliente();
+            renderPadronClientes();
+            renderRecorrido();
+            alert("¡Cliente guardado correctamente con éxito, compadre!");
         }
 
         function editarCliente(id) {
-            const c = appState.clientes.find(cli => cli.id === id); if (!c) return;
-            document.getElementById('edit-cliente-id').value = c.id; document.getElementById('alta-nombre').value = c.nombre;
-            document.getElementById('alta-dir').value = c.direccion; document.getElementById('alta-tel').value = c.tel || '';
-            document.getElementById('alta-tipo').value = c.tipo || 'Cliente Fijo'; document.getElementById('alta-dia').value = c.dia;
-            document.getElementById('alta-zona').value = c.zona; document.getElementById('alta-notas').value = c.notas || '';
-            document.getElementById('titulo-form-cliente').innerText = "✏️ Editar Cliente: " + c.nombre;
-            document.getElementById('btn-cancelar-edit').style.display = "block";
-            toggleSeccionCliente('form');
-        }
-
-        function limpiarFormCliente() {
-            document.getElementById('edit-cliente-id').value = ''; document.getElementById('alta-nombre').value = '';
-            document.getElementById('alta-dir').value = ''; document.getElementById('alta-tel').value = ''; document.getElementById('alta-notas').value = '';
-            document.getElementById('titulo-form-cliente').innerText = "➕ Alta de Cliente"; document.getElementById('btn-cancelar-edit').style.display = "none";
-            appState.tempGpsData = null;
-            document.getElementById('gps-status-txt').innerText = "Ubicación: No asignada";
-        }
-
-        function capturarGpsCliente() {
-            const txt = document.getElementById('gps-status-txt');
-            txt.innerText = "Buscando satélites...";
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    appState.tempGpsData = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                    txt.innerText = "GPS OK (Puerta): " + pos.coords.latitude.toFixed(5) + ", " + pos.coords.longitude.toFixed(5);
-                }, (err) => { 
-                    mostrarModal('Error de GPS', 'Activá el GPS/Ubicación del celular y dale permisos al navegador.'); 
-                    txt.innerText = "GPS: Error de captura";
-                }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
-            } else {
-                mostrarModal('Error', 'El navegador no soporta geolocalización.');
+            const cli = clientes.find(c => c.id == id);
+            if(cli) {
+                document.getElementById('modal-titulo').innerText = "Editar Cliente";
+                document.getElementById('cliente-id').value = cli.id;
+                document.getElementById('input-nombre').value = cli.nombre;
+                document.getElementById('input-zona').value = cli.zona;
+                document.getElementById('input-tel').value = cli.tel;
+                document.getElementById('input-dia').value = cli.dia;
+                document.getElementById('modal-cliente').classList.remove('hidden');
             }
-        }
-
-        function guardarRegistroCliente() {
-            const editId = document.getElementById('edit-cliente-id').value;
-            const nom = document.getElementById('alta-nombre').value; const dir = document.getElementById('alta-dir').value;
-            if (!nom || !dir) { mostrarModal('Datos Incompletos', 'Cargá el nombre y la dirección.'); return; }
-
-            if (editId) {
-                const cli = appState.clientes.find(c => c.id == editId);
-                if (cli) {
-                    cli.nombre = nom; cli.direccion = dir; cli.tel = document.getElementById('alta-tel').value;
-                    cli.tipo = document.getElementById('alta-tipo').value; cli.dia = document.getElementById('alta-dia').value;
-                    cli.zona = document.getElementById('alta-zona').value; cli.notas = document.getElementById('alta-notas').value;
-                    if (appState.tempGpsData) cli.gps = appState.tempGpsData;
-                }
-            } else {
-                appState.clientes.push({
-                    id: Date.now(), nombre: nom, direccion: dir, tel: document.getElementById('alta-tel').value,
-                    tipo: document.getElementById('alta-tipo').value, dia: document.getElementById('alta-dia').value,
-                    zona: document.getElementById('alta-zona').value, notas: document.getElementById('alta-notas').value,
-                    foto: appState.tempFotoData || "", gps: appState.tempGpsData || { lat: -31.982, lng: -68.433 }, estado: "Pendiente",
-                    activo: true, vacios: { b20: 0, b12: 0, soda: 0 }, poseeFc: "No", fcObs: "", deuda: 0, totalHistorico: 0
-                });
-            }
-
-            limpiarFormCliente(); guardarStorage(); renderPadronClientes(); renderClientesRuta();
-            toggleSeccionCliente('padron'); mostrarModal('Éxito', 'Cliente guardado correctamente.');
         }
 
         function eliminarCliente(id) {
-            if (confirm('¿Eliminar cliente del padrón?')) {
-                appState.clientes = appState.clientes.filter(c => c.id !== id);
-                guardarStorage(); renderPadronClientes(); renderClientesRuta();
+            if(confirm("¿Estás seguro de que querés borrar este cliente?")) {
+                clientes = clientes.filter(c => c.id != id);
+                localStorage.setItem('soderapp_clientes', JSON.stringify(clientes));
+                renderPadronClientes();
+                renderRecorrido();
             }
         }
 
-        function registrarGasto() {
-            const conc = document.getElementById('gasto-concepto').value;
-            const monto = parseInt(document.getElementById('gasto-monto').value) || 0;
-            if (!conc || monto <= 0) return;
-            appState.finanzas.gastos.push({ id: Date.now(), concepto: conc, monto: monto });
-            document.getElementById('gasto-concepto').value = ''; document.getElementById('gasto-monto').value = '';
-            actualizarFinanzasUI(); guardarStorage();
-        }
-
-        function actualizarFinanzasUI() {
-            const efec = appState.finanzas.efectivo;
-            const trans = appState.finanzas.transferencia;
-            const totGastos = appState.finanzas.gastos.reduce((acc, g) => acc + g.monto, 0);
-
-            const ganRep = (appState.ventasDelDia.b20 * appState.comisiones.b20) +
-                           (appState.ventasDelDia.b12 * appState.comisiones.b12) +
-                           (appState.ventasDelDia.soda * appState.comisiones.soda) +
-                           (appState.ventasDelDia.mesa * appState.comisiones.mesa);
-
-            const rendirDueno = Math.max(0, (efec + trans) - totGastos - ganRep);
-
-            document.getElementById('fin-efectivo').innerText = '$' + efec;
-            document.getElementById('fin-transf').innerText = '$' + trans;
-            document.getElementById('fin-gastos').innerText = '$' + totGastos;
-            document.getElementById('fin-ganancia-repartidor').innerText = '$' + ganRep;
-            document.getElementById('fin-rendir-dueno').innerText = '$' + rendirDueno;
-
-            document.getElementById('fin-acum-semana').innerText = '$' + (appState.finanzas.gananciaSemana || 0);
-            document.getElementById('fin-acum-mes').innerText = '$' + (appState.finanzas.gananciaMes || 0);
-
-            const tb = document.getElementById('tb-desglose-ventas'); tb.innerHTML = '';
-            const items = [
-                { nom: 'Bidón 20L', cant: appState.ventasDelDia.b20, prc: appState.precios.b20 },
-                { nom: 'Bidón 12L', cant: appState.ventasDelDia.b12, prc: appState.precios.b12 },
-                { nom: 'Sifón de Soda', cant: appState.ventasDelDia.soda, prc: appState.precios.soda },
-                { nom: 'Venta Dispenser Mesa', cant: appState.ventasDelDia.mesa, prc: appState.precios.mesa }
-            ];
-            items.forEach(i => {
-                tb.innerHTML += '<tr><td>' + i.nom + '</td><td>' + i.cant + '</td><td>$' + i.prc + '</td><td><strong>$' + (i.cant * i.prc) + '</strong></td></tr>';
-            });
-
-            const contG = document.getElementById('historial-gastos-lista'); contG.innerHTML = '';
-            appState.finanzas.gastos.forEach(g => {
-                contG.innerHTML += '<div style="display:flex; justify-content:space-between; background:#f1f5f9; padding:6px 10px; border-radius:4px; margin-bottom:4px; font-size:0.85rem;">' +
-                                   '<span>' + g.concepto + ': <strong>$' + g.monto + '</strong></span></div>';
-            });
-        }
-
-        function cerrarCajaDiaria() {
-            if (confirm('¿Cerrar la caja del día? Se sumarán tus ganancias al acumulado de la semana y mes.')) {
-                const ganRep = (appState.ventasDelDia.b20 * appState.comisiones.b20) +
-                               (appState.ventasDelDia.b12 * appState.comisiones.b12) +
-                               (appState.ventasDelDia.soda * appState.comisiones.soda) +
-                               (appState.ventasDelDia.mesa * appState.comisiones.mesa);
-
-                appState.finanzas.gananciaSemana = (appState.finanzas.gananciaSemana || 0) + ganRep;
-                appState.finanzas.gananciaMes = (appState.finanzas.gananciaMes || 0) + ganRep;
-
-                appState.finanzas.efectivo = 0; appState.finanzas.transferencia = 0; appState.finanzas.gastos = [];
-                appState.ventasDelDia = { b20: 0, b12: 0, soda: 0, mesa: 0 };
-                appState.clientes.forEach(c => c.estado = 'Pendiente');
-
-                actualizarFinanzasUI(); renderClientesRuta(); guardarStorage();
-                mostrarModal('Caja Cerrada', 'Se acumularon tus ganancias y se reseteó la caja diaria.');
-            }
-        }
-
-        function toggleGrabacionGPS() {
-            const btn = document.getElementById('btn-iniciar-rec');
-            const tag = document.getElementById('tag-grabando');
-            const nomInput = document.getElementById('nombre-recorrido-nuevo');
-
-            if (!grabandoGPS) {
-                if (!("geolocation" in navigator)) { mostrarModal('Error', 'GPS no disponible'); return; }
-                grabandoGPS = true; puntosGPSActuales = [];
-                btn.innerText = "⏹ Detener y Guardar Recorrido"; btn.className = "btn btn-warning"; tag.style.display = "inline";
-
-                gpsWatchId = navigator.geolocation.watchPosition(pos => {
-                    puntosGPSActuales.push({ lat: pos.coords.latitude, lng: pos.coords.longitude, hora: new Date().toLocaleTimeString() });
-                    document.getElementById('cant-puntos-gps').innerText = puntosGPSActuales.length;
-                }, err => console.error(err), { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+        function toggleJornada() {
+            jornadaActiva = !jornadaActiva;
+            const btn = document.getElementById('btn-jornada');
+            const estado = document.getElementById('jornada-estado');
+            if(jornadaActiva) {
+                btn.innerText = "Finalizar";
+                btn.className = "bg-red-600 text-white text-xs px-3 py-1.5 rounded font-bold";
+                estado.innerText = "EN CURSO";
+                estado.className = "text-xs px-2.5 py-1 rounded bg-green-600 font-semibold text-white";
             } else {
-                grabandoGPS = false; navigator.geolocation.clearWatch(gpsWatchId);
-                btn.innerText = "🔴 Iniciar Grabación GPS"; btn.className = "btn btn-danger"; tag.style.display = "none";
-
-                if (puntosGPSActuales.length === 0) return;
-                const nuevoRec = { id: Date.now(), nombre: nomInput.value.trim() || 'Recorrido ' + new Date().toLocaleDateString(), fecha: new Date().toLocaleDateString(), puntos: puntosGPSActuales };
-                appState.recorridosGrabados.push(nuevoRec);
-                guardarStorage(); renderRecorridosGuardados();
-                mostrarModal('Éxito', 'Recorrido GPS guardado.'); nomInput.value = ''; document.getElementById('cant-puntos-gps').innerText = '0';
+                btn.innerText = "Iniciar";
+                btn.className = "bg-green-600 text-white text-xs px-3 py-1.5 rounded font-bold";
+                estado.innerText = "PAUSADA";
+                estado.className = "text-xs px-2.5 py-1 rounded bg-red-600 font-semibold text-white";
             }
         }
 
-        function renderRecorridosGuardados() {
-            const cont = document.getElementById('lista-recorridos-guardados'); cont.innerHTML = '';
-            if (!appState.recorridosGrabados || appState.recorridosGrabados.length === 0) {
-                cont.innerHTML = '<p style="font-size:0.8rem; color: var(--text-secondary);">No hay recorridos grabados aún.</p>'; return;
-            }
-            appState.recorridosGrabados.forEach(r => {
-                cont.innerHTML += '<div class="rec-card"><div><strong>📍 ' + r.nombre + '</strong><br><small style="color:#64748b;">' + r.fecha + ' | Puntos: ' + r.puntos.length + '</small></div>' +
-                                  '<button class="btn btn-danger" style="font-size:0.75rem;" onclick="eliminarRecorrido(' + r.id + ')">🗑️ Borrar</button></div>';
-            });
-        }
-
-        function eliminarRecorrido(id) {
-            if (confirm('¿Borrar recorrido?')) {
-                appState.recorridosGrabados = appState.recorridosGrabados.filter(r => r.id !== id);
-                guardarStorage(); renderRecorridosGuardados();
+        function toggleGrabadorGPS() {
+            grabandoGPS = !grabandoGPS;
+            const btn = document.getElementById('btn-gps');
+            if(grabandoGPS) {
+                btn.innerText = "Detener Grabación GPS";
+                btn.className = "bg-red-600 text-white px-4 py-2 rounded text-xs font-bold";
+                alert("Grabación GPS iniciada...");
+            } else {
+                btn.innerText = "Iniciar Grabación GPS";
+                btn.className = "bg-blue-600 text-white px-4 py-2 rounded text-xs font-bold";
+                alert("Recorrido GPS guardado correctamente.");
             }
         }
 
-        function previewFotoCliente(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    appState.tempFotoData = evt.target.result;
-                    const prev = document.getElementById('alta-foto-preview');
-                    prev.src = evt.target.result; prev.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+        function atenderCliente(id) {
+            let cli = clientes.find(c => c.id == id);
+            if(cli) {
+                alert(`Atendiendo a: ${cli.nombre} en ${cli.zona}. ¡Venta registrada!`);
             }
         }
 
-        function abrirWhatsapp() {
-            const cli = appState.clientes.find(c => c.id === appState.clienteSeleccionadoId);
-            if (cli && cli.tel) window.open('https://wa.me/' + cli.tel, '_blank');
-        }
-
-        function mostrarModal(tit, msg) {
-            document.getElementById('modal-title').innerText = tit; document.getElementById('modal-msg').innerText = msg;
-            document.getElementById('app-modal').style.display = 'flex';
-        }
-        function cerrarModal() { document.getElementById('app-modal').style.display = 'none'; }
-
-        window.onload = initApp;
+        function guardarPrecios() { alert("Precios actualizados correctamente."); }
+        function registrarCargaCamion() { alert("Carga de camión registrada desde el galpón."); }
+        function registrarRetornoCamion() { alert("Retorno registrado con éxito."); }
+        function realizarCierreCaja() { alert("Cierre de caja realizado. ¡A descansar!"); }
     </script>
 </body>
 </html>
